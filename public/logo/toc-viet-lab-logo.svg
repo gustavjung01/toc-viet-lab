@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" width="280" height="60">
+  <defs>
+    <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D6A84F"/>
+      <stop offset="50%" style="stop-color:#F0C76A"/>
+      <stop offset="100%" style="stop-color:#C56A3A"/>
+    </linearGradient>
+    <filter id="logoGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Mark - Hair strand swirl -->
+  <g transform="translate(8, 8)">
+    <circle cx="22" cy="22" r="20" fill="none" stroke="url(#logoGold)" stroke-width="1.5"/>
+    <path d="M22 6 
+             C32 6, 40 13, 40 22 
+             C40 30, 33 35, 24 35
+             C16 35, 11 30, 11 23
+             C11 17, 16 14, 23 14
+             C28 14, 32 17, 32 23
+             C32 27, 28 30, 23 30" 
+          fill="none" 
+          stroke="url(#logoGold)" 
+          stroke-width="3" 
+          stroke-linecap="round"
+          filter="url(#logoGlow)"/>
+    <path d="M8 28
+             C12 35, 19 40, 28 40
+             C36 40, 42 35, 44 28" 
+          fill="none" 
+          stroke="url(#logoGold)" 
+          stroke-width="2" 
+          stroke-linecap="round"
+          opacity="0.6"/>
+    <circle cx="22" cy="46" r="2.5" fill="url(#logoGold)"/>
+  </g>
+  
+  <!-- Text: Tóc Việt Lab -->
+  <text x="65" y="28" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="20" 
+        font-weight="800" 
+        fill="#D6A84F"
+        letter-spacing="-0.02em">Tóc Việt Lab</text>
+  
+  <!-- Tagline -->
+  <text x="65" y="46" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="9" 
+        font-weight="600" 
+        fill="#B9AEA1"
+        letter-spacing="0.15em">KIẾN THỨC · KỸ THUẬT · TƯ DUY</text>
+</svg>
