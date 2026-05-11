@@ -1,0 +1,50 @@
+DANH SÁCH FILE CODE ĐÃ TẠO
+===========================
+
+Cấu hình project:
+- package.json
+- .gitignore
+- README.md
+- next.config.mjs
+- tsconfig.json
+- postcss.config.mjs
+- tailwind.config.ts
+- next-env.d.ts
+
+Core app:
+- app/layout.tsx
+- app/globals.css
+- app/page.tsx
+
+Public pages:
+- app/kien-thuc/page.tsx
+- app/kien-thuc/[slug]/page.tsx
+- app/case-thuc-te/page.tsx
+- app/cong-thuc-mau/page.tsx
+- app/cong-cu-ai/page.tsx
+- app/goi-thanh-vien/page.tsx
+- app/login/page.tsx
+
+Member/mock dashboard:
+- app/dashboard/page.tsx
+- app/so-tay/page.tsx
+- app/cong-thuc-cua-toi/page.tsx
+- app/ai-tu-van-mau/page.tsx
+- app/credit-ai/page.tsx
+
+Components:
+- components/logo.tsx
+- components/header.tsx
+- components/footer.tsx
+- components/visual.tsx
+- components/cards.tsx
+- components/app-shell.tsx
+
+Data:
+- lib/data.ts
+
+Ghi chú:
+- Đây là bản UI/mock data.
+- Chưa có auth thật.
+- Chưa có database/R2/AI API/thanh toán.
+- Copy toàn bộ nội dung trong thư mục này vào local root F:\1_A_Disk_D\Toc-Viet-Lab.
