@@ -8,7 +8,7 @@ import { CategoryGrid } from "@/components/home/category-grid";
 import { FeaturedCases } from "@/components/home/featured-cases";
 import { MemberNotebook } from "@/components/home/member-notebook";
 import { AiToolsPreview } from "@/components/home/ai-tools-preview";
-import { PricingPreview } from "@/components/home/pricing-preview";
+// PricingPreview hidden - will be enabled later
 
 export default function HomePage() {
   return (
@@ -22,7 +22,7 @@ export default function HomePage() {
         <FeaturedCases />
         <MemberNotebook />
         <AiToolsPreview />
-        <PricingPreview />
+        {/* PricingPreview hidden - will be enabled later */}
       </main>
       <Footer />
       <MobileBottomNav />

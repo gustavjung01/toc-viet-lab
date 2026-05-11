@@ -9,27 +9,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        black: "#050505",
-        card: "#0E0D0B",
-        softblack: "#171410",
-        gold: "#D6A84F",
-        lightgold: "#F0C76A",
-        cream: "#F8F1E7",
+        /* Tóc Việt Lab Design System */
+        black: "#030303",           // Deepest black
+        "black-soft": "#080706",    // Soft black
+        charcoal: "#11100E",        // Charcoal
+        card: "#171410",            // Card dark
+        gold: "#D6A84F",            // Primary gold
+        "gold-bright": "#F0C76A",   // Bright gold for buttons
+        "gold-deep": "#A87928",     // Deep gold
+        cream: "#F8F1E7",           // Cream background
+        "cream-card": "#FFF8EE",    // Cream card
+        muted: "#B9AEA1",           // Muted text
+        olive: "#637A4D",           // Olive accent
+        clay: "#C56A3A",            // Clay accent
+        // Legacy aliases
+        softblack: "#080706",
         softcream: "#FFF8EE",
-        muted: "#B9AEA1",
-        olive: "#637A4D",
-        clay: "#C56A3A",
-        charcoal: "#111111",
-        ink: "#1E1E1E",
-        champagne: "#C9A45C",
-        warmgray: "#6F665C"
+        lightgold: "#F0C76A",
+        champagne: "#D6A84F",
+        warmgray: "#B9AEA1",
+        ink: "#1E1E1E"
       },
       fontFamily: {
         sans: ["var(--font-be-vietnam)", "system-ui", "sans-serif"]
       },
       boxShadow: {
-        soft: "0 22px 70px rgba(17,17,17,0.12)",
-        gold: "0 18px 60px rgba(201,164,92,0.25)",
+        soft: "0 22px 70px rgba(3,3,3,0.12)",
+        gold: "0 18px 60px rgba(214,168,79,0.25)",
         'gold-sm': "0 8px 30px rgba(214,168,79,0.20)",
         'gold-lg': "0 24px 80px rgba(214,168,79,0.30)"
       }

@@ -4,8 +4,8 @@ export const navItems = [
   { label: "Kiến thức tóc", href: "/kien-thuc" },
   { label: "Công thức màu", href: "/cong-thuc-mau" },
   { label: "Case thực tế", href: "/case-thuc-te" },
-  { label: "Công cụ AI", href: "/cong-cu-ai" },
-  { label: "Gói thành viên", href: "/goi-thanh-vien" }
+  { label: "Công cụ AI", href: "/cong-cu-ai" }
+  // Gói thành viên hidden - will be enabled later
 ];
 
 export const categories = [
