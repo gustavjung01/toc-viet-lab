@@ -51,7 +51,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-10 max-w-7xl border-t border-gold/10 pt-6 text-xs text-white/45">
-        © 2026 Tóc Việt Lab. All rights reserved.
+        © 2026 Tóc Việt Lab. Nền tảng tri thức và công cụ ngành tóc Việt.
       </div>
     </footer>
   );

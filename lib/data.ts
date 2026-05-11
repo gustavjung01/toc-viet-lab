@@ -1,4 +1,5 @@
 import { BookOpen, BrainCircuit, Camera, ClipboardCheck, FlaskConical, Gem, Layers, Palette, PenLine, Scissors, Sparkles, Users } from "lucide-react";
+import type { ImageAssetKey } from "./image-assets";
 
 export const navItems = [
   { label: "Kiến thức tóc", href: "/kien-thuc" },
@@ -38,12 +39,18 @@ export const formulas = [
   { title:"Nâu trà sữa", tag:"Nhuộm toàn bộ", base:"Level 7 - nền vàng", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tông tự nhiên, phù hợp da ấm.", visual:"from-[#3a261d] via-[#9b7354] to-[#d6b48f]", imageKey:"formula-nau-tra-sua" }
 ];
 
-export const aiTools = [
+export const aiTools: Array<{
+  title: string;
+  desc: string;
+  icon: any;
+  imageKey: ImageAssetKey;
+}> = [
   { title:"AI tư vấn màu", desc:"Phân tích nền tóc, mục tiêu màu và rủi ro kỹ thuật.", icon: BrainCircuit, imageKey:"ai-tu-van-mau" },
   { title:"Gợi ý công thức", desc:"Tạo công thức tham khảo theo nền, tông và tình trạng tóc.", icon: FlaskConical, imageKey:"ai-goi-y-cong-thuc" },
   { title:"Tạo phiếu tư vấn", desc:"Viết nội dung giải thích dễ hiểu cho khách salon.", icon: PenLine, imageKey:"ai-tao-phieu-tu-van" },
   { title:"Viết bài Facebook", desc:"Tạo caption, kịch bản chăm sóc và nội dung bán hàng.", icon: BookOpen, imageKey:"ai-viet-bai-facebook" },
-  { title:"Phân tích ảnh tóc", desc:"Mock UI cho phân tích ảnh before/after sau này.", icon: Camera, imageKey:"ai-phan-tich-anh-toc" }
+  { title:"Phân tích ảnh tóc", desc:"Mock UI cho phân tích ảnh before/after sau này.", icon: Camera, imageKey:"ai-phan-tich-anh-toc" },
+  { title:"Credit AI Dashboard", desc:"Theo dõi số dư credit và lịch sử sử dụng AI.", icon: Layers, imageKey:"ai-credit-dashboard" }
 ];
 
 export const dashboardStats = [

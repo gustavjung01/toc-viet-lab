@@ -8,6 +8,7 @@
   --tvl-black-soft: #080706;
   --tvl-charcoal: #11100E;
   --tvl-card-dark: #171410;
+  --tvl-card-dark-2: #201A13;
   --tvl-gold: #D6A84F;
   --tvl-gold-bright: #F0C76A;
   --tvl-gold-deep: #A87928;
@@ -35,7 +36,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { background: #F8F1E7; color: #030303; }
+body { background: #030303; color: #030303; }
 ::selection { background: rgba(214,168,79,.35); }
 
 /* Luxury backgrounds */

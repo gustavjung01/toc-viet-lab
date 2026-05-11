@@ -14,6 +14,7 @@ const config: Config = {
         "black-soft": "#080706",    // Soft black
         charcoal: "#11100E",        // Charcoal
         card: "#171410",            // Card dark
+        "card-dark-2": "#201A13",   // Card dark hover
         gold: "#D6A84F",            // Primary gold
         "gold-bright": "#F0C76A",   // Bright gold for buttons
         "gold-deep": "#A87928",     // Deep gold
