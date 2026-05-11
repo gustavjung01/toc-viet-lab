@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { assetUrl } from "@/lib/image-assets";
 
 const featuredCases = [
   {
@@ -11,7 +12,8 @@ const featuredCases = [
     goal: "Level 8–9, beige ash trong và bóng",
     time: "240 phút",
     salon: "Salon Tuấn Nguyễn",
-    gradient: "from-[#171717] via-[#7a6046] to-[#d6c0a0]"
+    beforeImage: "case-01-before-nen-den-tu-nhien",
+    afterImage: "case-01-after-beige-ash"
   },
   {
     title: "Balayage xám khói trên nền nâu tự nhiên",
@@ -20,7 +22,8 @@ const featuredCases = [
     goal: "Hiệu ứng chuyển màu mềm, ít lộ chân",
     time: "180 phút",
     salon: "The Labs Hair",
-    gradient: "from-[#2b2b2b] via-[#8d8a7f] to-[#f0e6cf]"
+    beforeImage: "case-02-before-nen-nau-tu-nhien",
+    afterImage: "case-02-after-balayage-xam-khoi"
   },
   {
     title: "Phục hồi và nhuộm nâu socola cho tóc tẩy hư tổn",
@@ -29,7 +32,8 @@ const featuredCases = [
     goal: "Nâu socola mềm, giảm xơ, dễ chăm sóc",
     time: "150 phút",
     salon: "Linh Black Hair",
-    gradient: "from-[#3a261d] via-[#7b4f35] to-[#c9a45c]"
+    beforeImage: "case-03-before-toc-tay-hu-ton",
+    afterImage: "case-03-after-nau-socola-phuc-hoi"
   }
 ];
 
@@ -62,10 +66,33 @@ export function FeaturedCases() {
               href="/case-thuc-te"
               className="group relative overflow-hidden rounded-3xl border border-gold/10 bg-white transition-all duration-300 hover:border-gold/30 hover:shadow-gold-sm"
             >
-              {/* Visual gradient header */}
-              <div className={`h-32 bg-gradient-to-br ${caseItem.gradient} relative`}>
-                <div className="absolute inset-0 bg-black/10" />
-                <span className="absolute left-4 top-4 rounded-full bg-black/30 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+              {/* Before/After images */}
+              <div className="relative h-40 overflow-hidden">
+                <div className="absolute inset-0 flex">
+                  {/* Before image */}
+                  <div className="relative w-1/2 overflow-hidden">
+                    <img
+                      src={assetUrl(caseItem.beforeImage as any)}
+                      alt="Trước"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 text-xs font-bold text-white">
+                      TRƯỚC
+                    </div>
+                  </div>
+                  {/* After image */}
+                  <div className="relative w-1/2 overflow-hidden">
+                    <img
+                      src={assetUrl(caseItem.afterImage as any)}
+                      alt="Sau"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute bottom-2 right-2 rounded bg-gold/90 px-2 py-1 text-xs font-bold text-black">
+                      SAU
+                    </div>
+                  </div>
+                </div>
+                <span className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                   {caseItem.tag}
                 </span>
               </div>

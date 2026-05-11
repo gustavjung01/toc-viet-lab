@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
-import Image from "next/image";
+import { assetUrl } from "@/lib/image-assets";
 
 interface HeroStats {
   value: string;
@@ -73,66 +73,15 @@ export function HeroSection() {
         {/* Right column - Hero Image */}
         <div className="relative hidden lg:block">
           <div className="relative aspect-[4/5] w-full max-w-lg overflow-hidden rounded-3xl">
-            {/* Placeholder gradient for salon image */}
-            <div className="absolute inset-0 bg-gradient-to-br from-softblack via-card to-softblack">
-              {/* Decorative elements representing salon/hair theme */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-gold/10 via-transparent to-lightgold/10" />
-              <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
-              
-              {/* Abstract hair strand graphics */}
-              <svg
-                className="absolute inset-0 h-full w-full opacity-30"
-                viewBox="0 0 400 500"
-                fill="none"
-              >
-                <path
-                  d="M50 100 Q100 50 150 100 T250 100 T350 150"
-                  stroke="url(#heroGradient)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <path
-                  d="M30 200 Q80 150 130 200 T230 200 T330 250"
-                  stroke="url(#heroGradient)"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <path
-                  d="M70 300 Q120 250 170 300 T270 300 T370 350"
-                  stroke="url(#heroGradient)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <path
-                  d="M20 400 Q70 350 120 400 T220 400 T320 450"
-                  stroke="url(#heroGradient)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-                <defs>
-                  <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#D6A84F" />
-                    <stop offset="50%" stopColor="#F0C76A" />
-                    <stop offset="100%" stopColor="#C56A3A" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              
-              {/* Center content placeholder */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full border-2 border-gold/30 bg-gold/10">
-                    <Sparkles className="h-10 w-10 text-gold" />
-                  </div>
-                  <p className="text-sm font-medium text-white/50">Ảnh salon</p>
-                  <p className="text-xs text-white/30">hero-salon.jpg</p>
-                </div>
-              </div>
-            </div>
+            {/* Hero salon image */}
+            <img
+              src={assetUrl("hero-salon-desktop")}
+              alt="Salon tóc chuyên nghiệp"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            
+            {/* Gradient overlay for text readability if needed */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             
             {/* Gold border effect */}
             <div className="absolute inset-0 rounded-3xl border border-gold/20" />

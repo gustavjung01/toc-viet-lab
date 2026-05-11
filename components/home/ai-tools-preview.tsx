@@ -2,31 +2,36 @@
 
 import Link from "next/link";
 import { ArrowRight, BrainCircuit, Camera, FlaskConical, PenLine, Sparkles } from "lucide-react";
+import { assetUrl } from "@/lib/image-assets";
 
 const aiTools = [
   {
     title: "AI tư vấn màu",
     description: "Phân tích nền tóc, mục tiêu màu và rủi ro kỹ thuật",
     icon: BrainCircuit,
-    color: "from-gold/20 to-lightgold/20"
+    color: "from-gold/20 to-lightgold/20",
+    imageKey: "ai-tu-van-mau"
   },
   {
     title: "Gợi ý công thức",
     description: "Tạo công thức tham khảo theo nền, tông và tình trạng tóc",
     icon: FlaskConical,
-    color: "from-olive/20 to-gold/20"
+    color: "from-olive/20 to-gold/20",
+    imageKey: "ai-goi-y-cong-thuc"
   },
   {
     title: "Tạo phiếu tư vấn",
     description: "Viết nội dung giải thích dễ hiểu cho khách salon",
     icon: PenLine,
-    color: "from-clay/20 to-gold/20"
+    color: "from-clay/20 to-gold/20",
+    imageKey: "ai-tao-phieu-tu-van"
   },
   {
     title: "Phân tích ảnh tóc",
     description: "Đánh giá tình trạng tóc từ ảnh before/after",
     icon: Camera,
-    color: "from-gold/20 to-clay/20"
+    color: "from-gold/20 to-clay/20",
+    imageKey: "ai-phan-tich-anh-toc"
   }
 ];
 
@@ -58,21 +63,34 @@ export function AiToolsPreview() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {aiTools.map((tool) => {
             const Icon = tool.icon;
+            const imageUrl = assetUrl(tool.imageKey as any);
             return (
               <Link
                 key={tool.title}
                 href="/cong-cu-ai"
-                className="group relative overflow-hidden rounded-2xl border border-gold/10 bg-softblack p-5 transition-all duration-300 hover:border-gold/30"
+                className="group relative overflow-hidden rounded-2xl border border-gold/10 bg-softblack transition-all duration-300 hover:border-gold/30"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-                <div className="relative">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 transition-colors group-hover:bg-gold/20">
-                    <Icon className="h-6 w-6 text-gold" />
+                {/* AI Tool Image */}
+                <div className="relative h-32 overflow-hidden">
+                  <img
+                    src={imageUrl}
+                    alt={tool.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-softblack via-softblack/50 to-transparent" />
+                </div>
+                
+                <div className="relative p-5">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+                  <div className="relative">
+                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 transition-colors group-hover:bg-gold/20">
+                      <Icon className="h-5 w-5 text-gold" />
+                    </div>
+                    <h3 className="mb-2 text-base font-bold text-white transition-colors group-hover:text-gold">
+                      {tool.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-white/70">{tool.description}</p>
                   </div>
-                  <h3 className="mb-2 text-lg font-bold text-white transition-colors group-hover:text-gold">
-                    {tool.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-white/70">{tool.description}</p>
                 </div>
               </Link>
             );

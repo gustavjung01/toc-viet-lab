@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, BookOpen, Bookmark, FlaskConical, StickyNote } from "lucide-react";
+import { assetUrl } from "@/lib/image-assets";
 
 const notebookItems = [
   {
@@ -50,6 +51,18 @@ export function MemberNotebook() {
               Khám phá sổ tay
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
+          </div>
+
+          {/* Right - Notebook Preview Image */}
+          <div className="relative hidden lg:block">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-gold/10">
+              <img
+                src={assetUrl("hero-member-notebook")}
+                alt="Sổ tay thành viên"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
           </div>
 
           {/* Right - Feature Grid */}
