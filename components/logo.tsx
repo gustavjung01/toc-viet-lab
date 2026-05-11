@@ -1,52 +1,46 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
+import { assetUrl } from "@/lib/image-assets";
 
-interface LogoProps {
-  compact?: boolean;
-  variant?: "header" | "footer" | "dark" | "light";
-}
+export function Logo({ compact = false }: { compact?: boolean }) {
+  const mark = assetUrl("toc-viet-lab-mark");
+  const logo = assetUrl("toc-viet-lab-logo");
 
-export function Logo({ compact = false, variant = "header" }: LogoProps) {
-  const isLight = variant === "light";
+  if (!compact && logo) {
+    return (
+      <Link href="/" className="flex items-center">
+        <img
+          src={logo}
+          alt="Tóc Việt Lab"
+          className="h-12 w-auto max-w-[220px] object-contain"
+        />
+      </Link>
+    );
+  }
 
   return (
-    <Link href="/" className="flex items-center gap-3 group">
-      <div className="relative h-11 w-11 flex-shrink-0">
-        <Image
-          src="/logo/toc-viet-lab-mark.svg"
+    <Link href="/" className="flex items-center gap-3">
+      {mark ? (
+        <img
+          src={mark}
           alt="Tóc Việt Lab"
-          fill
-          className="object-contain transition-transform duration-300 group-hover:scale-105"
-          priority
+          className="h-11 w-11 rounded-full object-contain"
         />
-      </div>
+      ) : (
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-champagne text-charcoal shadow-gold">
+          <span className="text-xl font-black">T</span>
+        </div>
+      )}
+
       {!compact && (
-        <div className="flex flex-col">
-          <div className={`text-lg font-extrabold tracking-tight transition-colors ${isLight ? "text-gold" : "text-gold"}`}>
+        <div>
+          <div className="text-lg font-extrabold tracking-tight text-champagne">
             Tóc Việt Lab
           </div>
-          <div className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${isLight ? "text-muted" : "text-muted"}`}>
-            KIẾN THỨC · KỸ THUẬT · TƯ DUY
+          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
+            Kiến thức · Kỹ thuật · Tư duy
           </div>
         </div>
       )}
-    </Link>
-  );
-}
-
-export function LogoFull({ className = "" }: { className?: string }) {
-  return (
-    <Link href="/" className={`inline-block ${className}`}>
-      <Image
-        src="/logo/toc-viet-lab-logo.svg"
-        alt="Tóc Việt Lab"
-        width={280}
-        height={60}
-        className="h-auto w-auto max-w-[200px] md:max-w-[240px]"
-        priority
-      />
     </Link>
   );
 }

@@ -1,0 +1,75 @@
+# ASSET_MAP_REPORT
+
+Nguồn ảnh:
+
+```text
+F:/1_A_Disk_D/khuong-binh/toc-viet-lab-backup/public/image
+``` 
+
+Đích trong repo:
+
+```text
+F:\1_A_Disk_D\Toc-Viet-Lab
+```
+
+## Đã copy: 48/48
+
+- toc-viet-lab-logo -> `/logo/toc-viet-lab-logo.png`
+- toc-viet-lab-mark -> `/logo/toc-viet-lab-mark.png`
+- hero-salon-desktop -> `/images/hero/hero-salon-desktop.png`
+- hero-salon-mobile -> `/images/hero/hero-salon-mobile.png`
+- hero-ai-hair-glow -> `/images/hero/hero-ai-hair-glow.png`
+- hero-member-notebook -> `/images/hero/hero-member-notebook.png`
+- article-toc-nen-5-anh-cam -> `/images/articles/article-toc-nen-5-anh-cam.png`
+- article-tay-toc-an-toan -> `/images/articles/article-tay-toc-an-toan.png`
+- article-phu-bac-tu-nhien -> `/images/articles/article-phu-bac-tu-nhien.png`
+- article-sua-loi-mau-khoi-xanh-reu -> `/images/articles/article-sua-loi-mau-khoi-xanh-reu.png`
+- article-bang-nen-toc -> `/images/articles/article-bang-nen-toc.png`
+- article-vong-tron-mau-toc -> `/images/articles/article-vong-tron-mau-toc.png`
+- article-phuc-hoi-toc-hu-ton -> `/images/articles/article-phuc-hoi-toc-hu-ton.png`
+- article-cham-soc-toc-sau-nhuom -> `/images/articles/article-cham-soc-toc-sau-nhuom.png`
+- case-01-before-nen-den-tu-nhien -> `/images/cases/case-01-before-nen-den-tu-nhien.png`
+- case-01-after-beige-ash -> `/images/cases/case-01-after-beige-ash.png`
+- case-02-before-nen-nau-tu-nhien -> `/images/cases/case-02-before-nen-nau-tu-nhien.png`
+- case-02-after-balayage-xam-khoi -> `/images/cases/case-02-after-balayage-xam-khoi.png`
+- case-03-before-toc-tay-hu-ton -> `/images/cases/case-03-before-toc-tay-hu-ton.png`
+- case-03-after-nau-socola-phuc-hoi -> `/images/cases/case-03-after-nau-socola-phuc-hoi.png`
+- case-04-before-toc-bac-50 -> `/images/cases/case-04-before-toc-bac-50.png`
+- case-04-after-phu-bac-tu-nhien -> `/images/cases/case-04-after-phu-bac-tu-nhien.png`
+- case-05-before-nen-vang-cam -> `/images/cases/case-05-before-nen-vang-cam.png`
+- case-05-after-nau-lanh-khoi -> `/images/cases/case-05-after-nau-lanh-khoi.png`
+- formula-lanh-khoi-anh-reu -> `/images/formulas/formula-lanh-khoi-anh-reu.png`
+- formula-beige-sua-lanh -> `/images/formulas/formula-beige-sua-lanh.png`
+- formula-nau-tra-sua -> `/images/formulas/formula-nau-tra-sua.png`
+- formula-nau-lanh-khoi -> `/images/formulas/formula-nau-lanh-khoi.png`
+- formula-ash-beige-highlight -> `/images/formulas/formula-ash-beige-highlight.png`
+- formula-nau-socola-phuc-hoi -> `/images/formulas/formula-nau-socola-phuc-hoi.png`
+- ai-tu-van-mau -> `/images/ai/ai-tu-van-mau.jpg`
+- ai-goi-y-cong-thuc -> `/images/ai/ai-goi-y-cong-thuc.jpg`
+- ai-tao-phieu-tu-van -> `/images/ai/ai-tao-phieu-tu-van.jpg`
+- ai-viet-bai-facebook -> `/images/ai/ai-viet-bai-facebook.jpg`
+- ai-phan-tich-anh-toc -> `/images/ai/ai-phan-tich-anh-toc.jpg`
+- ai-credit-dashboard -> `/images/ai/ai-credit-dashboard.jpg`
+- dashboard-member-overview -> `/images/dashboard/dashboard-member-overview.png`
+- notebook-saved-articles -> `/images/dashboard/notebook-saved-articles.png`
+- notebook-technical-notes -> `/images/dashboard/notebook-technical-notes.png`
+- notebook-checklist -> `/images/dashboard/notebook-checklist.png`
+- my-formula-library -> `/images/dashboard/my-formula-library.png`
+- my-before-after-gallery -> `/images/dashboard/my-before-after-gallery.png`
+- pricing-membership-hero -> `/images/pricing/pricing-membership-hero.jpg`
+- pricing-credit-ai -> `/images/pricing/pricing-credit-ai.jpg`
+- testimonial-salon-owner-01 -> `/images/pricing/testimonial-salon-owner-01.jpg`
+- testimonial-salon-owner-02 -> `/images/pricing/testimonial-salon-owner-02.jpg`
+- testimonial-salon-owner-03 -> `/images/pricing/testimonial-salon-owner-03.jpg`
+- trust-salon-logos -> `/images/pricing/trust-salon-logos.jpg`
+
+## Thiếu: 0
+
+Không thiếu ảnh.
+
+## Ghi chú
+
+- File manifest đã tạo tại: `lib/image-assets.ts`
+- Nếu sau này dùng R2/CDN, đặt biến môi trường:
+  `NEXT_PUBLIC_ASSET_BASE_URL=https://cdn-domain-cua-anh`
+- Hiện tại chưa có domain Cloudflare, nên để trống `NEXT_PUBLIC_ASSET_BASE_URL`.

@@ -8,3 +8,9 @@ dist/
 .DS_Store
 *.log
 .vercel/
+
+# Cloudflare R2 data
+Cloudflare_data.md
+
+# Backup folders (do not commit)
+toc-viet-lab-backup/
