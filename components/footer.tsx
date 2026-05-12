@@ -9,8 +9,7 @@ const contentLinks = [
 ];
 
 const accountLinks = [
-  { label: "Đăng nhập", href: "/login" },
-  { label: "Hỗ trợ", href: "/ho-tro" }
+  { label: "Đăng nhập", href: "/login" }
   // Gói thành viên and Credit AI hidden - will be enabled later
 ];
 

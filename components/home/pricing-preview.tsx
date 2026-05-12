@@ -8,9 +8,9 @@ const plans = [
     name: "Miễn phí",
     price: "0₫",
     period: "",
-    description: "Bắt đầu học tập",
+    description: "Khởi đầu nhanh",
     features: [
-      "Đọc 10 bài/ngày",
+      "Tra cứu 10 nội dung/ngày",
       "Lưu 20 công thức",
       "Sử dụng AI cơ bản",
       "Tham gia cộng đồng"
@@ -21,13 +21,13 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "99K",
+    price: "99.000đ",
     period: "/tháng",
     description: "Dành cho thợ chuyên nghiệp",
     features: [
-      "Đọc không giới hạn",
+      "Tra cứu không giới hạn",
       "Lưu không giới hạn",
-      "AI nâng cao (200 credit/tháng)",
+      "AI nâng cao (200 lượt/tháng)",
       "Tải tài liệu PDF",
       "Hỗ trợ ưu tiên"
     ],
@@ -37,7 +37,7 @@ const plans = [
   },
   {
     name: "Salon",
-    price: "299K",
+    price: "299.000đ",
     period: "/tháng",
     description: "Dành cho salon & team",
     features: [
@@ -59,7 +59,7 @@ export function PricingPreview() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center sm:mb-12">
           <span className="mb-2 inline-block text-xs font-bold uppercase tracking-[0.2em] text-gold">
-            Gói thành viên
+            Gói sử dụng
           </span>
           <h2 className="mb-4 text-2xl font-black text-black sm:text-3xl lg:text-4xl">
             Chọn gói phù hợp

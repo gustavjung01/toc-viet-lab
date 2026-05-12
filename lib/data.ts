@@ -50,12 +50,12 @@ export const aiTools: Array<{
   { title:"Tạo phiếu tư vấn", desc:"Viết nội dung giải thích dễ hiểu cho khách salon.", icon: PenLine, imageKey:"ai-tao-phieu-tu-van" },
   { title:"Viết bài Facebook", desc:"Tạo caption, kịch bản chăm sóc và nội dung bán hàng.", icon: BookOpen, imageKey:"ai-viet-bai-facebook" },
   { title:"Phân tích ảnh tóc", desc:"Mock UI cho phân tích ảnh before/after sau này.", icon: Camera, imageKey:"ai-phan-tich-anh-toc" },
-  { title:"Credit AI Dashboard", desc:"Theo dõi số dư credit và lịch sử sử dụng AI.", icon: Layers, imageKey:"ai-credit-dashboard" }
+  { title:"Lượt dùng AI Dashboard", desc:"Theo dõi lượt dùng và lịch sử sử dụng AI.", icon: Layers, imageKey:"ai-credit-dashboard" }
 ];
 
 export const dashboardStats = [
   { label:"Bài đã lưu", value:"32", sub:"bài viết" },
   { label:"Công thức màu", value:"14", sub:"công thức" },
   { label:"Ghi chú", value:"27", sub:"ghi chú" },
-  { label:"Credit AI", value:"120", sub:"credit" }
+  { label:"Lượt dùng AI", value:"120", sub:"lượt" }
 ];

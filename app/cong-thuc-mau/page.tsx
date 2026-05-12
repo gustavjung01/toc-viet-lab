@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { HairVisual } from "@/components/visual";
@@ -37,7 +38,9 @@ export default function FormulaPublicPage() {
                       <b>Tỷ lệ</b><br />{formula.ratio}
                     </div>
                   </div>
-                  <button className="mt-5 w-full rounded-full bg-charcoal px-5 py-3 font-extrabold text-champagne">Lưu vào sổ tay</button>
+                  <Link href="/login" className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-charcoal px-5 py-3 font-extrabold text-champagne transition hover:bg-card-dark-2">
+                    Đăng nhập để lưu
+                  </Link>
                 </div>
               </div>
             ))}

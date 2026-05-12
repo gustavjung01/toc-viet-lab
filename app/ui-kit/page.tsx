@@ -207,7 +207,7 @@ export default function UiKitPage() {
               <p className="text-sm text-muted">Dành cho thợ chuyên nghiệp</p>
             </div>
             <div className="mb-6">
-              <span className="text-3xl font-black text-gold">99K</span>
+              <span className="text-3xl font-black text-gold">99.000đ</span>
               <span className="text-sm text-muted">/tháng</span>
             </div>
             <ul className="mb-6 space-y-3">
