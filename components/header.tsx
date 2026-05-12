@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search } from "lucide-react";
+import { useState } from "react";
+import { Menu, Search, X } from "lucide-react";
 import { navItems } from "@/lib/data";
 import { Logo } from "./logo";
 
 export function Header() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-gold/10 bg-black/95 backdrop-blur">
@@ -49,10 +51,48 @@ export function Header() {
             Đăng ký miễn phí
           </Link>
         </div>
-        <button className="rounded-full border border-white/15 p-3 text-white lg:hidden">
-          <Menu size={22} />
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="rounded-full border border-white/15 p-3 text-white lg:hidden"
+          aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
+
+      {/* Mobile menu drawer */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <nav className="absolute left-0 right-0 top-20 z-40 border-b border-gold/10 bg-black/95 px-4 py-4 sm:px-6 lg:hidden">
+            <div className="space-y-2">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded-lg px-4 py-3 transition ${
+                      isActive
+                        ? "bg-gold/15 font-semibold text-gold"
+                        : "text-white/80 hover:bg-white/5 hover:text-gold"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </>
+      )}
     </header>
   );
 }
+
