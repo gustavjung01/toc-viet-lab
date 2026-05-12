@@ -11,32 +11,27 @@ const problems = [
 
 export function ProblemStrip() {
   return (
-    <section className="relative z-10 -mt-8 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="rounded-2xl border border-gold/20 bg-card/95 p-5 shadow-lg backdrop-blur-sm sm:rounded-3xl sm:p-6">
-          <div className="flex items-center gap-3 border-b border-gold/10 pb-4 mb-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/10">
-              <AlertTriangle className="h-5 w-5 text-gold" />
-            </div>
-            <h3 className="text-base font-bold text-white sm:text-lg">
-              Những vấn đề salon thường gặp
-            </h3>
-            <HelpCircle className="ml-auto h-5 w-5 text-muted" />
+    <section className="relative px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-gold/20 bg-card-dark p-6 shadow-gold/10 backdrop-blur-sm">
+        <div className="flex flex-col gap-3 border-b border-gold/10 pb-5 text-white sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 text-sm font-bold uppercase tracking-[0.2em] text-gold">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-gold">
+              <AlertTriangle className="h-5 w-5" />
+            </span>
+            Những vấn đề salon thường gặp
           </div>
-          
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {problems.map((problem, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/5 p-3 transition-all hover:border-gold/20 hover:bg-white/10"
-              >
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-clay/20 text-xs font-bold text-clay">
-                  {index + 1}
-                </span>
-                <span className="text-sm leading-relaxed text-white/80">{problem}</span>
+          <HelpCircle className="h-5 w-5 text-tvl-gold" />
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {problems.map((problem, index) => (
+            <div key={problem} className="rounded-3xl border border-gold/10 bg-black/20 p-4 text-cream-card">
+              <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-2xl bg-gold/15 text-sm font-bold text-gold">
+                {index + 1}
               </div>
-            ))}
-          </div>
+              <p className="text-sm leading-6 text-white/80">{problem}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

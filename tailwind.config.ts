@@ -10,24 +10,25 @@ const config: Config = {
     extend: {
       colors: {
         /* Tóc Việt Lab Design System */
-        black: "#030303",           // Deepest black
-        "black-soft": "#080706",    // Soft black
-        charcoal: "#11100E",        // Charcoal
-        card: "#171410",            // Card dark
-        "card-dark-2": "#201A13",   // Card dark hover
-        gold: "#D6A84F",            // Primary gold
-        "gold-bright": "#F0C76A",   // Bright gold for buttons
-        "gold-deep": "#A87928",     // Deep gold
-        cream: "#F8F1E7",           // Cream background
-        "cream-card": "#FFF8EE",    // Cream card
-        muted: "#B9AEA1",           // Muted text
-        olive: "#637A4D",           // Olive accent
-        clay: "#C56A3A",            // Clay accent
-        // Legacy aliases
+        black: "#030303",
+        blackLab: "#030303",
+        blackSoft: "#080706",
+        charcoal: "#11100E",
+        card: "#171410",
+        cardDark: "#171410",
+        cardDark2: "#201A13",
+        gold: "#D6A84F",
+        champagne: "#D6A84F",
+        goldBright: "#F0C76A",
+        goldDeep: "#A87928",
+        cream: "#F8F1E7",
+        creamCard: "#FFF8EE",
+        muted: "#B9AEA1",
+        olive: "#637A4D",
+        clay: "#C56A3A",
         softblack: "#080706",
         softcream: "#FFF8EE",
         lightgold: "#F0C76A",
-        champagne: "#D6A84F",
         warmgray: "#B9AEA1",
         ink: "#1E1E1E"
       },

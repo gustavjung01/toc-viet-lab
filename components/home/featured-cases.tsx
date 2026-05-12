@@ -2,9 +2,20 @@
 
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
-import { assetUrl } from "@/lib/image-assets";
+import { assetUrl, type ImageAssetKey } from "@/lib/image-assets";
 
-const featuredCases = [
+type FeaturedCase = {
+  title: string;
+  tag: string;
+  condition: string;
+  goal: string;
+  time: string;
+  salon: string;
+  beforeImage: ImageAssetKey;
+  afterImage: ImageAssetKey;
+};
+
+const featuredCases: FeaturedCase[] = [
   {
     title: "Từ nền đen tự nhiên sang Beige Ash ánh khói",
     tag: "Nâng tông",
@@ -39,89 +50,66 @@ const featuredCases = [
 
 export function FeaturedCases() {
   return (
-    <section className="bg-softcream px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section className="bg-cream px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="mb-2 inline-block text-xs font-bold uppercase tracking-[0.2em] text-gold">
-              Case thực tế
-            </span>
-            <h2 className="text-2xl font-black text-black sm:text-3xl lg:text-4xl">
-              Học từ tình huống salon thực tế
-            </h2>
+            <span className="mb-2 inline-block text-xs font-bold uppercase tracking-[0.2em] text-gold">Case thực tế</span>
+            <h2 className="text-2xl font-black text-charcoal sm:text-3xl lg:text-4xl">Học từ tình huống salon thực tế</h2>
           </div>
           <Link
             href="/case-thuc-te"
-            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-clay"
+            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-gold-bright"
           >
             Xem tất cả case
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {featuredCases.map((caseItem) => (
             <Link
               key={caseItem.title}
               href="/case-thuc-te"
-              className="group relative overflow-hidden rounded-3xl border border-gold/10 bg-white transition-all duration-300 hover:border-gold/30 hover:shadow-gold-sm"
+              className="group overflow-hidden rounded-[2rem] border border-gold/20 bg-cream-card shadow-soft transition-transform duration-300 hover:-translate-y-1"
             >
-              {/* Before/After images */}
-              <div className="relative h-40 overflow-hidden">
+              <div className="relative h-52 overflow-hidden">
                 <div className="absolute inset-0 flex">
-                  {/* Before image */}
                   <div className="relative w-1/2 overflow-hidden">
                     <img
-                      src={assetUrl(caseItem.beforeImage as any)}
-                      alt="Trước"
+                      src={assetUrl(caseItem.beforeImage) ?? ""}
+                      alt="Before"
                       className="h-full w-full object-cover"
                     />
-                    <div className="absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 text-xs font-bold text-white">
+                    <div className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-white">
                       TRƯỚC
                     </div>
                   </div>
-                  {/* After image */}
                   <div className="relative w-1/2 overflow-hidden">
                     <img
-                      src={assetUrl(caseItem.afterImage as any)}
-                      alt="Sau"
+                      src={assetUrl(caseItem.afterImage) ?? ""}
+                      alt="After"
                       className="h-full w-full object-cover"
                     />
-                    <div className="absolute bottom-2 right-2 rounded bg-gold/90 px-2 py-1 text-xs font-bold text-black">
+                    <div className="absolute bottom-3 right-3 rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-black">
                       SAU
                     </div>
                   </div>
                 </div>
-                <span className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
-                  {caseItem.tag}
-                </span>
               </div>
 
-              <div className="p-5">
-                <h3 className="mb-3 text-lg font-bold leading-tight text-black transition-colors group-hover:text-gold line-clamp-2">
-                  {caseItem.title}
-                </h3>
-
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-start gap-2">
-                    <span className="flex-shrink-0 font-semibold text-muted">Tình trạng:</span>
-                    <span className="text-black/80">{caseItem.condition}</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="flex-shrink-0 font-semibold text-muted">Mục tiêu:</span>
-                    <span className="text-black/80">{caseItem.goal}</span>
-                  </div>
+              <div className="p-6">
+                <span className="inline-flex rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                  {caseItem.tag}
+                </span>
+                <h3 className="mt-4 text-lg font-black text-charcoal line-clamp-2">{caseItem.title}</h3>
+                <div className="mt-4 space-y-2 text-sm text-muted">
+                  <p><span className="font-semibold text-charcoal">Tình trạng:</span> {caseItem.condition}</p>
+                  <p><span className="font-semibold text-charcoal">Mục tiêu:</span> {caseItem.goal}</p>
                 </div>
-
-                <div className="mt-4 flex items-center gap-4 border-t border-gold/10 pt-4 text-xs">
-                  <div className="flex items-center gap-1 text-muted">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>{caseItem.time}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span>{caseItem.salon}</span>
-                  </div>
+                <div className="mt-6 flex flex-wrap gap-3 border-t border-gold/10 pt-4 text-xs text-muted">
+                  <span className="inline-flex items-center gap-2"><Clock className="h-3.5 w-3.5" />{caseItem.time}</span>
+                  <span className="inline-flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{caseItem.salon}</span>
                 </div>
               </div>
             </Link>

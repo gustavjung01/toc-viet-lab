@@ -3,7 +3,6 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { HairVisual } from "@/components/visual";
 import { aiTools } from "@/lib/data";
-import { assetUrl } from "@/lib/image-assets";
 import { BrainCircuit, FlaskConical, PenLine, BookOpen, Camera, Layers, CheckCircle, AlertTriangle, ArrowRight, Star } from "lucide-react";
 
 export default function AIToolsPage() {
@@ -11,21 +10,20 @@ export default function AIToolsPage() {
     <div>
       <Header />
       <main className="bg-black text-cream-card">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-black via-black-soft to-charcoal px-4 py-20 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(214,168,79,.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(99,122,77,.1),transparent_35%)]" />
+        <section className="relative overflow-hidden bg-black px-4 py-20 sm:px-6 lg:px-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(214,168,79,.16),transparent_30%),radial-gradient(circle_at_80%_80%,rgba(99,122,77,.1),transparent_35%)]" />
           <div className="relative mx-auto max-w-7xl">
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               <div>
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-xs font-bold text-gold backdrop-blur">
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-xs font-bold text-gold backdrop-blur">
                   <AlertTriangle size={14} />
                   AI chỉ hỗ trợ tham khảo · Quyết định cuối cùng thuộc về kỹ thuật viên
                 </div>
-                <h1 className="text-4xl font-black leading-tight md:text-6xl">
+                <h1 className="text-4xl font-black leading-tight text-white md:text-6xl">
                   Công cụ AI cho thợ tóc & salon
                 </h1>
                 <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
-                  Phân tích tình huống, gợi ý hướng xử lý, tạo phiếu tư vấn và nội dung chăm sóc khách hàng — tất cả được thiết kế cho thực tế salon Việt.
+                  Phân tích tình huống, gợi ý hướng xử lý, tạo phiếu tư vấn và nội dung chăm sóc khách hàng — thiết kế cho thực tế salon Việt.
                 </p>
                 <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <Link
@@ -35,12 +33,15 @@ export default function AIToolsPage() {
                     Thử AI tư vấn màu
                     <ArrowRight size={20} />
                   </Link>
-                  <button className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/32 bg-card-dark px-8 py-4 text-lg font-bold text-cream-card transition hover:bg-card-dark-2">
+                  <Link
+                    href="#tools"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/32 bg-card-dark px-8 py-4 text-lg font-bold text-cream-card transition hover:bg-card-dark-2"
+                  >
                     Xem bộ công cụ
-                  </button>
+                  </Link>
                 </div>
               </div>
-              <div className="lg:justify-end lg:flex">
+              <div className="lg:flex lg:justify-end">
                 <HairVisual
                   className="h-96 w-full max-w-md"
                   imageKey="ai-tu-van-mau"
@@ -51,8 +52,7 @@ export default function AIToolsPage() {
           </div>
         </section>
 
-        {/* Bộ công cụ AI */}
-        <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <section id="tools" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="text-center">
               <p className="text-sm font-extrabold uppercase tracking-[0.25em] text-gold">Bộ công cụ AI</p>
@@ -66,25 +66,21 @@ export default function AIToolsPage() {
                 const status = index < 3 ? "Dùng thử" : index < 5 ? "Sắp ra mắt" : "Pro";
                 const isAvailable = index < 3;
                 return (
-                  <div key={tool.title} className="group card-hover rounded-3xl bg-card-dark p-8 text-cream-card">
-                    <div className="relative">
+                  <div key={tool.title} className="group rounded-[2rem] border border-gold/20 bg-card-dark p-8 text-cream-card shadow-soft transition hover:-translate-y-1">
+                    <div className="relative overflow-hidden rounded-3xl">
                       <HairVisual
-                        className="aspect-video w-full rounded-2xl"
+                        className="aspect-video w-full"
                         imageKey={tool.imageKey}
                         alt={tool.title}
                       />
                       <div className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
                         Công cụ AI
                       </div>
-                      <div className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold backdrop-blur ${
-                        status === "Dùng thử" ? "bg-green-500/20 text-green-400" :
-                        status === "Sắp ra mắt" ? "bg-yellow-500/20 text-yellow-400" :
-                        "bg-purple-500/20 text-purple-400"
-                      }`}>
+                      <div className="absolute right-4 top-4 rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
                         {status}
                       </div>
                     </div>
-                    <h3 className="mt-6 text-xl font-black">{tool.title}</h3>
+                    <h3 className="mt-6 text-xl font-black text-white">{tool.title}</h3>
                     <p className="mt-3 text-sm leading-6 text-muted">{tool.desc}</p>
                     <ul className="mt-6 space-y-2 text-sm text-muted">
                       <li className="flex items-center gap-2">
@@ -118,7 +114,6 @@ export default function AIToolsPage() {
           </div>
         </section>
 
-        {/* Quy trình dùng AI trong salon */}
         <section className="bg-cream px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="text-center">
@@ -162,7 +157,6 @@ export default function AIToolsPage() {
           </div>
         </section>
 
-        {/* Giới hạn an toàn */}
         <section className="bg-card-dark px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-xs font-bold text-gold backdrop-blur">
@@ -200,7 +194,6 @@ export default function AIToolsPage() {
           </div>
         </section>
 
-        {/* Công cụ nổi bật */}
         <section className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="text-center">

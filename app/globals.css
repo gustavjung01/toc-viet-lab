@@ -36,8 +36,25 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { background: #030303; color: #030303; }
+body { background: var(--tvl-black); color: var(--tvl-cream-card); }
 ::selection { background: rgba(214,168,79,.35); }
+
+/* Design utilities */
+.bg-tvl-black { background: var(--tvl-black); }
+.bg-tvl-black-soft { background: var(--tvl-black-soft); }
+.bg-tvl-card { background: var(--tvl-card-dark); }
+.bg-tvl-card-dark { background: var(--tvl-card-dark); }
+.bg-tvl-card-dark-2 { background: var(--tvl-card-dark-2); }
+.text-tvl-gold { color: var(--tvl-gold); }
+.text-tvl-cream { color: var(--tvl-cream-card); }
+.border-tvl-gold { border-color: var(--tvl-border-gold); }
+.bg-tvl-cream { background: var(--tvl-cream); }
+.bg-tvl-cream-card { background: var(--tvl-cream-card); }
+.text-tvl-muted { color: var(--tvl-muted); }
+.gold-gradient-button {
+  background: linear-gradient(135deg, #F0C76A 0%, #D6A84F 100%);
+  color: #030303;
+}
 
 /* Luxury backgrounds */
 .bg-radial-gold {

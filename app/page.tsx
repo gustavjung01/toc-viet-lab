@@ -12,7 +12,7 @@ import { AiToolsPreview } from "@/components/home/ai-tools-preview";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-black text-cream-card">
       <Header />
       <main className="pb-16 lg:pb-0">
         <HeroSection />
