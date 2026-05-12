@@ -21,9 +21,9 @@ export function AiToolsPreview() {
               <Sparkles className="h-4 w-4 text-gold" />
               Công cụ AI
             </div>
-            <h2 className="text-2xl font-black text-white sm:text-3xl lg:text-4xl">Trợ lý AI cho salon tóc</h2>
+            <h2 className="text-2xl font-black text-white sm:text-3xl lg:text-4xl">Công cụ hỗ trợ tư vấn salon</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
-              Khám phá bộ công cụ AI dành cho thợ tóc và salon, thiết kế cho thực tế workflow Việt.
+              Bộ công cụ hỗ trợ phân tích tình huống, công thức màu và nội dung tư vấn khách salon.
             </p>
           </div>
           <Link

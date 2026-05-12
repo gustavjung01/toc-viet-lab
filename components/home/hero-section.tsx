@@ -33,7 +33,7 @@ export function HeroSection() {
               </Link>
               <Link
                 href="/case-thuc-te"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-black/40 px-7 py-4 font-extrabold text-white transition-all hover:border-gold/40 hover:bg-white/5"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-black/40 px-7 py-4 font-extrabold text-gold transition-all hover:border-gold/40 hover:text-gold-bright"
               >
                 Xem case thực tế
               </Link>

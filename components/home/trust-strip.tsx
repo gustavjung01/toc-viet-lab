@@ -3,10 +3,10 @@
 import { Award, Shield, Star, Users } from "lucide-react";
 
 const trustIndicators = [
-  { icon: Users, value: "15.000+", label: "Thành viên tin dùng" },
+  { icon: Users, value: "15.000+", label: "Người làm nghề đang sử dụng" },
   { icon: Award, value: "500+", label: "Salon đối tác" },
   { icon: Star, value: "4.9/5", label: "Đánh giá từ người dùng" },
-  { icon: Shield, value: "100%", label: "Nội dung chuyên gia" }
+  { icon: Shield, value: "100%", label: "Nội dung tham khảo chuyên môn" }
 ];
 
 export function TrustStrip() {

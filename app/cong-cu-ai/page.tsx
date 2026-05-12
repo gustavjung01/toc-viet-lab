@@ -76,14 +76,14 @@ export default function AIToolsPage() {
               <div className="space-y-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-gold/20 bg-black/50 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-gold backdrop-blur">
                   <Sparkles size={16} />
-                  CÔNG CỤ AI CHO NGƯỜI LÀM TÓC
+                  CÔNG CỤ HỖ TRỢ CHUYÊN MÔN
                 </div>
                 <div className="space-y-6">
                   <h1 className="text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                    Công cụ AI cho thợ tóc & salon
+                    Công cụ hỗ trợ tư vấn màu và xử lý case
                   </h1>
                   <p className="max-w-xl text-lg leading-8 text-muted sm:text-xl">
-                    Phân tích tình huống, gợi ý hướng xử lý, tạo phiếu tư vấn và nội dung chăm sóc khách hàng — thiết kế cho thực tế salon Việt.
+                    Công cụ chỉ dùng để tham khảo chuyên môn, giúp bạn phân tích tình huống và chuẩn bị bước xử lý chính xác.
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -321,7 +321,7 @@ export default function AIToolsPage() {
               <AlertTriangle size={14} />
               Giới hạn an toàn
             </div>
-            <h2 className="mt-6 text-3xl font-black text-cream-card md:text-5xl">AI không thay thế thợ kỹ thuật</h2>
+            <h2 className="mt-6 text-3xl font-black text-cream-card md:text-5xl">Công cụ chỉ dùng để tham khảo chuyên môn</h2>
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               {[
                 {
