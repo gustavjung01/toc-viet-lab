@@ -15,13 +15,12 @@ export function HeroSection() {
               <Sparkles size={14} />
               NỀN TẢNG TRI THỨC NGÀNH TÓC
             </div>
-            <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4.5rem]">
-              Tra cứu kỹ thuật tóc.
-              <span className="text-gold"> Lưu công thức màu.</span>
-              <span className="text-gold-bright"> Xử lý case salon thực tế.</span>
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-5xl xl:text-6xl">
+              Kho kỹ thuật tóc
+              <span className="block text-white">cho <span className="text-gold">salon Việt</span></span>
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8">
-              Không gian dành cho thợ tóc và salon Việt hệ thống hóa công thức, phân tích tình huống màu và chuẩn hóa tư vấn khách hàng.
+            <p className="mt-6 max-w-2xl text-base leading-7 text-white/80 sm:text-lg sm:leading-8">
+              Tra cứu công thức màu, phân tích case thực tế và chuẩn hóa tư vấn cho thợ tóc — gọn, dễ tra, dùng được ngay tại salon.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link

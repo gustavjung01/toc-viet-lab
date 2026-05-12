@@ -96,7 +96,7 @@ export default function AIToolsPage() {
                   </Link>
                   <Link
                     href="#tools"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/30 bg-card-dark px-8 py-4 text-lg font-bold text-cream-card transition hover:bg-card-dark-2 sm:w-auto"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/30 bg-card-dark px-8 py-4 text-lg font-bold text-white transition hover:bg-card-dark-2 sm:w-auto"
                   >
                     Xem bộ công cụ
                   </Link>
@@ -185,7 +185,7 @@ export default function AIToolsPage() {
                         <ArrowRight size={16} />
                       </Link>
                     ) : (
-                      <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/25 bg-black/40 px-5 py-3 text-sm font-bold text-cream-card/60 cursor-not-allowed opacity-50">
+                      <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/25 bg-black/40 px-5 py-3 text-sm font-bold text-white/70 cursor-not-allowed opacity-50">
                         Mở công cụ
                         <ArrowRight size={16} />
                       </span>
