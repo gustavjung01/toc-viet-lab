@@ -176,17 +176,20 @@ export default function AIToolsPage() {
                         </li>
                       ))}
                     </ul>
-                    <Link
-                      href={tool.status === "Dùng thử" ? "/ai-tu-van-mau" : "#"}
-                      className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition ${
-                        tool.status === "Dùng thử"
-                          ? "bg-gradient-to-r from-gold-bright to-gold text-black shadow-gold hover:brightness-110"
-                          : "border border-gold/25 bg-black/40 text-cream-card hover:border-gold/40"
-                      }`}
-                    >
-                      Mở công cụ
-                      <ArrowRight size={16} />
-                    </Link>
+                    {tool.status === "Dùng thử" ? (
+                      <Link
+                        href="/ai-tu-van-mau"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-bright to-gold px-5 py-3 text-sm font-bold text-black shadow-gold transition hover:brightness-110"
+                      >
+                        Mở công cụ
+                        <ArrowRight size={16} />
+                      </Link>
+                    ) : (
+                      <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/25 bg-black/40 px-5 py-3 text-sm font-bold text-cream-card/60 cursor-not-allowed opacity-50">
+                        Mở công cụ
+                        <ArrowRight size={16} />
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
