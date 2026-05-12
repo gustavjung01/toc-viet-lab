@@ -89,21 +89,21 @@ export default function AIToolsPage() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <Link
                     href="/ai-tu-van-mau"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-bright to-gold px-8 py-4 text-lg font-extrabold text-black shadow-gold transition hover:brightness-110 sm:w-auto"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-goldBright to-gold px-8 py-4 text-lg font-extrabold text-black shadow-gold transition hover:brightness-110 sm:w-auto"
                   >
                     Thử AI tư vấn màu
                     <ArrowRight size={20} />
                   </Link>
                   <Link
                     href="#tools"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/30 bg-card-dark px-8 py-4 text-lg font-bold text-white transition hover:bg-card-dark-2 sm:w-auto"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-gold/30 bg-cardDark px-8 py-4 text-lg font-bold text-white transition hover:bg-cardDark2 sm:w-auto"
                   >
                     Xem bộ công cụ
                   </Link>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
                   {heroStats.map((stat) => (
-                    <div key={stat} className="rounded-[1.75rem] border border-gold/20 bg-card-dark p-4 text-sm text-white shadow-sm">
+                    <div key={stat} className="rounded-[1.75rem] border border-gold/20 bg-cardDark p-4 text-sm text-white shadow-sm">
                       {stat}
                     </div>
                   ))}
@@ -152,7 +152,7 @@ export default function AIToolsPage() {
             </div>
             <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {aiToolCards.map((tool) => (
-                <div key={tool.title} className="group overflow-hidden rounded-[2rem] border border-gold/20 bg-card-dark shadow-soft transition hover:border-gold/50 hover:bg-card-dark-2">
+                <div key={tool.title} className="group overflow-hidden rounded-[2rem] border border-gold/20 bg-cardDark shadow-soft transition hover:border-gold/50 hover:bg-cardDark2">
                   <div className="relative">
                     <HairVisual
                       className="h-56 rounded-[1.5rem] border-b border-gold/10"
@@ -179,7 +179,7 @@ export default function AIToolsPage() {
                     {tool.status === "Dùng thử" ? (
                       <Link
                         href="/ai-tu-van-mau"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-bright to-gold px-5 py-3 text-sm font-bold text-black shadow-gold transition hover:brightness-110"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-goldBright to-gold px-5 py-3 text-sm font-bold text-black shadow-gold transition hover:brightness-110"
                       >
                         Mở công cụ
                         <ArrowRight size={16} />
@@ -231,7 +231,7 @@ export default function AIToolsPage() {
         </section>
 
         <section className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-[1240px] rounded-[2rem] border border-gold/20 bg-card-dark p-8 shadow-soft">
+          <div className="mx-auto max-w-[1240px] rounded-[2rem] border border-gold/20 bg-cardDark p-8 shadow-soft">
             <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
                 <span className="inline-flex rounded-full bg-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-gold">
@@ -242,7 +242,7 @@ export default function AIToolsPage() {
                   Mô phỏng UI giúp bạn hình dung quy trình chọn nền, mục tiêu màu và kết quả AI trong salon.
                 </p>
                 <div className="mt-8 space-y-5 rounded-[2rem] border border-gold/20 bg-black/50 p-6">
-                  <div className="rounded-3xl bg-card-dark-2 p-5">
+                  <div className="rounded-3xl bg-cardDark2 p-5">
                     <div className="mb-4 flex items-center justify-between text-sm text-white/70">
                       <span>Cấp độ nền tóc</span>
                       <span className="font-semibold text-gold">Level 6</span>
@@ -265,11 +265,11 @@ export default function AIToolsPage() {
                     </div>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
-                    <div className="rounded-3xl bg-card-dark-2 p-5">
+                    <div className="rounded-3xl bg-cardDark2 p-5">
                       <div className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Tình trạng tóc</div>
                       <p className="mt-3 text-sm text-white/80">Tóc tự nhiên, ít hư tổn, cần giữ độ mượt.</p>
                     </div>
-                    <div className="rounded-3xl bg-card-dark-2 p-5">
+                    <div className="rounded-3xl bg-cardDark2 p-5">
                       <div className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Mục tiêu màu</div>
                       <p className="mt-3 text-sm text-white/80">Beige Ash bóng mượt, ấm áp.</p>
                     </div>
@@ -318,7 +318,7 @@ export default function AIToolsPage() {
           </div>
         </section>
 
-        <section className="bg-card-dark px-4 py-20 sm:px-6 lg:px-8">
+        <section className="bg-cardDark px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-[1240px] text-center">
             <div className="inline-flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-xs font-bold text-gold backdrop-blur">
               <AlertTriangle size={14} />
@@ -343,7 +343,7 @@ export default function AIToolsPage() {
                   desc: "Điều chỉnh theo nền tóc thực tế, sản phẩm và kinh nghiệm của thợ."
                 }
               ].map((item) => (
-                <div key={item.title} className="rounded-[2rem] bg-card-dark-2 p-8 text-center">
+                <div key={item.title} className="rounded-[2rem] bg-cardDark2 p-8 text-center">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gold/20 text-gold">
                     <item.icon size={24} />
                   </div>

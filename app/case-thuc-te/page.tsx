@@ -32,7 +32,7 @@ export default function CasePage() {
                 <p className="mt-5 leading-8 text-white/65">Tóc đen tự nhiên, sợi to, đã nhuộm màu tối 2 lần. Mục tiêu là nâng lên level 8–9 nhưng vẫn giữ độ bóng và mềm mượt.</p>
                 <div className="mt-7 flex flex-wrap gap-3">
                   <button className="rounded-full bg-champagne px-6 py-3 font-extrabold text-charcoal">Xem phân tích case</button>
-                  <button className="rounded-full border border-gold/30 bg-black/30 px-6 py-3 font-extrabold text-gold hover:text-gold-bright">Xem hướng xử lý</button>
+                  <button className="rounded-full border border-gold/30 bg-black/30 px-6 py-3 font-extrabold text-gold hover:text-goldBright">Xem hướng xử lý</button>
                 </div>
               </div>
             </div>

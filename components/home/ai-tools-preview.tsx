@@ -28,7 +28,7 @@ export function AiToolsPreview() {
           </div>
           <Link
             href="/cong-cu-ai"
-            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-gold-bright"
+            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-goldBright"
           >
             Khám phá AI
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

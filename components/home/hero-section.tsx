@@ -25,14 +25,14 @@ export function HeroSection() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/kien-thuc"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-bright to-gold px-7 py-4 font-extrabold text-black shadow-gold transition-all hover:brightness-110"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D6A84F] px-7 py-4 font-extrabold text-[#030303] shadow-gold transition-all hover:bg-[#F0C76A]"
               >
                 Khám phá nội dung
                 <ArrowRight size={18} />
               </Link>
               <Link
                 href="/case-thuc-te"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-black/40 px-7 py-4 font-extrabold text-gold transition-all hover:border-gold/40 hover:text-gold-bright"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-black/40 px-7 py-4 font-extrabold text-gold transition-all hover:border-gold/40 hover:text-[#F0C76A]"
               >
                 Xem case thực tế
               </Link>

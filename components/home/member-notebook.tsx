@@ -24,14 +24,14 @@ export function MemberNotebook() {
             </p>
             <Link
               href="/so-tay"
-              className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-gold-bright"
+              className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-goldBright"
             >
               Khám phá sổ tay
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="relative hidden overflow-hidden rounded-[2rem] border border-gold/20 bg-card-dark p-4 shadow-gold/10 lg:block">
+          <div className="relative hidden overflow-hidden rounded-[2rem] border border-gold/20 bg-cardDark p-4 shadow-gold/10 lg:block">
             <img
               src={assetUrl("hero-member-notebook") ?? ""}
               alt="Sổ tay thành viên"
@@ -44,7 +44,7 @@ export function MemberNotebook() {
             {notebookItems.map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="rounded-[1.75rem] border border-gold/15 bg-card-dark p-5 text-white shadow-soft">
+                <div key={item.title} className="rounded-[1.75rem] border border-gold/15 bg-cardDark p-5 text-white shadow-soft">
                   <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gold/15 text-gold">
                     <Icon className="h-5 w-5" />
                   </div>
