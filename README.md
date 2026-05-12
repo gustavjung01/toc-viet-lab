@@ -1,6 +1,14 @@
-# Tóc Việt Lab - Starter UI
+# Tóc Việt Lab - Knowledge Platform UI
 
 Bộ code nền giao diện cho website **Tóc Việt Lab**.
+
+## Trạng thái hiện tại
+
+- Public UI: đang hoàn thiện
+- Auth: mock
+- Data: static
+- AI: mock
+- R2: chưa tích hợp runtime
 
 ## Mục tiêu
 
