@@ -28,15 +28,15 @@ export const articles = [
 ];
 
 export const cases = [
-  { title:"Từ nền đen tự nhiên sang Beige Ash ánh khói", tag:"Nâng tông", condition:"Tóc đen tự nhiên, sợi to, khô xơ nhẹ", goal:"Level 8–9, beige ash trong và bóng", time:"240 phút", salon:"Salon Tuấn Nguyễn", visual:"from-[#171717] via-[#7a6046] to-[#d6c0a0]", imageKeyBefore:"case-01-before-nen-den-tu-nhien", imageKeyAfter:"case-01-after-beige-ash" },
-  { title:"Balayage xám khói trên nền nâu tự nhiên", tag:"Balayage", condition:"Nền nâu tự nhiên, thân tóc khỏe", goal:"Hiệu ứng chuyển màu mềm, ít lộ chân", time:"180 phút", salon:"The Labs Hair", visual:"from-[#2b2b2b] via-[#8d8a7f] to-[#f0e6cf]", imageKeyBefore:"case-02-before-nen-nau-tu-nhien", imageKeyAfter:"case-02-after-balayage-xam-khoi" },
-  { title:"Phục hồi và nhuộm nâu socola cho tóc tẩy hư tổn", tag:"Phục hồi", condition:"Tóc tẩy khô, xốp, thiếu bóng", goal:"Nâu socola mềm, giảm xơ, dễ chăm sóc", time:"150 phút", salon:"Linh Black Hair", visual:"from-[#3a261d] via-[#7b4f35] to-[#c9a45c]", imageKeyBefore:"case-03-before-toc-tay-hu-ton", imageKeyAfter:"case-03-after-nau-socola-phuc-hoi" }
+  { title:"Từ nền đen tự nhiên sang Beige Ash ánh khói", tag:"Nâng tông", condition:"Tóc đen tự nhiên, sợi to, khô xơ nhẹ", goal:"Level 8–9, beige ash trong và bóng", time:"240 phút", salon:"Salon Tuấn Nguyễn", visual:"from-[#171717] via-[#7a6046] to-[#d6c0a0]", imageKeyBefore:"case-01-before-nen-den-tu-nhien" as ImageAssetKey, imageKeyAfter:"case-01-after-beige-ash" as ImageAssetKey },
+  { title:"Balayage xám khói trên nền nâu tự nhiên", tag:"Balayage", condition:"Nền nâu tự nhiên, thân tóc khỏe", goal:"Hiệu ứng chuyển màu mềm, ít lộ chân", time:"180 phút", salon:"The Labs Hair", visual:"from-[#2b2b2b] via-[#8d8a7f] to-[#f0e6cf]", imageKeyBefore:"case-02-before-nen-nau-tu-nhien" as ImageAssetKey, imageKeyAfter:"case-02-after-balayage-xam-khoi" as ImageAssetKey },
+  { title:"Phục hồi và nhuộm nâu socola cho tóc tẩy hư tổn", tag:"Phục hồi", condition:"Tóc tẩy khô, xốp, thiếu bóng", goal:"Nâu socola mềm, giảm xơ, dễ chăm sóc", time:"150 phút", salon:"Linh Black Hair", visual:"from-[#3a261d] via-[#7b4f35] to-[#c9a45c]", imageKeyBefore:"case-03-before-toc-tay-hu-ton" as ImageAssetKey, imageKeyAfter:"case-03-after-nau-socola-phuc-hoi" as ImageAssetKey }
 ];
 
 export const formulas = [
-  { title:"Lạnh khói ánh rêu", tag:"Balayage", base:"Level 6 - nền vàng cam", developer:"6% / 20 vol", ratio:"1 : 1.5", note:"Khử vàng nhẹ phần thân, giữ khói ở ngọn.", visual:"from-[#20231f] via-[#637a4d] to-[#c9a45c]", imageKey:"formula-lanh-khoi-anh-reu" },
-  { title:"Beige sữa lạnh", tag:"Nhuộm toàn bộ", base:"Level 8 - nền vàng nhạt", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tạo be sáng, cân bằng rêu nhẹ.", visual:"from-[#5f5342] via-[#c9a45c] to-[#f7f1e8]", imageKey:"formula-beige-sua-lanh" },
-  { title:"Nâu trà sữa", tag:"Nhuộm toàn bộ", base:"Level 7 - nền vàng", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tông tự nhiên, phù hợp da ấm.", visual:"from-[#3a261d] via-[#9b7354] to-[#d6b48f]", imageKey:"formula-nau-tra-sua" }
+  { title:"Lạnh khói ánh rêu", tag:"Balayage", base:"Level 6 - nền vàng cam", developer:"6% / 20 vol", ratio:"1 : 1.5", note:"Khử vàng nhẹ phần thân, giữ khói ở ngọn.", visual:"from-[#20231f] via-[#637a4d] to-[#c9a45c]", imageKey:"formula-lanh-khoi-anh-reu" as ImageAssetKey },
+  { title:"Beige sữa lạnh", tag:"Nhuộm toàn bộ", base:"Level 8 - nền vàng nhạt", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tạo be sáng, cân bằng rêu nhẹ.", visual:"from-[#5f5342] via-[#c9a45c] to-[#f7f1e8]", imageKey:"formula-beige-sua-lanh" as ImageAssetKey },
+  { title:"Nâu trà sữa", tag:"Nhuộm toàn bộ", base:"Level 7 - nền vàng", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tông tự nhiên, phù hợp da ấm.", visual:"from-[#3a261d] via-[#9b7354] to-[#d6b48f]", imageKey:"formula-nau-tra-sua" as ImageAssetKey }
 ];
 
 export const aiTools: Array<{

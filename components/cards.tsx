@@ -27,8 +27,20 @@ export function ArticleCard({ article }: { article: any }) {
 export function CaseCard({ item }: { item: any }) {
   return (
     <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
-      <div className="grid grid-cols-2 gap-1 p-2"><HairVisual className="h-40 rounded-2xl" gradient="from-[#1e1e1e] to-[#68452b]" label="Before" /><HairVisual className="h-40 rounded-2xl" gradient={item.visual} label="After" /></div>
-      <div className="p-5"><span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span><h3 className="mt-4 text-lg font-extrabold leading-snug text-charcoal">{item.title}</h3><p className="mt-3 text-sm leading-6 text-warmgray"><b>Tình trạng:</b> {item.condition}</p><p className="mt-1 text-sm leading-6 text-warmgray"><b>Mục tiêu:</b> {item.goal}</p><div className="mt-5 flex items-center justify-between text-sm"><span className="font-bold text-charcoal">{item.salon}</span><span className="text-warmgray">{item.time}</span></div></div>
+      <div className="grid grid-cols-2 gap-1 p-2">
+        <HairVisual className="h-40 rounded-2xl" imageKey={item.imageKeyBefore} alt={`${item.title} before`} label="Before" />
+        <HairVisual className="h-40 rounded-2xl" imageKey={item.imageKeyAfter} alt={`${item.title} after`} label="After" />
+      </div>
+      <div className="p-5">
+        <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span>
+        <h3 className="mt-4 text-lg font-extrabold leading-snug text-charcoal">{item.title}</h3>
+        <p className="mt-3 text-sm leading-6 text-warmgray"><b>Tình trạng:</b> {item.condition}</p>
+        <p className="mt-1 text-sm leading-6 text-warmgray"><b>Mục tiêu:</b> {item.goal}</p>
+        <div className="mt-5 flex items-center justify-between text-sm">
+          <span className="font-bold text-charcoal">{item.salon}</span>
+          <span className="text-warmgray">{item.time}</span>
+        </div>
+      </div>
     </div>
   );
 }
