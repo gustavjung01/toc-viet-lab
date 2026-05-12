@@ -37,7 +37,7 @@ export default function CasePage() {
           <section className="mt-12">
             <SectionHeader title="Danh sách case" />
             <div className="grid gap-6 lg:grid-cols-3">
-              {[...cases, ...cases].map((item, index) => (
+              {cases.map((item, index) => (
                 <CaseCard key={`${item.title}-${index}`} item={item} />
               ))}
             </div>

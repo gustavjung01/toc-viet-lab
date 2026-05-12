@@ -18,7 +18,11 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 export function ArticleCard({ article }: { article: any }) {
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
-      <HairVisual className="h-44 rounded-none" gradient={article.visual} label={article.category} />
+      {article.imageKey ? (
+        <HairVisual imageKey={article.imageKey} alt={article.title} className="h-44 rounded-none" />
+      ) : (
+        <HairVisual className="h-44 rounded-none" gradient={article.visual} label={article.category} />
+      )}
       <div className="p-5"><div className="mb-3 flex items-center justify-between gap-3"><span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{article.level}</span><span className="inline-flex items-center gap-1 text-xs font-semibold text-warmgray"><Clock size={14} /> {article.minutes} phút</span></div><h3 className="line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{article.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-warmgray">{article.excerpt}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm font-extrabold text-charcoal">Đọc chi tiết</span><Bookmark size={18} className="text-champagne" /></div></div>
     </Link>
   );
