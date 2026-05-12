@@ -55,7 +55,7 @@ export function FeaturedCases() {
         <div className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <span className="mb-2 inline-block text-xs font-bold uppercase tracking-[0.2em] text-gold">Case thực tế</span>
-            <h2 className="text-2xl font-black text-charcoal sm:text-3xl lg:text-4xl">Học từ tình huống salon thực tế</h2>
+            <h2 className="text-2xl font-black text-charcoal sm:text-3xl lg:text-4xl">Phân tích case salon thực tế</h2>
           </div>
           <Link
             href="/case-thuc-te"

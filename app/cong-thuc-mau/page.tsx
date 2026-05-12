@@ -10,9 +10,9 @@ export default function FormulaPublicPage() {
       <main className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <section className="rounded-[2rem] bg-radial-gold p-8 text-white shadow-soft lg:p-10">
-            <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">Công thức màu</p>
-            <h1 className="mt-4 text-4xl font-black md:text-6xl">Thư viện công thức màu tóc</h1>
-            <p className="mt-5 max-w-2xl leading-8 text-white/65">Xem công thức mẫu, tư duy nền tóc và lưu lại vào sổ tay cá nhân sau khi đăng nhập.</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">SỔ TAY CÔNG THỨC</p>
+            <h1 className="mt-4 text-4xl font-black md:text-6xl">Công thức màu theo nền tóc thực tế</h1>
+            <p className="mt-5 max-w-2xl leading-8 text-white/65">Tham khảo công thức, tỷ lệ và ghi chú xử lý theo từng nền tóc. Điều chỉnh theo hãng màu, chất tóc và lịch sử hóa chất.</p>
           </section>
           <section className="mt-10 grid gap-6 lg:grid-cols-3">
             {formulas.map((formula) => (

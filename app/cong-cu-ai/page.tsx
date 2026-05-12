@@ -50,7 +50,7 @@ const aiToolCards: AIToolCard[] = [
     status: "Sắp ra mắt"
   },
   {
-    title: "AI credit dashboard",
+    title: "Dashboard lượt dùng AI",
     imageKey: "ai-credit-dashboard",
     desc: "Theo dõi lượt dùng AI và quản lý workflow salon.",
     bullets: ["Xem lịch sử sử dụng", "Quản lý công cụ AI", "Giữ quyền kiểm soát"],

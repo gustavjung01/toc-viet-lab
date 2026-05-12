@@ -5,10 +5,10 @@ import { ArrowRight, BookOpen, Bookmark, FlaskConical, StickyNote } from "lucide
 import { assetUrl } from "@/lib/image-assets";
 
 const notebookItems = [
-  { title: "Lưu bài học & công thức", description: "Ghi lại công thức màu đã thử nghiệm và kết quả trên từng loại tóc", icon: Bookmark },
+  { title: "Lưu công thức & ghi chú", description: "Ghi lại công thức màu đã thử nghiệm và kết quả trên từng loại tóc", icon: Bookmark },
   { title: "Tạo sổ tay kỹ thuật", description: "Tổ chức ghi chú và công thức theo phong cách salon chuyên nghiệp", icon: StickyNote },
   { title: "Lưu trữ công thức", description: "Ghi nhớ tỷ lệ pha màu, thời gian xử lý và chú ý quan trọng", icon: FlaskConical },
-  { title: "Đọc bài chuyên sâu", description: "Truy cập bài viết kỹ thuật tóc từ cơ bản đến nâng cao", icon: BookOpen }
+  { title: "Tra cứu chủ đề chuyên sâu", description: "Tìm nhanh nội dung tham khảo kỹ thuật và case salon", icon: BookOpen }
 ];
 
 export function MemberNotebook() {

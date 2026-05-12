@@ -11,9 +11,9 @@ export default function CasePage() {
       <main className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <section className="rounded-[2rem] bg-radial-gold p-8 text-white shadow-soft lg:p-10">
-            <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">Case thực tế</p>
-            <h1 className="mt-4 text-4xl font-black md:text-6xl">Case thực tế từ salon</h1>
-            <p className="mt-5 max-w-2xl leading-8 text-white/65">Tập hợp tình huống before/after, phân tích nền tóc, kỹ thuật xử lý, thời gian làm và ghi chú thực chiến.</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">CASE SALON THỰC TẾ</p>
+            <h1 className="mt-4 text-4xl font-black md:text-6xl">Before / After và hướng xử lý kỹ thuật</h1>
+            <p className="mt-5 max-w-2xl leading-8 text-white/65">Tổng hợp tình huống màu, tẩy, phủ bạc, phục hồi và sửa lỗi thường gặp trong salon Việt.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               {["Tất cả loại case", "Nâng tông", "Màu khói", "Phục hồi", "Phủ bạc", "Balayage"].map((chip) => (
                 <button key={chip} className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold text-white/75">{chip}</button>

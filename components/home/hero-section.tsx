@@ -13,22 +13,22 @@ export function HeroSection() {
           <div className="relative z-10">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/25 bg-white/5 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.22em] text-gold">
               <Sparkles size={14} />
-              Nền tảng tri thức & công cụ ngành tóc
+              NỀN TẢNG TRI THỨC NGÀNH TÓC
             </div>
             <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4.5rem]">
-              Học kỹ thuật tóc chuyên sâu.
+              Tra cứu kỹ thuật tóc.
               <span className="text-gold"> Lưu công thức màu.</span>
-              <span className="text-gold-bright"> Hỏi AI theo tình huống salon thực tế.</span>
+              <span className="text-gold-bright"> Xử lý case salon thực tế.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8">
-              Tóc Việt Lab giúp thợ tóc và salon Việt hệ thống hóa kiến thức, lưu lại công thức màu và nâng cao hiệu suất làm việc bằng bộ công cụ chuyên nghiệp.
+              Không gian dành cho thợ tóc và salon Việt hệ thống hóa công thức, phân tích tình huống màu và chuẩn hóa tư vấn khách hàng.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/login"
+                href="/kien-thuc"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-bright to-gold px-7 py-4 font-extrabold text-black shadow-gold transition-all hover:brightness-110"
               >
-                Bắt đầu học miễn phí
+                Khám phá nội dung
                 <ArrowRight size={18} />
               </Link>
               <Link
