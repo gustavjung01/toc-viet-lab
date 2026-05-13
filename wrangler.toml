@@ -1,0 +1,11 @@
+name = "toc-viet-lab"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "toc-viet-lab-db"
+database_id = "0f7e0a27-befe-475f-93de-6ad8c0971e48"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "toc-viet-lab"
