@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X, LogOut, LayoutDashboard } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 import { navItems } from "@/lib/data";
 import { Logo } from "./logo";
 
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   return (
     <header className="sticky top-0 z-50 border-b border-gold/10 bg-black/95 backdrop-blur">
@@ -38,18 +40,41 @@ export function Header() {
           <button className="rounded-full border border-white/15 p-3 text-white/70 transition hover:border-gold hover:text-gold">
             <Search size={18} />
           </button>
-          <Link
-            href="/login"
-            className="rounded-full border border-gold/45 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/5"
-          >
-            Đăng nhập
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-full bg-gold px-5 py-2.5 text-sm font-extrabold text-black shadow-gold transition hover:brightness-110"
-          >
-            Đăng ký miễn phí
-          </Link>
+          {status === "loading" ? (
+            <div className="h-9 w-24 animate-pulse rounded-full bg-white/10" />
+          ) : session?.user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full border border-gold/30 px-4 py-2 text-sm font-bold text-gold transition hover:bg-gold/10"
+              >
+                <LayoutDashboard size={16} />
+                {session.user.name?.split(" ").pop() ?? "Dashboard"}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-bold text-white/70 transition hover:border-red-400/50 hover:text-red-400"
+              >
+                <LogOut size={16} />
+                Đăng xuất
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-full border border-gold/45 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/5"
+              >
+                Đăng nhập
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full bg-gold px-5 py-2.5 text-sm font-extrabold text-black shadow-gold transition hover:brightness-110"
+              >
+                Đăng ký miễn phí
+              </Link>
+            </>
+          )}
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
