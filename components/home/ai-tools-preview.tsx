@@ -13,7 +13,7 @@ const aiTools = [
 
 export function AiToolsPreview() {
   return (
-    <section className="bg-card-dark px-4 py-12 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section className="bg-[#171410] px-4 py-12 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -28,7 +28,7 @@ export function AiToolsPreview() {
           </div>
           <Link
             href="/cong-cu-ai"
-            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-goldBright"
+            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-[#F0C76A]"
           >
             Khám phá AI
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

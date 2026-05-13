@@ -12,7 +12,7 @@ const problems = [
 export function ProblemStrip() {
   return (
     <section className="relative px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-gold/20 bg-card-dark p-6 shadow-gold/10 backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-gold/20 bg-[#171410] p-6 shadow-gold/10 backdrop-blur-sm">
         <div className="flex flex-col gap-3 border-b border-gold/10 pb-5 text-white sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 text-sm font-bold uppercase tracking-[0.2em] text-gold">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-gold">

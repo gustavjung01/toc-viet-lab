@@ -38,7 +38,7 @@ export default function FormulaPublicPage() {
                       <b>Tỷ lệ</b><br />{formula.ratio}
                     </div>
                   </div>
-                  <Link href="/login" className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-charcoal px-5 py-3 font-extrabold text-champagne transition hover:bg-cardDark2">
+                  <Link href="/login" className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#171410] px-5 py-3 font-extrabold text-[#D6A84F] transition hover:bg-[#201A13]">
                     Đăng nhập để lưu
                   </Link>
                 </div>

@@ -59,7 +59,7 @@ export function FeaturedCases() {
           </div>
           <Link
             href="/case-thuc-te"
-            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-goldBright"
+            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-[#F0C76A]"
           >
             Xem tất cả case
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

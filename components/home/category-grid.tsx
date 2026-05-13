@@ -25,7 +25,7 @@ export function CategoryGrid() {
           </div>
           <Link
             href="/kien-thuc"
-            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-goldBright"
+            className="group inline-flex items-center gap-2 font-bold text-gold transition-colors hover:text-[#F0C76A]"
           >
             Xem tất cả
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
