@@ -89,6 +89,18 @@ export const savedItems = sqliteTable("saved_items", {
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
 });
 
+export const userFormulas = sqliteTable("user_formulas", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  tag: text("tag").default(""),
+  base: text("base").default(""),
+  developer: text("developer").default(""),
+  ratio: text("ratio").default(""),
+  note: text("note").default(""),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+});
+
 export const aiUsageLogs = sqliteTable("ai_usage_logs", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
