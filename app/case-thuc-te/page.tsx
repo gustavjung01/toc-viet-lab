@@ -1,10 +1,22 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CaseCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
 import { cases } from "@/lib/data";
 
+const FILTER_CHIPS = ["Tất cả loại case", "Nâng tông", "Màu khói", "Phục hồi", "Phủ bạc", "Balayage"];
+
 export default function CasePage() {
+  const [activeTag, setActiveTag] = useState("Tất cả loại case");
+
+  const filtered = useMemo(() => {
+    if (activeTag === "Tất cả loại case") return cases;
+    return cases.filter((c) => c.tag === activeTag);
+  }, [activeTag]);
+
   return (
     <div>
       <Header />
@@ -15,8 +27,18 @@ export default function CasePage() {
             <h1 className="mt-4 text-4xl font-black md:text-6xl">Before / After và hướng xử lý kỹ thuật</h1>
             <p className="mt-5 max-w-2xl leading-8 text-white/65">Tổng hợp tình huống màu, tẩy, phủ bạc, phục hồi và sửa lỗi thường gặp trong salon Việt.</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              {["Tất cả loại case", "Nâng tông", "Màu khói", "Phục hồi", "Phủ bạc", "Balayage"].map((chip) => (
-                <button key={chip} className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold text-white/75">{chip}</button>
+              {FILTER_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => setActiveTag(chip)}
+                  className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                    activeTag === chip
+                      ? "bg-gold text-black"
+                      : "border border-white/15 text-white/75 hover:border-white/40 hover:text-white"
+                  }`}
+                >
+                  {chip}
+                </button>
               ))}
             </div>
           </section>
@@ -38,12 +60,31 @@ export default function CasePage() {
             </div>
           </section>
           <section className="mt-12">
-            <SectionHeader title="Danh sách case" />
-            <div className="grid gap-6 lg:grid-cols-3">
-              {cases.map((item, index) => (
-                <CaseCard key={`${item.title}-${index}`} item={item} />
-              ))}
+            <div className="mb-5 flex items-center justify-between">
+              <SectionHeader title="Danh sách case" />
+              <p className="text-sm text-warmgray">
+                <span className="font-extrabold text-charcoal">{filtered.length}</span> case
+                {activeTag !== "Tất cả loại case" && <span> · <span className="text-gold">{activeTag}</span></span>}
+              </p>
             </div>
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
+                <p className="text-lg font-extrabold text-charcoal">Chưa có case nào cho loại này</p>
+                <p className="mt-2 text-sm text-warmgray">Thử chọn loại case khác</p>
+                <button
+                  onClick={() => setActiveTag("Tất cả loại case")}
+                  className="mt-4 rounded-full bg-gold px-5 py-2 text-sm font-bold text-black"
+                >
+                  Xem tất cả
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-6 lg:grid-cols-3">
+                {filtered.map((item, index) => (
+                  <CaseCard key={`${item.title}-${index}`} item={item} />
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
