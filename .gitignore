@@ -15,4 +15,8 @@ Cloudflare_data.md
 # Backup folders (do not commit)
 toc-viet-lab-backup/
 
+# Real images — upload to R2, do not commit
+public/images/cases/
+public/images/articles/
+
 .vercel
