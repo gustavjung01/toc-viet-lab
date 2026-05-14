@@ -9,8 +9,10 @@ const contentLinks = [
 ];
 
 const accountLinks = [
-  { label: "Đăng nhập", href: "/login" }
-  // Gói thành viên and Credit AI hidden - will be enabled later
+  { label: "Đăng nhập", href: "/login" },
+  { label: "Đăng ký", href: "/login" },
+  { label: "Gói thành viên", href: "/goi-thanh-vien" },
+  { label: "Hỗ trợ", href: "/ho-tro" },
 ];
 
 export function Footer() {
