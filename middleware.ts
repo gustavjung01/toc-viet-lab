@@ -7,6 +7,7 @@ const PROTECTED_ROUTES = [
   "/cong-thuc-cua-toi",
   "/ai-tu-van-mau",
   "/credit-ai",
+  "/settings",
 ];
 
 export default auth((req) => {

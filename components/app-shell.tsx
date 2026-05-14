@@ -6,12 +6,11 @@ import { SignOutButton } from "./sign-out-button";
 
 const menu = [
   { label: "Tổng quan", href: "/dashboard", icon: Home },
-  { label: "Bài đã lưu", href: "/so-tay", icon: BookOpen },
   { label: "Sổ tay của tôi", href: "/so-tay", icon: NotebookTabs },
   { label: "Công thức màu", href: "/cong-thuc-cua-toi", icon: Palette },
   { label: "Hỏi AI", href: "/ai-tu-van-mau", icon: BrainCircuit },
   { label: "Credit AI", href: "/credit-ai", icon: CreditCard },
-  { label: "Cài đặt", href: "#", icon: Settings },
+  { label: "Cài đặt", href: "/settings", icon: Settings },
 ];
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
