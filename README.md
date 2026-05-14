@@ -28,7 +28,7 @@ npm run dev
 Mở:
 
 ```txt
-http://localhost:3000
+Local: http://localhost:3000
 ```
 
 ## Trang đã có
