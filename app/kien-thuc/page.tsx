@@ -1,31 +1,53 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
-import { articles, categories } from "@/lib/data";
-import { Search } from "lucide-react";
+import { articles as mockArticles, categories } from "@/lib/data";
+import { Loader2, Search } from "lucide-react";
 
 export default function KnowledgePage() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Tất cả");
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [allCategories, setAllCategories] = useState<string[]>(["Tất cả"]);
 
-  const filtered = useMemo(() => {
-    return articles.filter((a) => {
-      const matchQuery =
-        query.trim() === "" ||
-        a.title.toLowerCase().includes(query.toLowerCase()) ||
-        a.excerpt.toLowerCase().includes(query.toLowerCase()) ||
-        a.category.toLowerCase().includes(query.toLowerCase());
-      const matchCategory =
-        activeCategory === "Tất cả" || a.category === activeCategory;
-      return matchQuery && matchCategory;
-    });
-  }, [query, activeCategory]);
+  const fetchArticles = useCallback((cat: string, q: string) => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (cat !== "Tất cả") params.set("category", cat);
+    if (q.trim()) params.set("q", q.trim());
+    fetch(`/api/articles?${params}`)
+      .then((r) => r.json())
+      .then((d) => {
+        const data: any[] = d.articles ?? [];
+        if (data.length > 0) {
+          setArticles(data);
+          if (cat === "Tất cả" && !q) {
+            const cats = ["Tất cả", ...Array.from(new Set(data.map((a: any) => a.category).filter(Boolean)))];
+            setAllCategories(cats as string[]);
+          }
+        } else if (!q && cat === "Tất cả") {
+          setArticles(mockArticles as any[]);
+        } else {
+          setArticles([]);
+        }
+      })
+      .catch(() => setArticles(mockArticles as any[]))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const allCategories = ["Tất cả", ...Array.from(new Set(articles.map((a) => a.category)))];
+  useEffect(() => { fetchArticles("Tất cả", ""); }, [fetchArticles]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => fetchArticles(activeCategory, query), 400);
+    return () => clearTimeout(timer);
+  }, [query, activeCategory, fetchArticles]);
+
+  const filtered = articles;
 
   return (
     <div>
@@ -118,7 +140,11 @@ export default function KnowledgePage() {
                 </p>
                 <button className="rounded-full border border-black/10 px-4 py-2 text-sm font-bold">Mới nhất</button>
               </div>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
                   <p className="text-lg font-extrabold text-charcoal">Không tìm thấy kết quả</p>
                   <p className="mt-2 text-sm text-warmgray">Thử từ khoá khác hoặc chọn danh mục khác</p>
@@ -132,7 +158,7 @@ export default function KnowledgePage() {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {filtered.map((article, index) => (
-                    <ArticleCard key={`${article.slug}-${index}`} article={article} />
+                    <ArticleCard key={`${article.slug ?? article.id}-${index}`} article={article} />
                   ))}
                 </div>
               )}

@@ -1,21 +1,53 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CaseCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
-import { cases } from "@/lib/data";
+import { cases as mockCases } from "@/lib/data";
+import { Loader2 } from "lucide-react";
 
-const FILTER_CHIPS = ["Tất cả loại case", "Nâng tông", "Màu khói", "Phục hồi", "Phủ bạc", "Balayage"];
+const ALL = "Tất cả loại case";
 
 export default function CasePage() {
-  const [activeTag, setActiveTag] = useState("Tất cả loại case");
+  const [activeTag, setActiveTag] = useState(ALL);
+  const [cases, setCases] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>([ALL]);
 
-  const filtered = useMemo(() => {
-    if (activeTag === "Tất cả loại case") return cases;
-    return cases.filter((c) => c.tag === activeTag);
-  }, [activeTag]);
+  useEffect(() => {
+    fetch("/api/cases")
+      .then((r) => r.json())
+      .then((d) => {
+        const data: any[] = d.cases ?? [];
+        if (data.length > 0) {
+          setCases(data);
+          const cats = [ALL, ...Array.from(new Set(data.map((c: any) => c.category).filter(Boolean)))];
+          setCategories(cats as string[]);
+        } else {
+          setCases(mockCases as any[]);
+        }
+      })
+      .catch(() => setCases(mockCases as any[]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = activeTag === ALL ? cases : cases.filter((c) => c.category === activeTag || c.tag === activeTag);
+
+  // Normalize DB row vs mock shape for CaseCard
+  function normalizeCase(c: any) {
+    return {
+      ...c,
+      imageKeyBefore: c.imageKeyBefore ?? c.before_image_key,
+      imageKeyAfter: c.imageKeyAfter ?? c.after_image_key,
+      tag: c.tag ?? c.category,
+      condition: c.condition ?? c.description,
+      goal: c.goal ?? c.analysis,
+      salon: c.salon ?? "Tóc Việt Lab",
+      time: c.time ?? "",
+    };
+  }
 
   return (
     <div>
@@ -27,7 +59,7 @@ export default function CasePage() {
             <h1 className="mt-4 text-4xl font-black md:text-6xl">Before / After và hướng xử lý kỹ thuật</h1>
             <p className="mt-5 max-w-2xl leading-8 text-white/65">Tổng hợp tình huống màu, tẩy, phủ bạc, phục hồi và sửa lỗi thường gặp trong salon Việt.</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              {FILTER_CHIPS.map((chip) => (
+              {categories.map((chip) => (
                 <button
                   key={chip}
                   onClick={() => setActiveTag(chip)}
@@ -45,12 +77,12 @@ export default function CasePage() {
           <section className="mt-10 rounded-[2rem] bg-charcoal p-6 text-white shadow-soft lg:p-8">
             <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
               <div className="grid grid-cols-2 gap-2">
-                <HairVisual className="h-80" imageKey={cases[0].imageKeyBefore} alt={`${cases[0].title} before`} label="Before" />
-                <HairVisual className="h-80" imageKey={cases[0].imageKeyAfter} alt={`${cases[0].title} after`} label="After" />
+                <HairVisual className="h-80" imageKey={cases[0] ? (cases[0].before_image_key ?? cases[0].imageKeyBefore) : undefined} alt="Before" label="Before" />
+                <HairVisual className="h-80" imageKey={cases[0] ? (cases[0].after_image_key ?? cases[0].imageKeyAfter) : undefined} alt="After" label="After" />
               </div>
               <div className="flex flex-col justify-center">
                 <span className="w-fit rounded-full bg-champagne px-4 py-2 text-xs font-extrabold text-charcoal">Case nổi bật</span>
-                <h2 className="mt-5 text-3xl font-black md:text-4xl">Từ nền đen tự nhiên sang Beige Ash ánh khói sang trọng</h2>
+                <h2 className="mt-5 text-3xl font-black md:text-4xl">{cases[0]?.title ?? "Từ nền đen tự nhiên sang Beige Ash ánh khói sang trọng"}</h2>
                 <p className="mt-5 leading-8 text-white/65">Tóc đen tự nhiên, sợi to, đã nhuộm màu tối 2 lần. Mục tiêu là nâng lên level 8–9 nhưng vẫn giữ độ bóng và mềm mượt.</p>
                 <div className="mt-7 flex flex-wrap gap-3">
                   <button className="rounded-full bg-champagne px-6 py-3 font-extrabold text-charcoal">Xem phân tích case</button>
@@ -67,12 +99,16 @@ export default function CasePage() {
                 {activeTag !== "Tất cả loại case" && <span> · <span className="text-gold">{activeTag}</span></span>}
               </p>
             </div>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
                 <p className="text-lg font-extrabold text-charcoal">Chưa có case nào cho loại này</p>
                 <p className="mt-2 text-sm text-warmgray">Thử chọn loại case khác</p>
                 <button
-                  onClick={() => setActiveTag("Tất cả loại case")}
+                  onClick={() => setActiveTag(ALL)}
                   className="mt-4 rounded-full bg-gold px-5 py-2 text-sm font-bold text-black"
                 >
                   Xem tất cả
@@ -81,7 +117,7 @@ export default function CasePage() {
             ) : (
               <div className="grid gap-6 lg:grid-cols-3">
                 {filtered.map((item, index) => (
-                  <CaseCard key={`${item.title}-${index}`} item={item} />
+                  <CaseCard key={`${item.id ?? item.title}-${index}`} item={normalizeCase(item)} />
                 ))}
               </div>
             )}
