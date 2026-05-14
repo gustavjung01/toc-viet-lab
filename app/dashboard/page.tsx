@@ -4,10 +4,48 @@ import { articles, cases } from "@/lib/data";
 import { auth } from "@/auth";
 import { BookOpen, FlaskConical, NotebookPen, Sparkles } from "lucide-react";
 
+async function getUserStats(userId: string) {
+  try {
+    const query = async (sql: string, params: any[]) => {
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/d1/database/${process.env.CLOUDFLARE_D1_DATABASE_ID}/query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.CLOUDFLARE_D1_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ sql, params }),
+          cache: "no-store",
+        }
+      );
+      const data = await res.json();
+      return data.result?.[0]?.results?.[0];
+    };
+
+    const [saved, formulas, aiLogs, credits] = await Promise.all([
+      query("SELECT COUNT(*) as count FROM saved_items WHERE user_id = ?", [userId]),
+      query("SELECT COUNT(*) as count FROM user_formulas WHERE user_id = ?", [userId]),
+      query("SELECT COUNT(*) as count FROM ai_usage_logs WHERE user_id = ?", [userId]),
+      query("SELECT ai_credits FROM users WHERE id = ?", [userId]),
+    ]);
+
+    return {
+      saved: saved?.count ?? 0,
+      formulas: formulas?.count ?? 0,
+      aiUsed: aiLogs?.count ?? 0,
+      aiCredits: credits?.ai_credits ?? 0,
+    };
+  } catch {
+    return { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
+  }
+}
+
 export default async function DashboardPage() {
   const session = await auth();
   const firstName = session?.user?.name?.split(" ").pop() ?? "bạn";
   const role = (session?.user as any)?.role ?? "free";
+  const userId = (session?.user as any)?.id;
 
   const roleLabel: Record<string, string> = {
     free: "Tài khoản miễn phí",
@@ -15,11 +53,13 @@ export default async function DashboardPage() {
     pro: "Pro Member",
   };
 
+  const userStats = userId ? await getUserStats(userId) : { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
+
   const stats = [
-    { label: "Bài đã lưu", value: "0", sub: "bài viết", icon: BookOpen, color: "text-blue-500" },
-    { label: "Công thức màu", value: "0", sub: "công thức", icon: FlaskConical, color: "text-[#D6A84F]" },
-    { label: "Ghi chú", value: "0", sub: "ghi chú", icon: NotebookPen, color: "text-green-500" },
-    { label: "Lượt dùng AI", value: "0", sub: "lượt", icon: Sparkles, color: "text-purple-500" },
+    { label: "Bài đã lưu", value: String(userStats.saved), sub: "bài viết", icon: BookOpen, color: "text-blue-500" },
+    { label: "Công thức màu", value: String(userStats.formulas), sub: "công thức", icon: FlaskConical, color: "text-[#D6A84F]" },
+    { label: "Lượt dùng AI", value: String(userStats.aiUsed), sub: "lượt", icon: Sparkles, color: "text-purple-500" },
+    { label: "Credit AI còn lại", value: String(userStats.aiCredits), sub: "credit", icon: NotebookPen, color: "text-green-500" },
   ];
 
   return (
