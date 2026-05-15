@@ -12,11 +12,21 @@ export function HairVisual({
   className?: string;
   gradient?: string;
   label?: string;
-  imageKey?: ImageAssetKey;
+  imageKey?: ImageAssetKey | string;
   src?: string;
   alt?: string;
 }) {
-  const finalSrc = src ?? (imageKey ? assetUrl(imageKey) : undefined);
+  // If imageKey is a direct path (e.g. "images/cases/before-..."), build URL from base
+  // Otherwise, look up in the imageAssets map
+  let finalSrc = src;
+  if (!finalSrc && imageKey) {
+    if (typeof imageKey === "string" && imageKey.includes("/")) {
+      const base = process.env.NEXT_PUBLIC_ASSET_BASE_URL || "";
+      finalSrc = `${base}/${imageKey.replace(/^\//, "")}`;
+    } else {
+      finalSrc = assetUrl(imageKey as ImageAssetKey);
+    }
+  }
 
   return (
     <div className={clsx("relative overflow-hidden rounded-3xl", className)}>
