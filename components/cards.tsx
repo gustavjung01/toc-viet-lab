@@ -69,8 +69,8 @@ export function CaseCard({ item }: { item: any }) {
       <div className="p-5">
         <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span>
         <h3 className="mt-4 text-lg font-extrabold leading-snug text-charcoal">{item.title}</h3>
-        <p className="mt-3 text-sm leading-6 text-warmgray"><b>Tình trạng:</b> {item.condition}</p>
-        <p className="mt-1 text-sm leading-6 text-warmgray"><b>Mục tiêu:</b> {item.goal}</p>
+        <p className="mt-3 line-clamp-2 text-sm leading-6 text-warmgray"><b>Tình trạng:</b> {item.condition}</p>
+        <p className="mt-1 line-clamp-2 text-sm leading-6 text-warmgray"><b>Mục tiêu:</b> {item.goal}</p>
         <div className="mt-5 flex items-center justify-between text-sm">
           <span className="font-bold text-charcoal">{item.salon}</span>
           <div className="flex items-center gap-3">
