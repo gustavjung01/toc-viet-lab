@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
@@ -8,6 +8,7 @@ import { HairVisual } from "@/components/visual";
 import { articles as mockArticles, categories } from "@/lib/data";
 import { Loader2, Search } from "lucide-react";
 
+const PAGE_SIZE = 12;
 const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
 
 function resolveAssetSrc(path?: string) {
@@ -21,60 +22,88 @@ function isRelativeAssetPath(path?: string) {
   return typeof path === "string" && path.includes("/");
 }
 
+const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao", "high-risk": "Rủi ro cao" };
+
+function normalizeArticle(a: any) {
+  const rawImageKey = a.imageKey ?? a.image_key ?? undefined;
+  return {
+    ...a,
+    slug: a.slug ?? a.id,
+    imageKey: isRelativeAssetPath(rawImageKey) ? undefined : rawImageKey,
+    imageSrc: isRelativeAssetPath(rawImageKey) ? resolveAssetSrc(rawImageKey) : undefined,
+    level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
+    minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
+  };
+}
+
 export default function KnowledgePage() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Tất cả");
   const [articles, setArticles] = useState<any[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [allCategories, setAllCategories] = useState<string[]>(["Tất cả"]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const fetchArticles = useCallback((cat: string, q: string) => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (cat !== "Tất cả") params.set("category", cat);
-    if (q.trim()) params.set("q", q.trim());
-    fetch(`/api/articles?${params}`)
-      .then((r) => r.json())
-      .then((d) => {
-        const data: any[] = d.articles ?? [];
-        if (data.length > 0) {
-          setArticles(data);
-          if (cat === "Tất cả" && !q) {
-            const cats = ["Tất cả", ...Array.from(new Set(data.map((a: any) => a.category).filter(Boolean)))];
-            setAllCategories(cats as string[]);
-          }
-        } else if (!q && cat === "Tất cả") {
-          setArticles(mockArticles as any[]);
-        } else {
-          setArticles([]);
+  const fetchArticles = useCallback(async (cat: string, q: string, offset: number, append: boolean) => {
+    if (!append) setLoading(true);
+    else setLoadingMore(true);
+    try {
+      const params = new URLSearchParams({ limit: String(PAGE_SIZE), offset: String(offset) });
+      if (cat !== "Tất cả") params.set("category", cat);
+      if (q.trim()) params.set("q", q.trim());
+      const res = await fetch(`/api/articles?${params}`);
+      const d = await res.json();
+      const rows: any[] = d.articles ?? [];
+      if (rows.length > 0 || d.total != null) {
+        setArticles((prev) => (append ? [...prev, ...rows] : rows));
+        setTotal(d.total ?? rows.length);
+        if (!append && offset === 0 && cat === "Tất cả" && !q) {
+          const catRes = await fetch("/api/articles?limit=50&offset=0");
+          const catData = await catRes.json();
+          const allRows: any[] = catData.articles ?? [];
+          const cats = ["Tất cả", ...Array.from(new Set(allRows.map((a: any) => a.category).filter(Boolean)))];
+          setAllCategories(cats as string[]);
         }
-      })
-      .catch(() => setArticles(mockArticles as any[]))
-      .finally(() => setLoading(false));
+      } else if (!append && !q && cat === "Tất cả") {
+        setArticles(mockArticles as any[]);
+        setTotal(mockArticles.length);
+      } else if (!append) {
+        setArticles([]);
+        setTotal(0);
+      }
+    } catch {
+      if (!append) {
+        setArticles(mockArticles as any[]);
+        setTotal(mockArticles.length);
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }, []);
 
-  useEffect(() => { fetchArticles("Tất cả", ""); }, [fetchArticles]);
+  useEffect(() => { fetchArticles("Tất cả", "", 0, false); }, [fetchArticles]);
 
   useEffect(() => {
-    const timer = setTimeout(() => fetchArticles(activeCategory, query), 400);
-    return () => clearTimeout(timer);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setArticles([]);
+      fetchArticles(activeCategory, query, 0, false);
+    }, 400);
+    return () => clearTimeout(debounceRef.current);
   }, [query, activeCategory, fetchArticles]);
 
-  // Normalize DB row (snake_case) → ArticleCard props
-  const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao", "high-risk": "Rủi ro cao" };
-  function normalizeArticle(a: any) {
-    const rawImageKey = a.imageKey ?? a.image_key ?? undefined;
-    return {
-      ...a,
-      slug: a.slug ?? a.id,
-      imageKey: isRelativeAssetPath(rawImageKey) ? undefined : rawImageKey,
-      imageSrc: isRelativeAssetPath(rawImageKey) ? resolveAssetSrc(rawImageKey) : undefined,
-      level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
-      minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
-    };
-  }
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+  };
 
-  const filtered = articles;
+  const handleLoadMore = () => {
+    fetchArticles(activeCategory, query, articles.length, true);
+  };
+
+  const hasMore = articles.length < total;
 
   return (
     <div>
@@ -120,7 +149,7 @@ export default function KnowledgePage() {
               {allCategories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => handleCategoryChange(cat)}
                   className={`rounded-full px-4 py-2 text-sm font-bold transition ${
                     activeCategory === cat
                       ? "bg-gold text-black"
@@ -161,7 +190,7 @@ export default function KnowledgePage() {
             <div>
               <div className="mb-5 flex items-center justify-between">
                 <p className="text-sm font-semibold text-warmgray">
-                  Hiển thị <span className="font-extrabold text-charcoal">{filtered.length}</span> chủ đề
+                  Hiển thị <span className="font-extrabold text-charcoal">{total}</span> chủ đề
                   {query && <span> cho &ldquo;{query}&rdquo;</span>}
                   {activeCategory !== "Tất cả" && <span> trong <span className="text-gold">{activeCategory}</span></span>}
                 </p>
@@ -171,7 +200,7 @@ export default function KnowledgePage() {
                 <div className="flex items-center justify-center py-20">
                   <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
                 </div>
-              ) : filtered.length === 0 ? (
+              ) : articles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
                   <p className="text-lg font-extrabold text-charcoal">Không tìm thấy kết quả</p>
                   <p className="mt-2 text-sm text-warmgray">Thử từ khoá khác hoặc chọn danh mục khác</p>
@@ -183,11 +212,24 @@ export default function KnowledgePage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                  {filtered.map((article, index) => (
-                    <ArticleCard key={`${article.slug ?? article.id}-${index}`} article={normalizeArticle(article)} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    {articles.map((article, index) => (
+                      <ArticleCard key={`${article.slug ?? article.id}-${index}`} article={normalizeArticle(article)} />
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <div className="mt-10 text-center">
+                      <button
+                        onClick={handleLoadMore}
+                        disabled={loadingMore}
+                        className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3 text-sm font-extrabold text-black transition hover:bg-champagne disabled:opacity-60"
+                      >
+                        {loadingMore ? <><Loader2 size={16} className="animate-spin" /> Đang tải...</> : "Xem thêm bài viết"}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>
