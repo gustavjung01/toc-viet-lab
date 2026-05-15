@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
+import { HairVisual } from "@/components/visual";
 import { articles as mockArticles, categories } from "@/lib/data";
 import { Loader2, Search } from "lucide-react";
 
@@ -60,7 +61,7 @@ export default function KnowledgePage() {
   }, [query, activeCategory, fetchArticles]);
 
   // Normalize DB row (snake_case) → ArticleCard props
-  const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao" };
+  const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao", "high-risk": "Rủi ro cao" };
   function normalizeArticle(a: any) {
     const rawImageKey = a.imageKey ?? a.image_key ?? undefined;
     return {

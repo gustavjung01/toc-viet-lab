@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CaseCard, SectionHeader } from "@/components/cards";
+import { HairVisual } from "@/components/visual";
 import { cases as mockCases } from "@/lib/data";
 import { Loader2 } from "lucide-react";
 

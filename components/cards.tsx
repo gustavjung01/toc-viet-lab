@@ -25,13 +25,14 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 }
 
 export function ArticleCard({ article }: { article: any }) {
-  const isRelativePath = typeof article.imageKey === "string" && article.imageKey.includes("/");
+  const resolvedSrc = article.imageSrc ?? (typeof article.imageKey === "string" && article.imageKey.includes("/") ? resolveAssetSrc(article.imageKey) : undefined);
+  const resolvedKey = resolvedSrc ? undefined : article.imageKey;
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
-      {article.imageKey ? (
+      {(resolvedSrc || resolvedKey) ? (
         <HairVisual
-          src={isRelativePath ? resolveAssetSrc(article.imageKey) : undefined}
-          imageKey={isRelativePath ? undefined : article.imageKey}
+          src={resolvedSrc}
+          imageKey={resolvedKey}
           alt={article.title}
           className="h-44 rounded-none"
         />
