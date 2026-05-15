@@ -45,6 +45,7 @@ export default function KnowledgePage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [allCategories, setAllCategories] = useState<string[]>(["Tất cả"]);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const isMountedRef = useRef(false);
 
   const fetchArticles = useCallback(async (cat: string, q: string, offset: number, append: boolean) => {
     if (!append) setLoading(true);
@@ -84,10 +85,13 @@ export default function KnowledgePage() {
     }
   }, []);
 
-  useEffect(() => { fetchArticles("Tất cả", "", 0, false); }, [fetchArticles]);
-
   useEffect(() => {
     clearTimeout(debounceRef.current);
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      fetchArticles("Tất cả", "", 0, false);
+      return;
+    }
     debounceRef.current = setTimeout(() => {
       setArticles([]);
       fetchArticles(activeCategory, query, 0, false);
