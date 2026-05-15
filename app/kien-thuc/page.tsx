@@ -47,6 +47,18 @@ export default function KnowledgePage() {
     return () => clearTimeout(timer);
   }, [query, activeCategory, fetchArticles]);
 
+  // Normalize DB row (snake_case) → ArticleCard props
+  const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao" };
+  function normalizeArticle(a: any) {
+    return {
+      ...a,
+      slug: a.slug ?? a.id,
+      imageKey: a.imageKey ?? a.image_key ?? undefined,
+      level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
+      minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
+    };
+  }
+
   const filtered = articles;
 
   return (
@@ -158,7 +170,7 @@ export default function KnowledgePage() {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {filtered.map((article, index) => (
-                    <ArticleCard key={`${article.slug ?? article.id}-${index}`} article={article} />
+                    <ArticleCard key={`${article.slug ?? article.id}-${index}`} article={normalizeArticle(article)} />
                   ))}
                 </div>
               )}

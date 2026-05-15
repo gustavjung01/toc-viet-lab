@@ -35,15 +35,15 @@ export default function CasePage() {
 
   const filtered = activeTag === ALL ? cases : cases.filter((c) => c.category === activeTag || c.tag === activeTag);
 
-  // Normalize DB row vs mock shape for CaseCard
+  // Normalize DB row (snake_case) → CaseCard props (camelCase)
   function normalizeCase(c: any) {
     return {
       ...c,
-      imageKeyBefore: c.imageKeyBefore ?? c.before_image_key,
-      imageKeyAfter: c.imageKeyAfter ?? c.after_image_key,
-      tag: c.tag ?? c.category,
-      condition: c.condition ?? c.description,
-      goal: c.goal ?? c.analysis,
+      imageKeyBefore: c.imageKeyBefore ?? c.before_image_key ?? undefined,
+      imageKeyAfter: c.imageKeyAfter ?? c.after_image_key ?? undefined,
+      tag: c.tag ?? c.category ?? "",
+      condition: c.condition ?? c.description ?? "",
+      goal: c.goal ?? c.formula ?? c.analysis ?? "",
       salon: c.salon ?? "Tóc Việt Lab",
       time: c.time ?? "",
     };
