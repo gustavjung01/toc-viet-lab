@@ -34,12 +34,13 @@ export function ArticleCard({ article }: { article: any }) {
           src={resolvedSrc}
           imageKey={resolvedKey}
           alt={article.title}
-          className="h-44 rounded-none"
+          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
+          className="rounded-none"
         />
       ) : (
-        <HairVisual className="h-44 rounded-none" gradient={article.visual} label={article.category} />
+        <HairVisual className="rounded-none" gradient={article.visual} label={article.category} aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video" />
       )}
-      <div className="p-5"><div className="mb-3 flex items-center justify-between gap-3"><span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{article.level}</span><span className="inline-flex items-center gap-1 text-xs font-semibold text-warmgray"><Clock size={14} /> {article.minutes} phút</span></div><h3 className="line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{article.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-warmgray">{article.excerpt}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm font-extrabold text-charcoal">Đọc chi tiết</span><BookmarkButton itemType="article" itemId={article.slug} /></div></div>
+      <div className="p-5"><div className="mb-3 flex items-center justify-between gap-3"><span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{article.level}</span><span className="inline-flex items-center gap-1 text-xs font-semibold text-warmgray"><Clock size={14} /> {article.minutes} phút</span></div><h3 className="line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{article.title}</h3><p className="mt-3 line-clamp-2 text-sm leading-6 text-warmgray">{article.excerpt}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm font-extrabold text-charcoal">Đọc chi tiết</span><BookmarkButton itemType="article" itemId={article.slug} /></div></div>
     </Link>
   );
 }
@@ -52,14 +53,16 @@ export function CaseCard({ item }: { item: any }) {
     <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       <div className="grid grid-cols-2 gap-1 p-2">
         <HairVisual
-          className="h-40 rounded-2xl"
+          className="rounded-2xl"
+          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
           src={beforePath ? resolveAssetSrc(item.imageKeyBefore) : undefined}
           imageKey={beforePath ? undefined : item.imageKeyBefore}
           alt={`${item.title} before`}
           label="Before"
         />
         <HairVisual
-          className="h-40 rounded-2xl"
+          className="rounded-2xl"
+          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
           src={afterPath ? resolveAssetSrc(item.imageKeyAfter) : undefined}
           imageKey={afterPath ? undefined : item.imageKeyAfter}
           alt={`${item.title} after`}

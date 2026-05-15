@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { assetUrl, type ImageAssetKey } from "@/lib/image-assets";
+import { toAssetUrl } from "@/lib/asset-url";
 
 export function HairVisual({
   className,
@@ -7,7 +8,8 @@ export function HairVisual({
   label,
   imageKey,
   src,
-  alt = "Tóc Việt Lab"
+  alt = "Tóc Việt Lab",
+  aspect,
 }: {
   className?: string;
   gradient?: string;
@@ -15,28 +17,27 @@ export function HairVisual({
   imageKey?: ImageAssetKey | string;
   src?: string;
   alt?: string;
+  aspect?: string;
 }) {
-  // If imageKey is a direct path (e.g. "images/cases/before-..."), build URL from base
-  // Otherwise, look up in the imageAssets map
-  let finalSrc = src;
-  if (!finalSrc && imageKey) {
-    if (typeof imageKey === "string" && imageKey.includes("/")) {
-      const base = process.env.NEXT_PUBLIC_ASSET_BASE_URL || "";
-      finalSrc = `${base}/${imageKey.replace(/^\//, "")}`;
-    } else {
-      finalSrc = assetUrl(imageKey as ImageAssetKey);
-    }
-  }
+  const resolved = src
+    ? toAssetUrl(src)
+    : imageKey
+      ? (typeof imageKey === "string" && imageKey.includes("/")
+        ? toAssetUrl(imageKey)
+        : assetUrl(imageKey as ImageAssetKey))
+      : undefined;
 
   return (
-    <div className={clsx("relative overflow-hidden rounded-3xl", className)}>
-      {finalSrc ? (
+    <div className={clsx("relative overflow-hidden", aspect || "aspect-[4/3] sm:aspect-video", className)}>
+      {resolved ? (
         <>
           <img
-            src={finalSrc}
+            src={resolved}
             alt={alt}
             className="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/10" />
@@ -50,7 +51,7 @@ export function HairVisual({
       )}
 
       {label && (
-        <div className="absolute left-4 top-4 rounded-full bg-black/45 px-3 py-1 text-xs font-bold text-champagne backdrop-blur">
+        <div className="absolute left-4 top-4 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
           {label}
         </div>
       )}

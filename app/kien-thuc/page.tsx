@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
+import FilterSheetClient from "./FilterSheetClient";
 import { articles as mockArticles, categories } from "@/lib/data";
 import { Loader2, Search } from "lucide-react";
 
@@ -100,6 +101,8 @@ export default function KnowledgePage() {
   }, [query, activeCategory, fetchArticles]);
 
   const handleCategoryChange = (cat: string) => {
+    setArticles([]);
+    setTotal(0);
     setActiveCategory(cat);
   };
 
@@ -114,7 +117,7 @@ export default function KnowledgePage() {
       <Header />
       <main className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <section className="rounded-[2rem] bg-radial-gold p-7 text-white shadow-soft lg:p-10">
+          <section className="rounded-[2rem] bg-radial-gold p-5 sm:p-7 text-white shadow-soft lg:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_.75fr]">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">KHO TRI THỨC NGÀNH TÓC</p>
@@ -149,7 +152,12 @@ export default function KnowledgePage() {
 
           <section className="mt-10">
             <SectionHeader title="Chủ đề phổ biến" />
-            <div className="mb-6 flex flex-wrap gap-2">
+            <FilterSheetClient
+              categories={allCategories}
+              activeCategory={activeCategory}
+              onApply={(cat) => handleCategoryChange(cat)}
+            />
+            <div className="mb-6 hidden flex-wrap gap-2 sm:flex">
               {allCategories.map((cat) => (
                 <button
                   key={cat}
@@ -172,7 +180,7 @@ export default function KnowledgePage() {
           </section>
 
           <section className="mt-12 grid gap-8 lg:grid-cols-[280px_1fr]">
-            <aside className="h-fit rounded-3xl bg-white p-6 shadow-soft">
+            <aside className="hidden md:block h-fit rounded-3xl bg-white p-5 shadow-soft">
               <h3 className="font-extrabold text-charcoal">Bộ lọc</h3>
               {[
                 "Danh mục",

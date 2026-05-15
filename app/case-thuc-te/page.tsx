@@ -122,7 +122,7 @@ export default function CasePage() {
               ))}
             </div>
           </section>
-          <section className="mt-10 rounded-[2rem] bg-charcoal p-6 text-white shadow-soft lg:p-8">
+          <section className="mt-10 rounded-[2rem] bg-charcoal p-5 sm:p-6 text-white shadow-soft lg:p-8">
             <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
               <div className="grid grid-cols-2 gap-2">
                 <HairVisual className="h-80" imageKey={cases[0] ? (cases[0].before_image_key ?? cases[0].imageKeyBefore) : undefined} alt="Before" label="Before" />
@@ -164,7 +164,7 @@ export default function CasePage() {
               </div>
             ) : (
               <>
-                <div className="grid gap-6 lg:grid-cols-3">
+                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {cases.map((item, index) => (
                     <CaseCard key={`${item.id ?? item.title}-${index}`} item={normalizeCase(item)} />
                   ))}
