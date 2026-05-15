@@ -3,6 +3,14 @@ import { ArrowRight, Bookmark, Clock } from "lucide-react";
 import { HairVisual } from "./visual";
 import { BookmarkButton } from "./bookmark-button";
 
+const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
+function resolveAssetSrc(path?: string) {
+  if (!path) return undefined;
+  if (/^https?:\/\//.test(path)) return path;
+  const clean = path.replace(/^\//, "");
+  return ASSET_BASE ? `${ASSET_BASE}/${clean}` : `/${clean}`;
+}
+
 export function SectionHeader({ eyebrow, title, desc, href }: { eyebrow?: string; title: string; desc?: string; href?: string }) {
   return (
     <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -17,10 +25,16 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 }
 
 export function ArticleCard({ article }: { article: any }) {
+  const isRelativePath = typeof article.imageKey === "string" && article.imageKey.includes("/");
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       {article.imageKey ? (
-        <HairVisual imageKey={article.imageKey} alt={article.title} className="h-44 rounded-none" />
+        <HairVisual
+          src={isRelativePath ? resolveAssetSrc(article.imageKey) : undefined}
+          imageKey={isRelativePath ? undefined : article.imageKey}
+          alt={article.title}
+          className="h-44 rounded-none"
+        />
       ) : (
         <HairVisual className="h-44 rounded-none" gradient={article.visual} label={article.category} />
       )}
@@ -30,11 +44,26 @@ export function ArticleCard({ article }: { article: any }) {
 }
 
 export function CaseCard({ item }: { item: any }) {
+  const beforePath = typeof item.imageKeyBefore === "string" && item.imageKeyBefore.includes("/");
+  const afterPath = typeof item.imageKeyAfter === "string" && item.imageKeyAfter.includes("/");
+
   return (
     <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       <div className="grid grid-cols-2 gap-1 p-2">
-        <HairVisual className="h-40 rounded-2xl" imageKey={item.imageKeyBefore} alt={`${item.title} before`} label="Before" />
-        <HairVisual className="h-40 rounded-2xl" imageKey={item.imageKeyAfter} alt={`${item.title} after`} label="After" />
+        <HairVisual
+          className="h-40 rounded-2xl"
+          src={beforePath ? resolveAssetSrc(item.imageKeyBefore) : undefined}
+          imageKey={beforePath ? undefined : item.imageKeyBefore}
+          alt={`${item.title} before`}
+          label="Before"
+        />
+        <HairVisual
+          className="h-40 rounded-2xl"
+          src={afterPath ? resolveAssetSrc(item.imageKeyAfter) : undefined}
+          imageKey={afterPath ? undefined : item.imageKeyAfter}
+          alt={`${item.title} after`}
+          label="After"
+        />
       </div>
       <div className="p-5">
         <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span>

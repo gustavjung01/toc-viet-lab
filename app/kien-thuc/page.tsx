@@ -4,9 +4,21 @@ import { useState, useEffect, useCallback } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
-import { HairVisual } from "@/components/visual";
 import { articles as mockArticles, categories } from "@/lib/data";
 import { Loader2, Search } from "lucide-react";
+
+const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
+
+function resolveAssetSrc(path?: string) {
+  if (!path) return undefined;
+  if (/^https?:\/\//.test(path)) return path;
+  const clean = path.replace(/^\//, "");
+  return ASSET_BASE ? `${ASSET_BASE}/${clean}` : `/${clean}`;
+}
+
+function isRelativeAssetPath(path?: string) {
+  return typeof path === "string" && path.includes("/");
+}
 
 export default function KnowledgePage() {
   const [query, setQuery] = useState("");
@@ -50,10 +62,12 @@ export default function KnowledgePage() {
   // Normalize DB row (snake_case) → ArticleCard props
   const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao" };
   function normalizeArticle(a: any) {
+    const rawImageKey = a.imageKey ?? a.image_key ?? undefined;
     return {
       ...a,
       slug: a.slug ?? a.id,
-      imageKey: a.imageKey ?? a.image_key ?? undefined,
+      imageKey: isRelativeAssetPath(rawImageKey) ? undefined : rawImageKey,
+      imageSrc: isRelativeAssetPath(rawImageKey) ? resolveAssetSrc(rawImageKey) : undefined,
       level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
       minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
     };

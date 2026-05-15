@@ -4,11 +4,22 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CaseCard, SectionHeader } from "@/components/cards";
-import { HairVisual } from "@/components/visual";
 import { cases as mockCases } from "@/lib/data";
 import { Loader2 } from "lucide-react";
 
 const ALL = "Tất cả loại case";
+const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
+
+function resolveAssetSrc(path?: string) {
+  if (!path) return undefined;
+  if (/^https?:\/\//.test(path)) return path;
+  const clean = path.replace(/^\//, "");
+  return ASSET_BASE ? `${ASSET_BASE}/${clean}` : `/${clean}`;
+}
+
+function isRelativeAssetPath(path?: string) {
+  return typeof path === "string" && path.includes("/");
+}
 
 export default function CasePage() {
   const [activeTag, setActiveTag] = useState(ALL);
@@ -37,10 +48,14 @@ export default function CasePage() {
 
   // Normalize DB row (snake_case) → CaseCard props (camelCase)
   function normalizeCase(c: any) {
+    const rawBefore = c.imageKeyBefore ?? c.before_image_key ?? undefined;
+    const rawAfter = c.imageKeyAfter ?? c.after_image_key ?? undefined;
     return {
       ...c,
-      imageKeyBefore: c.imageKeyBefore ?? c.before_image_key ?? undefined,
-      imageKeyAfter: c.imageKeyAfter ?? c.after_image_key ?? undefined,
+      imageKeyBefore: isRelativeAssetPath(rawBefore) ? undefined : rawBefore,
+      imageSrcBefore: isRelativeAssetPath(rawBefore) ? resolveAssetSrc(rawBefore) : undefined,
+      imageKeyAfter: isRelativeAssetPath(rawAfter) ? undefined : rawAfter,
+      imageSrcAfter: isRelativeAssetPath(rawAfter) ? resolveAssetSrc(rawAfter) : undefined,
       tag: c.tag ?? c.category ?? "",
       condition: c.condition ?? c.description ?? "",
       goal: c.goal ?? c.formula ?? c.analysis ?? "",
