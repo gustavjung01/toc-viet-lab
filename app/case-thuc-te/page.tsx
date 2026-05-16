@@ -125,8 +125,27 @@ export default function CasePage() {
           <section className="mt-10 rounded-[2rem] bg-charcoal p-5 sm:p-6 text-white shadow-soft lg:p-8">
             <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
               <div className="grid grid-cols-2 gap-2">
-                <HairVisual className="h-80" imageKey={cases[0] ? (cases[0].before_image_key ?? cases[0].imageKeyBefore) : undefined} alt="Before" label="Before" />
-                <HairVisual className="h-80" imageKey={cases[0] ? (cases[0].after_image_key ?? cases[0].imageKeyAfter) : undefined} alt="After" label="After" />
+                {(() => {
+                  const feat = cases[0] ? normalizeCase(cases[0]) : null;
+                  return (
+                    <>
+                      <HairVisual
+                        src={feat?.imageSrcBefore}
+                        imageKey={feat?.imageKeyBefore}
+                        aspect="aspect-[4/3] sm:aspect-video"
+                        alt={feat ? `${feat.title} before` : "Before"}
+                        label="Before"
+                      />
+                      <HairVisual
+                        src={feat?.imageSrcAfter}
+                        imageKey={feat?.imageKeyAfter}
+                        aspect="aspect-[4/3] sm:aspect-video"
+                        alt={feat ? `${feat.title} after` : "After"}
+                        label="After"
+                      />
+                    </>
+                  );
+                })()}
               </div>
               <div className="flex flex-col justify-center">
                 <span className="w-fit rounded-full bg-champagne px-4 py-2 text-xs font-extrabold text-charcoal">Case nổi bật</span>

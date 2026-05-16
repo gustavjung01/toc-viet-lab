@@ -2,14 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Bookmark, Clock } from "lucide-react";
 import { HairVisual } from "./visual";
 import { BookmarkButton } from "./bookmark-button";
-
-const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
-function resolveAssetSrc(path?: string) {
-  if (!path) return undefined;
-  if (/^https?:\/\//.test(path)) return path;
-  const clean = path.replace(/^\//, "");
-  return ASSET_BASE ? `${ASSET_BASE}/${clean}` : `/${clean}`;
-}
+import { toAssetUrl } from "@/lib/asset-url";
 
 export function SectionHeader({ eyebrow, title, desc, href }: { eyebrow?: string; title: string; desc?: string; href?: string }) {
   return (
@@ -25,20 +18,18 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 }
 
 export function ArticleCard({ article }: { article: any }) {
-  const resolvedSrc = article.imageSrc ?? (typeof article.imageKey === "string" && article.imageKey.includes("/") ? resolveAssetSrc(article.imageKey) : undefined);
-  const resolvedKey = resolvedSrc ? undefined : article.imageKey;
+  const imgSrc = toAssetUrl(article.src ?? article.imageKey);
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
-      {(resolvedSrc || resolvedKey) ? (
+      {imgSrc ? (
         <HairVisual
-          src={resolvedSrc}
-          imageKey={resolvedKey}
+          src={imgSrc}
           alt={article.title}
-          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
+          aspect="aspect-[4/3] sm:aspect-video"
           className="rounded-none"
         />
       ) : (
-        <HairVisual className="rounded-none" gradient={article.visual} label={article.category} aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video" />
+        <HairVisual className="rounded-none" gradient={article.visual} label={article.category} aspect="aspect-[4/3] sm:aspect-video" />
       )}
       <div className="p-5"><div className="mb-3 flex items-center justify-between gap-3"><span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{article.level}</span><span className="inline-flex items-center gap-1 text-xs font-semibold text-warmgray"><Clock size={14} /> {article.minutes} phút</span></div><h3 className="line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{article.title}</h3><p className="mt-3 line-clamp-2 text-sm leading-6 text-warmgray">{article.excerpt}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm font-extrabold text-charcoal">Đọc chi tiết</span><BookmarkButton itemType="article" itemId={article.slug} /></div></div>
     </Link>
@@ -46,25 +37,23 @@ export function ArticleCard({ article }: { article: any }) {
 }
 
 export function CaseCard({ item }: { item: any }) {
-  const beforePath = typeof item.imageKeyBefore === "string" && item.imageKeyBefore.includes("/");
-  const afterPath = typeof item.imageKeyAfter === "string" && item.imageKeyAfter.includes("/");
+  const beforeSrc = item.imageSrcBefore ?? toAssetUrl(item.imageKeyBefore);
+  const afterSrc = item.imageSrcAfter ?? toAssetUrl(item.imageKeyAfter);
 
   return (
     <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       <div className="grid grid-cols-2 gap-1 p-2">
         <HairVisual
           className="rounded-2xl"
-          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
-          src={beforePath ? resolveAssetSrc(item.imageKeyBefore) : undefined}
-          imageKey={beforePath ? undefined : item.imageKeyBefore}
+          aspect="aspect-[4/3] sm:aspect-video"
+          src={beforeSrc}
           alt={`${item.title} before`}
           label="Before"
         />
         <HairVisual
           className="rounded-2xl"
-          aspect="aspect-[4/3] sm:aspect-[4/3] md:aspect-video"
-          src={afterPath ? resolveAssetSrc(item.imageKeyAfter) : undefined}
-          imageKey={afterPath ? undefined : item.imageKeyAfter}
+          aspect="aspect-[4/3] sm:aspect-video"
+          src={afterSrc}
           alt={`${item.title} after`}
           label="After"
         />

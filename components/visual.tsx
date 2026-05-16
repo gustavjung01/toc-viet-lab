@@ -9,7 +9,7 @@ export function HairVisual({
   imageKey,
   src,
   alt = "Tóc Việt Lab",
-  aspect,
+  aspect = "aspect-[4/3] sm:aspect-video",
 }: {
   className?: string;
   gradient?: string;
