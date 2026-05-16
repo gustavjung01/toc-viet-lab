@@ -16,3 +16,7 @@ export function toAssetUrl(path?: string | null): string | undefined {
     ? `${ASSET_BASE_URL}/${cleanPath}`
     : `/${cleanPath}`;
 }
+
+export function isRelativeAssetPath(value?: string | null) {
+  return !!value && (value.includes("/") || /\.(png|jpg|jpeg|webp|avif)$/i.test(value));
+}

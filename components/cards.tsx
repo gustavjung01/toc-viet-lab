@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Bookmark, Clock } from "lucide-react";
 import { HairVisual } from "./visual";
 import { BookmarkButton } from "./bookmark-button";
-import { toAssetUrl } from "@/lib/asset-url";
+import { toAssetUrl, isRelativeAssetPath } from "@/lib/asset-url";
 import { getCaseEditorialStatus } from "@/lib/case-editorial";
 
 export function SectionHeader({ eyebrow, title, desc, href }: { eyebrow?: string; title: string; desc?: string; href?: string }) {
@@ -19,19 +19,20 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 }
 
 export function ArticleCard({ article }: { article: any }) {
-  const imgSrc = article.imageSrc ?? toAssetUrl(article.src ?? article.imageKey);
+  const rawImage = article.src ?? article.imageUrl ?? article.image_key ?? article.imageKey;
+  const imageSrc = isRelativeAssetPath(rawImage) ? toAssetUrl(rawImage) : (article.src ?? article.imageUrl);
+  const imageKey = !imageSrc ? rawImage : undefined;
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
-      {imgSrc ? (
-        <HairVisual
-          src={imgSrc}
-          alt={article.title}
-          aspect="aspect-[4/3] sm:aspect-video"
-          className="rounded-none"
-        />
-      ) : (
-        <HairVisual className="rounded-none" gradient={article.visual} label={article.category} aspect="aspect-[4/3] sm:aspect-video" />
-      )}
+      <HairVisual
+        src={imageSrc}
+        imageKey={imageKey}
+        alt={article.title}
+        aspect="aspect-[4/3] sm:aspect-video"
+        className="rounded-none"
+        gradient={imageSrc || imageKey ? undefined : article.visual}
+        label={imageSrc || imageKey ? undefined : article.category}
+      />
       <div className="p-5"><div className="mb-3 flex items-center justify-between gap-3"><span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{article.level}</span><span className="inline-flex items-center gap-1 text-xs font-semibold text-warmgray"><Clock size={14} /> {article.minutes} phút</span></div><h3 className="line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{article.title}</h3><p className="mt-3 line-clamp-2 text-sm leading-6 text-warmgray">{article.excerpt}</p><div className="mt-5 flex items-center justify-between"><span className="text-sm font-extrabold text-charcoal">Đọc chi tiết</span><BookmarkButton itemType="article" itemId={article.slug} /></div></div>
     </Link>
   );

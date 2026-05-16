@@ -7,6 +7,7 @@ import { HairVisual } from "@/components/visual";
 import { toAssetUrl } from "@/lib/asset-url";
 import { BookmarkButton } from "@/components/bookmark-button";
 import type { Metadata } from "next";
+import { absoluteSiteUrl } from "@/lib/site-url";
 
 const DIFF_LABEL: Record<string, string> = {
   basic: "Cơ bản",
@@ -16,25 +17,11 @@ const DIFF_LABEL: Record<string, string> = {
 };
 
 async function fetchArticle(slug: string) {
-  const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const DB_ID = process.env.CLOUDFLARE_D1_DATABASE_ID;
-  const TOKEN = process.env.CLOUDFLARE_D1_TOKEN;
-  if (!ACCOUNT_ID || !DB_ID || !TOKEN) return null;
-
   try {
-    const res = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DB_ID}/query`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ sql: "SELECT * FROM articles WHERE slug = ? AND published = 1 LIMIT 1", params: [slug] }),
-        next: { revalidate: 300 },
-      }
-    );
+    const res = await fetch(absoluteSiteUrl(`/api/articles/${slug}`), { next: { revalidate: 300 } });
+    if (!res.ok) return null;
     const data = await res.json();
-    if (!data.success) return null;
-    const rows = data.result?.[0]?.results;
-    return rows?.[0] ?? null;
+    return data.article ?? null;
   } catch {
     return null;
   }
@@ -47,11 +34,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const imageUrl = toAssetUrl(article.image_key);
   return {
-    title: `${article.title} | Tóc Việt Lab`,
+    title: article.title,
     description: article.excerpt ?? "",
+    alternates: { canonical: absoluteSiteUrl(`/kien-thuc/${slug}`) },
     openGraph: {
       title: article.title,
       description: article.excerpt ?? "",
+      url: absoluteSiteUrl(`/kien-thuc/${slug}`),
       ...(imageUrl ? { images: [{ url: imageUrl }] } : {}),
     },
   };
@@ -115,7 +104,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
   const imageUrl = toAssetUrl(article.image_key);
   const level = DIFF_LABEL[article.difficulty] ?? article.difficulty ?? "Cơ bản";
-  const readTime = article.read_time ?? 5;
+  const readTime = article.read_time ?? article.readTime ?? article.minutes ?? 5;
   const tags: string[] = (() => {
     try { return JSON.parse(article.tags || "[]"); } catch { return []; }
   })();

@@ -4,10 +4,10 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category");
   const q = searchParams.get("q");
-  const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "12", 10), 1), 50);
+  const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "50", 10), 1), 50);
   const offset = Math.max(parseInt(searchParams.get("offset") || "0", 10), 0);
 
-  let sql = "SELECT * FROM articles WHERE published = 1";
+  let sql = "SELECT slug, title, excerpt, content, category, difficulty, read_time, image_key, tags, published, created_at FROM articles WHERE published = 1";
   let countSql = "SELECT COUNT(*) as total FROM articles WHERE published = 1";
   const params: string[] = [];
   const countParams: string[] = [];

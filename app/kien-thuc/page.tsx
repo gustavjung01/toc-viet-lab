@@ -7,26 +7,24 @@ import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
 import FilterSheetClient from "./FilterSheetClient";
 import { articles as mockArticles, categories } from "@/lib/data";
-import { toAssetUrl } from "@/lib/asset-url";
+import { toAssetUrl, isRelativeAssetPath } from "@/lib/asset-url";
 import { Loader2, Search } from "lucide-react";
 
-const PAGE_SIZE = 12;
-
-function isRelativeAssetPath(path?: string) {
-  return typeof path === "string" && path.includes("/");
-}
+const PAGE_SIZE = 50;
 
 const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Trung cấp", advanced: "Nâng cao", "high-risk": "Rủi ro cao" };
 
 function normalizeArticle(a: any) {
-  const rawImageKey = a.imageKey ?? a.image_key ?? undefined;
+  const rawImage = a.src ?? a.imageUrl ?? a.image_key ?? a.imageKey ?? undefined;
+  const imageSrc = isRelativeAssetPath(rawImage) ? toAssetUrl(rawImage) : (a.src ?? a.imageUrl);
   return {
     ...a,
-    slug: a.slug ?? a.id,
-    imageKey: isRelativeAssetPath(rawImageKey) ? undefined : rawImageKey,
-    imageSrc: isRelativeAssetPath(rawImageKey) ? toAssetUrl(rawImageKey) : undefined,
+    slug: a.slug,
+    src: imageSrc,
+    imageUrl: imageSrc,
+    imageKey: imageSrc ? undefined : (a.imageKey ?? undefined),
     level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
-    minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
+    minutes: a.read_time ?? a.readTime ?? a.minutes ?? 5,
   };
 }
 
