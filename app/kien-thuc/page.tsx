@@ -7,17 +7,10 @@ import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
 import FilterSheetClient from "./FilterSheetClient";
 import { articles as mockArticles, categories } from "@/lib/data";
+import { toAssetUrl } from "@/lib/asset-url";
 import { Loader2, Search } from "lucide-react";
 
 const PAGE_SIZE = 12;
-const ASSET_BASE = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
-
-function resolveAssetSrc(path?: string) {
-  if (!path) return undefined;
-  if (/^https?:\/\//.test(path)) return path;
-  const clean = path.replace(/^\//, "");
-  return ASSET_BASE ? `${ASSET_BASE}/${clean}` : `/${clean}`;
-}
 
 function isRelativeAssetPath(path?: string) {
   return typeof path === "string" && path.includes("/");
@@ -31,7 +24,7 @@ function normalizeArticle(a: any) {
     ...a,
     slug: a.slug ?? a.id,
     imageKey: isRelativeAssetPath(rawImageKey) ? undefined : rawImageKey,
-    imageSrc: isRelativeAssetPath(rawImageKey) ? resolveAssetSrc(rawImageKey) : undefined,
+    imageSrc: isRelativeAssetPath(rawImageKey) ? toAssetUrl(rawImageKey) : undefined,
     level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
     minutes: a.minutes ?? a.read_time ?? a.readTime ?? 5,
   };

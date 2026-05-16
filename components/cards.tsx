@@ -18,7 +18,7 @@ export function CategoryCard({ title, count, icon: Icon }: { title: string; coun
 }
 
 export function ArticleCard({ article }: { article: any }) {
-  const imgSrc = toAssetUrl(article.src ?? article.imageKey);
+  const imgSrc = article.imageSrc ?? toAssetUrl(article.src ?? article.imageKey);
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       {imgSrc ? (
