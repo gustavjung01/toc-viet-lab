@@ -7,7 +7,9 @@ import { CaseCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
 import { cases as mockCases } from "@/lib/data";
 import { toAssetUrl } from "@/lib/asset-url";
+import { getCaseEditorialStatus } from "@/lib/case-editorial";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 const ALL = "Tất cả loại case";
 const PAGE_SIZE = 12;
@@ -139,12 +141,32 @@ export default function CasePage() {
                 })()}
               </div>
               <div className="flex flex-col justify-center">
-                <span className="w-fit rounded-full bg-champagne px-4 py-2 text-xs font-extrabold text-charcoal">Case nổi bật</span>
-                <h2 className="mt-5 text-3xl font-black md:text-4xl">{cases[0]?.title ?? "Từ nền đen tự nhiên sang Beige Ash ánh khói sang trọng"}</h2>
-                <p className="mt-5 line-clamp-3 leading-8 text-white/65">{cases[0]?.description ?? "Tóc đen tự nhiên, sợi to, đã nhuộm màu tối 2 lần. Mục tiêu là nâng lên level 8–9 nhưng vẫn giữ độ bóng và mềm mượt."}</p>
+                {(() => {
+                  const feat = cases[0] ? normalizeCase(cases[0]) : null;
+                  const editorial = getCaseEditorialStatus(feat ?? {});
+                  return (
+                    <>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="w-fit rounded-full bg-champagne px-4 py-2 text-xs font-extrabold text-charcoal">Case nổi bật</span>
+                        <span className={`rounded-full px-4 py-2 text-xs font-extrabold ${editorial.className}`}>{editorial.label}</span>
+                      </div>
+                      <h2 className="mt-5 text-3xl font-black md:text-4xl">{feat?.title ?? "Từ nền đen tự nhiên sang Beige Ash ánh khói sang trọng"}</h2>
+                      <p className="mt-5 line-clamp-3 leading-8 text-white/65">{feat?.description ?? "Tóc đen tự nhiên, sợi to, đã nhuộm màu tối 2 lần. Mục tiêu là nâng lên level 8–9 nhưng vẫn giữ độ bóng và mềm mượt."}</p>
+                    </>
+                  );
+                })()}
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <button className="rounded-full bg-champagne px-6 py-3 font-extrabold text-charcoal">Xem phân tích case</button>
-                  <button className="rounded-full border border-gold/30 bg-black/30 px-6 py-3 font-extrabold text-gold hover:text-[#F0C76A]">Xem hướng xử lý</button>
+                  {cases[0]?.id ? (
+                    <>
+                      <Link href={`/case-thuc-te/${cases[0].id}`} className="rounded-full bg-champagne px-6 py-3 font-extrabold text-charcoal">Xem phân tích case</Link>
+                      <Link href={`/case-thuc-te/${cases[0].id}`} className="rounded-full border border-gold/30 bg-black/30 px-6 py-3 font-extrabold text-gold hover:text-[#F0C76A]">Xem hướng xử lý</Link>
+                    </>
+                  ) : (
+                    <>
+                      <button className="rounded-full bg-champagne px-6 py-3 font-extrabold text-charcoal">Xem phân tích case</button>
+                      <button className="rounded-full border border-gold/30 bg-black/30 px-6 py-3 font-extrabold text-gold hover:text-[#F0C76A]">Xem hướng xử lý</button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

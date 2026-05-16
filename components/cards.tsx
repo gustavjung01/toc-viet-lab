@@ -3,6 +3,7 @@ import { ArrowRight, Bookmark, Clock } from "lucide-react";
 import { HairVisual } from "./visual";
 import { BookmarkButton } from "./bookmark-button";
 import { toAssetUrl } from "@/lib/asset-url";
+import { getCaseEditorialStatus } from "@/lib/case-editorial";
 
 export function SectionHeader({ eyebrow, title, desc, href }: { eyebrow?: string; title: string; desc?: string; href?: string }) {
   return (
@@ -39,6 +40,8 @@ export function ArticleCard({ article }: { article: any }) {
 export function CaseCard({ item }: { item: any }) {
   const beforeSrc = item.imageSrcBefore ?? toAssetUrl(item.imageKeyBefore);
   const afterSrc = item.imageSrcAfter ?? toAssetUrl(item.imageKeyAfter);
+  const editorial = getCaseEditorialStatus(item);
+  const detailHref = item.id ? `/case-thuc-te/${item.id}` : undefined;
 
   return (
     <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
@@ -59,7 +62,10 @@ export function CaseCard({ item }: { item: any }) {
         />
       </div>
       <div className="p-5">
-        <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.tag}</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${editorial.className}`}>{editorial.label}</span>
+        </div>
         <h3 className="mt-4 text-lg font-extrabold leading-snug text-charcoal">{item.title}</h3>
         <p className="mt-3 line-clamp-2 text-sm leading-6 text-warmgray"><b>Tình trạng:</b> {item.condition}</p>
         <p className="mt-1 line-clamp-2 text-sm leading-6 text-warmgray"><b>Mục tiêu:</b> {item.goal}</p>
@@ -67,9 +73,14 @@ export function CaseCard({ item }: { item: any }) {
           <span className="font-bold text-charcoal">{item.salon}</span>
           <div className="flex items-center gap-3">
             <span className="text-warmgray">{item.time}</span>
-            <BookmarkButton itemType="case" itemId={item.title} />
+            <BookmarkButton itemType="case" itemId={item.id ?? item.title} />
           </div>
         </div>
+        {detailHref && (
+          <Link href={detailHref} className="mt-4 inline-flex items-center gap-2 text-sm font-extrabold text-charcoal">
+            Xem chi tiết <ArrowRight size={16} />
+          </Link>
+        )}
       </div>
     </div>
   );
