@@ -1,4 +1,5 @@
-const ASSET_BASE_URL = process.env.NEXT_PUBLIC_ASSET_BASE_URL?.replace(/\/$/, "");
+const DEFAULT_BASE = "https://cdn.tocvietlab.studio";
+const ASSET_BASE_URL = (process.env.NEXT_PUBLIC_ASSET_BASE_URL || DEFAULT_BASE)?.replace(/\/$/, "");
 
 export function toAssetUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
