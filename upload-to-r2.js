@@ -10,6 +10,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const STAGING_DIR = 'temp-cases-staging';
+const R2_BUCKET = 'toc-viet-lab';
 const R2_PREFIX = 'images/cases';
 
 async function main() {
@@ -44,7 +45,7 @@ async function main() {
       process.stdout.write(`[${i + 1}/${files.length}] Uploading ${file}... `);
       
       // Use wrangler r2 object put command (--remote for production R2)
-      execSync(`wrangler r2 object put "${r2Key}" --file="${filePath}" --remote`, {
+      execSync(`wrangler r2 object put "${R2_BUCKET}/${r2Key}" --file="${filePath}" --remote`, {
         stdio: 'pipe',
         encoding: 'utf-8'
       });
