@@ -1,71 +1,72 @@
 /**
- * seed-30-cases.mjs
- * Seed 30 case kỹ thuật tóc vào bảng cases trong Cloudflare D1.
+ * reseed-cases-clean.mjs
+ * Xóa TOÀN BỘ cases rồi seed lại 30 case chuẩn với ID ổn định (slug).
+ * Dùng khi DB bị corrupt hoặc cần reset về trạng thái chuẩn.
  *
- * IDEMPOTENT: Script này an toàn để chạy lại nhiều lần.
- *   - Mỗi case dùng slug cố định làm primary key (id), ví dụ: "tvl-color-001".
- *   - INSERT OR REPLACE đảm bảo chạy lại sẽ CẬP NHẬT record cũ thay vì tạo duplicate.
+ * Run: node scripts/reseed-cases-clean.mjs
+ * Bỏ qua confirm: node scripts/reseed-cases-clean.mjs --yes
  *
- * Dataset hiện tại: đúng 30 case (xem mảng CASES bên dưới).
- *   - Để thêm case mới, bổ sung object vào mảng CASES với slug duy nhất.
- *   - Slug phải là duy nhất trong toàn bộ bảng; dùng định dạng: tvl-{loại}-{số}.
- *
- * Run: node scripts/seed-30-cases.mjs
- * Requires: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, CLOUDFLARE_D1_TOKEN trong .env.local
+ * ⚠️  CẢNH BÁO: Sẽ xóa TẤT CẢ records trong bảng cases (kể cả data thật).
  */
 
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, createInterface } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const envPath = resolve(__dirname, "../.env.local");
+const SKIP_CONFIRM = process.argv.includes("--yes");
 
-// Parse .env.local
-const env = {};
-try {
-  const raw = readFileSync(envPath, "utf-8");
-  for (const line of raw.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const idx = trimmed.indexOf("=");
-    if (idx === -1) continue;
-    env[trimmed.slice(0, idx).trim()] = trimmed.slice(idx + 1).trim();
+function loadEnv() {
+  const p = resolve(__dirname, "../.env.local");
+  const env = {};
+  if (existsSync(p)) {
+    for (const line of readFileSync(p, "utf8").split(/\r?\n/)) {
+      const t = line.trim();
+      if (!t || t.startsWith("#")) continue;
+      const i = t.indexOf("=");
+      if (i === -1) continue;
+      env[t.slice(0, i).trim()] = t.slice(i + 1).trim();
+    }
   }
-} catch {
-  console.error("❌ Không đọc được .env.local");
+  return env;
+}
+
+const local = loadEnv();
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || local.CLOUDFLARE_ACCOUNT_ID;
+const DATABASE_ID = process.env.CLOUDFLARE_D1_DATABASE_ID || local.CLOUDFLARE_D1_DATABASE_ID;
+const TOKEN = process.env.CLOUDFLARE_D1_TOKEN || local.CLOUDFLARE_D1_TOKEN;
+
+if (!ACCOUNT_ID || !DATABASE_ID || !TOKEN) {
+  console.error("❌ Thiếu CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_D1_DATABASE_ID / CLOUDFLARE_D1_TOKEN");
   process.exit(1);
 }
 
-const ACCOUNT_ID = env.CLOUDFLARE_ACCOUNT_ID;
-const DB_ID = env.CLOUDFLARE_D1_DATABASE_ID;
-const TOKEN = env.CLOUDFLARE_D1_TOKEN;
-
-if (!ACCOUNT_ID || !DB_ID || !TOKEN) {
-  console.error("❌ Thiếu CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID hoặc CLOUDFLARE_D1_TOKEN trong .env.local");
-  process.exit(1);
-}
+const API_URL = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DATABASE_ID}/query`;
 
 async function d1(sql, params = []) {
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DB_ID}/query`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sql, params }),
-    }
-  );
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ sql, params }),
+  });
   const data = await res.json();
   if (!data.success) throw new Error(JSON.stringify(data.errors));
   return data.result[0];
 }
 
-// ─── Case data ───────────────────────────────────────────────────────────────
-// 30 case kỹ thuật tóc, mỗi case có slug cố định làm ID.
-// Thêm case mới: bổ sung object vào cuối mảng với slug duy nhất.
+// ─── Confirmation prompt ──────────────────────────────────────────────────────
+async function confirm(question) {
+  if (SKIP_CONFIRM) return true;
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase() === "yes");
+    });
+  });
+}
+
+// ─── Case data (stable slug IDs, mirrors seed-30-cases.mjs) ──────────────────
 const CASES = [
   {
     slug: "tvl-color-001", title: "Nâu lạnh cho nền đen Việt Nam không bị đỏ cam",
@@ -339,32 +340,48 @@ const CASES = [
   },
 ];
 
-async function main() {
-  console.log(`\n🌱 Seed ${CASES.length} cases vào D1...\n`);
+// ─── Main ─────────────────────────────────────────────────────────────────────
+console.log("\n⚠️  reseed-cases-clean.mjs");
+console.log("═══════════════════════════════════════════════════════════════");
+console.log("  Thao tác này sẽ:");
+console.log("  1. DELETE FROM cases  — xóa TẤT CẢ records (kể cả data thật)");
+console.log(`  2. INSERT OR REPLACE   — seed lại ${CASES.length} case chuẩn`);
+console.log("═══════════════════════════════════════════════════════════════\n");
 
-  let ok = 0, skip = 0;
-
-  for (const c of CASES) {
-    try {
-      // INSERT OR REPLACE: nếu id đã tồn tại → cập nhật, nếu chưa → thêm mới.
-      // c.slug được dùng làm cả id (primary key) lẫn tham chiếu ổn định.
-      await d1(
-        `INSERT OR REPLACE INTO cases (id, title, description, category, before_image_key, after_image_key, analysis, formula, published)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
-        [c.slug, c.title, c.description, c.category, c.before_image_key, c.after_image_key, c.analysis, c.formula]
-      );
-      console.log(`  ✅ ${c.slug}`);
-      ok++;
-    } catch (e) {
-      console.warn(`  ⚠️ ${c.slug} — ${e.message.slice(0, 100)}`);
-      skip++;
-    }
-  }
-
-  console.log(`\n✅ Xong! ${ok} inserted, ${skip} skipped.\n`);
+const ok = await confirm('Nhập "yes" để tiếp tục, hoặc Enter để hủy: ');
+if (!ok) {
+  console.log("❌ Đã hủy. Không thay đổi gì.\n");
+  process.exit(0);
 }
 
-main().catch((e) => {
-  console.error("❌ Lỗi:", e.message);
+// Step 1: Delete all
+console.log("\n🗑️  Xóa toàn bộ cases...");
+try {
+  const result = await d1("DELETE FROM cases");
+  console.log(`  ✅ Đã xóa. (changes: ${result?.meta?.changes ?? "n/a"})`);
+} catch (e) {
+  console.error(`  ❌ Lỗi DELETE: ${e.message}`);
   process.exit(1);
-});
+}
+
+// Step 2: Reseed
+console.log(`\n🌱 Seed lại ${CASES.length} case...\n`);
+let inserted = 0;
+let failed = 0;
+
+for (const c of CASES) {
+  try {
+    await d1(
+      `INSERT OR REPLACE INTO cases (id, title, description, category, before_image_key, after_image_key, analysis, formula, published)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      [c.slug, c.title, c.description, c.category, c.before_image_key, c.after_image_key, c.analysis, c.formula]
+    );
+    console.log(`  ✅ ${c.slug}`);
+    inserted++;
+  } catch (e) {
+    console.warn(`  ⚠️  ${c.slug} — ${e.message.slice(0, 100)}`);
+    failed++;
+  }
+}
+
+console.log(`\n✅ Xong! ${inserted} inserted, ${failed} failed.\n`);
