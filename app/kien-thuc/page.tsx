@@ -7,7 +7,7 @@ import { ArticleCard, CategoryCard, SectionHeader } from "@/components/cards";
 import { HairVisual } from "@/components/visual";
 import FilterSheetClient from "./FilterSheetClient";
 import { articles as mockArticles, categories } from "@/lib/data";
-import { toAssetUrl, isRelativeAssetPath } from "@/lib/asset-url";
+import { toAssetUrl } from "@/lib/asset-url";
 import { Loader2, Search } from "lucide-react";
 
 const PAGE_SIZE = 50;
@@ -16,13 +16,13 @@ const DIFF_MAP: Record<string, string> = { basic: "Cơ bản", intermediate: "Tr
 
 function normalizeArticle(a: any) {
   const rawImage = a.src ?? a.imageUrl ?? a.image_key ?? a.imageKey ?? undefined;
-  const imageSrc = isRelativeAssetPath(rawImage) ? toAssetUrl(rawImage) : (a.src ?? a.imageUrl);
+  const imageSrc = toAssetUrl(rawImage);
   return {
     ...a,
     slug: a.slug,
     src: imageSrc,
     imageUrl: imageSrc,
-    imageKey: imageSrc ? undefined : (a.imageKey ?? undefined),
+    imageKey: undefined,
     level: a.level ?? DIFF_MAP[a.difficulty] ?? a.difficulty ?? "Cơ bản",
     minutes: a.read_time ?? a.readTime ?? a.minutes ?? 5,
   };

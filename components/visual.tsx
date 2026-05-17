@@ -1,5 +1,4 @@
 import { clsx } from "clsx";
-import { assetUrl, type ImageAssetKey } from "@/lib/image-assets";
 import { toAssetUrl } from "@/lib/asset-url";
 
 export function HairVisual({
@@ -14,18 +13,12 @@ export function HairVisual({
   className?: string;
   gradient?: string;
   label?: string;
-  imageKey?: ImageAssetKey | string;
+  imageKey?: string;
   src?: string;
   alt?: string;
   aspect?: string;
 }) {
-  const resolved = src
-    ? toAssetUrl(src)
-    : imageKey
-      ? (typeof imageKey === "string" && imageKey.includes("/")
-        ? toAssetUrl(imageKey)
-        : assetUrl(imageKey as ImageAssetKey))
-      : undefined;
+  const resolved = toAssetUrl(src) ?? toAssetUrl(imageKey) ?? undefined;
 
   return (
     <div className={clsx("relative overflow-hidden", aspect || "aspect-[4/3] sm:aspect-video", className)}>

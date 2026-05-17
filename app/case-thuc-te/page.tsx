@@ -15,16 +15,14 @@ const ALL = "Tất cả loại case";
 const PAGE_SIZE = 12;
 
 function normalizeCase(c: any) {
-  const rawBefore = c.imageKeyBefore ?? c.before_image_key ?? undefined;
-  const rawAfter = c.imageKeyAfter ?? c.after_image_key ?? undefined;
-  const isBeforePath = typeof rawBefore === "string" && rawBefore.includes("/");
-  const isAfterPath = typeof rawAfter === "string" && rawAfter.includes("/");
+  const rawBefore = c.imageSrcBefore ?? c.imageKeyBefore ?? c.before_image_key ?? undefined;
+  const rawAfter = c.imageSrcAfter ?? c.imageKeyAfter ?? c.after_image_key ?? undefined;
   return {
     ...c,
-    imageKeyBefore: isBeforePath ? undefined : rawBefore,
-    imageSrcBefore: isBeforePath ? toAssetUrl(rawBefore) : undefined,
-    imageKeyAfter: isAfterPath ? undefined : rawAfter,
-    imageSrcAfter: isAfterPath ? toAssetUrl(rawAfter) : undefined,
+    imageKeyBefore: undefined,
+    imageSrcBefore: toAssetUrl(rawBefore),
+    imageKeyAfter: undefined,
+    imageSrcAfter: toAssetUrl(rawAfter),
     tag: c.tag ?? c.category ?? "",
     condition: c.condition ?? c.description ?? "",
     goal: c.goal ?? c.formula ?? c.analysis ?? "",

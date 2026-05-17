@@ -12,7 +12,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "upload:assets": "node scripts/upload-assets-to-r2.mjs",
-    "db:seed": "node scripts/seed-d1.mjs"
+    "db:seed": "node scripts/seed-d1.mjs",
+    "check:images": "node -e \"const {execSync}=require('child_process');try{execSync('npx rg -n --type-add tsx:*.tsx -t tsx \\\"imageKey=\\\"',{stdio:'inherit'})}catch{}\" && echo \"Run: grep -rn 'imageKey=' --include='*.tsx' to verify no raw imageKey props\""
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
