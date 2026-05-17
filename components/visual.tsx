@@ -24,7 +24,7 @@ export function HairVisual({
     : imageKey
       ? (typeof imageKey === "string" && imageKey.includes("/")
         ? toAssetUrl(imageKey)
-        : assetUrl(imageKey as ImageAssetKey))
+        : toAssetUrl(assetUrl(imageKey as ImageAssetKey)))
       : undefined;
 
   return (
