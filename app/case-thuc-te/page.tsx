@@ -123,18 +123,16 @@ export default function CasePage() {
                   return (
                     <>
                       <HairVisual
-                        src={feat?.imageSrcBefore}
-                        imageKey={feat?.imageKeyBefore}
-                        aspect="aspect-[4/3] sm:aspect-video"
+                        src={feat?.imageSrcBefore ?? toAssetUrl(feat?.imageKeyBefore)}
                         alt={feat ? `${feat.title} before` : "Before"}
                         label="Before"
+                        aspect="aspect-[4/3] sm:aspect-video"
                       />
                       <HairVisual
-                        src={feat?.imageSrcAfter}
-                        imageKey={feat?.imageKeyAfter}
-                        aspect="aspect-[4/3] sm:aspect-video"
+                        src={feat?.imageSrcAfter ?? toAssetUrl(feat?.imageKeyAfter)}
                         alt={feat ? `${feat.title} after` : "After"}
                         label="After"
+                        aspect="aspect-[4/3] sm:aspect-video"
                       />
                     </>
                   );

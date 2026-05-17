@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { HairVisual } from "@/components/visual";
+import { toAssetUrl } from "@/lib/asset-url";
 import { assetUrl, type ImageAssetKey } from "@/lib/image-assets";
 import { BrainCircuit, FlaskConical, PenLine, BookOpen, Camera, Layers, CheckCircle, AlertTriangle, ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
 
@@ -112,9 +113,10 @@ export default function AIToolsPage() {
 
               <div className="relative">
                 <HairVisual
-                  className="min-h-[320px] md:min-h-[520px] w-full rounded-[2rem] border border-gold/30 shadow-2xl"
-                  imageKey="ai-tu-van-mau"
+                  className="w-full rounded-[2rem] border border-gold/30 shadow-2xl"
+                  src={toAssetUrl("ai-tu-van-mau")}
                   alt="AI tư vấn màu tóc"
+                  aspect="aspect-[4/3] sm:aspect-video"
                 />
                 <div className="absolute left-5 top-5 rounded-[1.75rem] border border-gold/20 bg-black/85 p-5 text-sm text-cream-card shadow-2xl backdrop-blur">
                   <div className="text-xs font-bold uppercase tracking-[0.25em] text-gold">AI phân tích</div>
@@ -155,9 +157,10 @@ export default function AIToolsPage() {
                 <div key={tool.title} className="group overflow-hidden rounded-[2rem] border border-gold/20 bg-[#171410] shadow-soft transition hover:border-gold/50 hover:bg-[#201A13]">
                   <div className="relative">
                     <HairVisual
-                      className="h-56 rounded-[1.5rem] border-b border-gold/10"
-                      imageKey={tool.imageKey}
+                      className="rounded-[1.5rem] border-b border-gold/10"
+                      src={toAssetUrl(tool.imageKey)}
                       alt={tool.title}
+                      aspect="aspect-[4/3] sm:aspect-video"
                     />
                     <div className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
                       {tool.status}

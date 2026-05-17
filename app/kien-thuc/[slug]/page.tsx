@@ -152,9 +152,10 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
           {imageUrl && (
             <HairVisual
-              className="mt-8 h-[320px] md:h-[420px]"
+              className="mt-8 rounded-3xl"
               src={imageUrl}
               alt={article.title}
+              aspect="aspect-[4/3] sm:aspect-video"
             />
           )}
 

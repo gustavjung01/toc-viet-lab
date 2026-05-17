@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { HairVisual } from "@/components/visual";
+import { toAssetUrl } from "@/lib/asset-url";
 import { formulas } from "@/lib/data";
 
 export default function FormulaPublicPage() {
@@ -19,9 +20,10 @@ export default function FormulaPublicPage() {
             {formulas.map((formula) => (
               <div key={formula.title} className="overflow-hidden rounded-3xl bg-white shadow-soft">
                 <HairVisual
-                  imageKey={formula.imageKey}
+                  src={toAssetUrl(formula.imageKey)}
                   alt={formula.title}
-                  className="h-56 rounded-[1.5rem] border border-gold/20"
+                  className="rounded-[1.5rem] border border-gold/20"
+                  aspect="aspect-[4/3] sm:aspect-video"
                   label={formula.tag}
                 />
                 <div className="p-6">

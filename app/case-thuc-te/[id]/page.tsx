@@ -163,17 +163,17 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ id:
             <div className="mt-8 grid gap-3 md:grid-cols-2">
               <HairVisual
                 src={beforeImage}
-                imageKey={item.before_image_key}
                 alt={`${item.title} before`}
                 label="Before"
-                className="h-[260px] md:h-[360px]"
+                aspect="aspect-[4/3] sm:aspect-video"
+                className="rounded-3xl"
               />
               <HairVisual
                 src={afterImage}
-                imageKey={item.after_image_key}
                 alt={`${item.title} after`}
                 label="After"
-                className="h-[260px] md:h-[360px]"
+                aspect="aspect-[4/3] sm:aspect-video"
+                className="rounded-3xl"
               />
             </div>
           </div>

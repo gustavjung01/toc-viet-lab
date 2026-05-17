@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Bookmark, Clock } from "lucide-react";
 import { HairVisual } from "./visual";
 import { BookmarkButton } from "./bookmark-button";
+import { assetUrl, type ImageAssetKey } from "@/lib/image-assets";
 import { toAssetUrl, isRelativeAssetPath } from "@/lib/asset-url";
 import { getCaseEditorialStatus } from "@/lib/case-editorial";
 
@@ -25,8 +26,7 @@ export function ArticleCard({ article }: { article: any }) {
   return (
     <Link href={`/kien-thuc/${article.slug}`} className="card-hover block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       <HairVisual
-        src={imageSrc}
-        imageKey={imageKey}
+        src={imageSrc ?? (imageKey ? assetUrl(imageKey as ImageAssetKey) : undefined)}
         alt={article.title}
         aspect="aspect-[4/3] sm:aspect-video"
         className="rounded-none"
