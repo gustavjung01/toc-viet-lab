@@ -134,7 +134,7 @@ export default function KnowledgePage() {
                 </div>
               </div>
               <div className="rounded-3xl border border-champagne/25 bg-black/25 p-4">
-                <HairVisual className="h-56" gradient="from-[#15211e] via-[#637a4d] to-[#c9a45c]" label="Chủ đề nổi bật" />
+                <HairVisual className="rounded-2xl" gradient="from-[#15211e] via-[#637a4d] to-[#c9a45c]" label="Chủ đề nổi bật" aspect="aspect-[4/3] sm:aspect-video" />
                 <h2 className="mt-5 text-xl font-black">Sửa lỗi màu khói bị xanh rêu</h2>
                 <p className="mt-2 text-sm leading-6 text-white/60">Phân tích nguyên nhân, hướng xử lý và công thức tham khảo.</p>
               </div>
