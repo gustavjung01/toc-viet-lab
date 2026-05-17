@@ -9,7 +9,8 @@
  * ⚠️  CẢNH BÁO: Sẽ xóa TẤT CẢ records trong bảng cases (kể cả data thật).
  */
 
-import { readFileSync, existsSync, createInterface } from "fs";
+import { readFileSync, existsSync } from "fs";
+import { createInterface } from "readline";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
