@@ -21,12 +21,15 @@ Public pages:
 - app/kien-thuc/[slug]/page.tsx
 - app/case-thuc-te/page.tsx
 - app/cong-thuc-mau/page.tsx
+- app/tuyen-dung/page.tsx
 - app/cong-cu-ai/page.tsx
 - app/goi-thanh-vien/page.tsx
 - app/login/page.tsx
 
-Member/mock dashboard:
+Member/account dashboard:
 - app/dashboard/page.tsx
+- app/tuyen-dung-cua-toi/page.tsx
+- app/tuyen-dung/dang-tin/page.tsx
 - app/so-tay/page.tsx
 - app/cong-thuc-cua-toi/page.tsx
 - app/ai-tu-van-mau/page.tsx
@@ -36,15 +39,25 @@ Components:
 - components/logo.tsx
 - components/header.tsx
 - components/footer.tsx
+- components/mobile-bottom-nav.tsx
 - components/visual.tsx
 - components/cards.tsx
 - components/app-shell.tsx
+- components/home/recruitment-preview.tsx
 
-Data:
+Data/schema:
 - lib/data.ts
+- lib/recruitment.ts
+- lib/db/schema.ts
+- drizzle/migrations/0001_recruitment_jobs.sql
+- drizzle/migrations/meta/_journal.json
+
+Audit/docs:
+- RECRUITMENT_LOGIC_AUDIT.md
 
 Ghi chú:
-- Đây là bản UI/mock data.
-- Chưa có auth thật.
-- Chưa có database/R2/AI API/thanh toán.
-- Copy toàn bộ nội dung trong thư mục này vào local root F:\1_A_Disk_D\Toc-Viet-Lab.
+- Tuyển dụng đã được đưa thành mảng chính.
+- Tài khoản không cần salon vẫn có thể tuyển nếu còn quota.
+- Khi vượt quota có gói đăng thêm và gói đẩy tin.
+- Các flow thanh toán/API thật vẫn cần triển khai tiếp.
+- Copy/pull toàn bộ nội dung về local root F:\1_A_Disk_D\Toc-Viet-Lab.
