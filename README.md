@@ -9,7 +9,7 @@ Bộ code nền giao diện cho website **Tóc Việt Lab**.
 - Data: static fallback + schema D1/Drizzle bước đầu
 - AI: mock
 - R2: chưa tích hợp runtime
-- Tuyển dụng: đã thêm UI chính, quota logic và schema nền
+- Tuyển dụng: đã có UI chính, API đăng tin, quota logic, API quản lý tin và schema nền
 - Công thức màu: đã có thư viện public DB-first, fallback 6 công thức và trang chi tiết theo slug
 
 ## Mục tiêu
@@ -75,17 +75,20 @@ Member/account:
 
 - Bất cứ tài khoản đăng nhập nào cũng có thể đăng tuyển.
 - Không yêu cầu tài khoản phải có salon.
-- Giới hạn đăng tin theo role tài khoản.
-- Khi vượt giới hạn, bán gói đăng thêm.
-- Khi muốn nổi bật, bán gói đẩy tin.
+- `/tuyen-dung` đọc `/api/recruitment/jobs`, fallback khi D1 chưa sẵn.
+- `/tuyen-dung/dang-tin` gọi `POST /api/recruitment/jobs` để tạo tin thật.
+- `/tuyen-dung-cua-toi` gọi `GET /api/recruitment/jobs?mine=1` để lấy tin và quota của user.
+- `PATCH /api/recruitment/jobs/[id]` hỗ trợ đóng/mở tin và đẩy tin.
+- Khi vượt giới hạn, API trả lỗi để UI dẫn sang gói đăng thêm hoặc đẩy tin.
 - Chi tiết audit nằm ở `RECRUITMENT_LOGIC_AUDIT.md`.
 
 ## Chưa làm ở bản này
 
 - Login/register hoàn chỉnh cho mọi flow.
-- API/server action thật cho đăng tuyển.
 - Thanh toán thật cho gói đăng thêm/đẩy tin.
+- Webhook/handler ghi `recruitment_orders` sau thanh toán.
 - Admin/CMS quản lý công thức màu public.
 - Copy công thức public sang công thức cá nhân của user.
+- Filter public cho tuyển dụng và công thức màu.
 - R2 upload ảnh.
 - AI API thật.
