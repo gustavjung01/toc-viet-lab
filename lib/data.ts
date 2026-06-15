@@ -1,5 +1,6 @@
 import { BookOpen, BrainCircuit, Camera, ClipboardCheck, FlaskConical, Gem, Layers, Palette, PenLine, Scissors, Sparkles, Users } from "lucide-react";
 import type { ImageAssetKey } from "./image-assets";
+import { publicFormulaLibrary } from "./formulas";
 
 export const navItems = [
   { label: "Kiến thức tóc", href: "/kien-thuc" },
@@ -34,11 +35,19 @@ export const cases = [
   { title:"Phục hồi và nhuộm nâu socola cho tóc tẩy hư tổn", tag:"Phục hồi", condition:"Tóc tẩy khô, xốp, thiếu bóng", goal:"Nâu socola mềm, giảm xơ, dễ chăm sóc", time:"150 phút", salon:"Linh Black Hair", visual:"from-[#3a261d] via-[#7b4f35] to-[#c9a45c]", imageKeyBefore:"case-03-before-toc-tay-hu-ton" as ImageAssetKey, imageKeyAfter:"case-03-after-nau-socola-phuc-hoi" as ImageAssetKey }
 ];
 
-export const formulas = [
-  { title:"Lạnh khói ánh rêu", tag:"Balayage", base:"Level 6 - nền vàng cam", developer:"6% / 20 vol", ratio:"1 : 1.5", note:"Khử vàng nhẹ phần thân, giữ khói ở ngọn.", visual:"from-[#20231f] via-[#637a4d] to-[#c9a45c]", imageKey:"formula-lanh-khoi-anh-reu" as ImageAssetKey },
-  { title:"Beige sữa lạnh", tag:"Nhuộm toàn bộ", base:"Level 8 - nền vàng nhạt", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tạo be sáng, cân bằng rêu nhẹ.", visual:"from-[#5f5342] via-[#c9a45c] to-[#f7f1e8]", imageKey:"formula-beige-sua-lanh" as ImageAssetKey },
-  { title:"Nâu trà sữa", tag:"Nhuộm toàn bộ", base:"Level 7 - nền vàng", developer:"3% / 10 vol", ratio:"1 : 1.5", note:"Tông tự nhiên, phù hợp da ấm.", visual:"from-[#3a261d] via-[#9b7354] to-[#d6b48f]", imageKey:"formula-nau-tra-sua" as ImageAssetKey }
-];
+const formulaVisuals: Record<string, string> = {
+  "lanh-khoi-anh-reu": "from-[#20231f] via-[#637a4d] to-[#c9a45c]",
+  "beige-sua-lanh": "from-[#5f5342] via-[#c9a45c] to-[#f7f1e8]",
+  "nau-tra-sua": "from-[#3a261d] via-[#9b7354] to-[#d6b48f]",
+  "nau-lanh-khoi-khu-cam-nen-5": "from-[#2d1d14] via-[#4e5f54] to-[#9a8362]",
+  "ash-beige-highlight-nen-8": "from-[#3d3f3d] via-[#b7ae9e] to-[#f4ead8]",
+  "nau-socola-phuc-hoi-toc-tay-xop": "from-[#2c1b14] via-[#7b4f35] to-[#b98a5d]",
+};
+
+export const formulas = publicFormulaLibrary.map((formula) => ({
+  ...formula,
+  visual: formulaVisuals[formula.slug] ?? "from-[#20231f] via-[#637a4d] to-[#c9a45c]",
+}));
 
 export const aiTools: Array<{
   title: string;
