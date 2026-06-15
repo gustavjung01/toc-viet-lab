@@ -70,12 +70,17 @@ export const cases = sqliteTable("cases", {
 
 export const formulas = sqliteTable("formulas", {
   id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
+  excerpt: text("excerpt"),
+  content: text("content"),
   tag: text("tag"),
   base: text("base"),
   developer: text("developer"),
   ratio: text("ratio"),
   note: text("note"),
+  difficulty: text("difficulty", { enum: ["basic", "intermediate", "advanced"] }).default("intermediate"),
+  readTime: integer("read_time"),
   imageKey: text("image_key"),
   published: integer("published", { mode: "boolean" }).default(true),
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
