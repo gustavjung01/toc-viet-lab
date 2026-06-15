@@ -30,7 +30,7 @@ isLoggedIn === true
 AND user.salonId != null
 ```
 
-## Quota đề xuất
+## Quota hiện tại
 
 | Role tài khoản | Tin/tháng | Tin đang hoạt động | Lượt đẩy/tháng |
 | --- | ---: | ---: | ---: |
@@ -38,26 +38,59 @@ AND user.salonId != null
 | Member | 3 | 3 | 1 |
 | Pro | 10 | 10 | 3 |
 
-Các quota này đang được khai báo trong `lib/recruitment.ts` để UI và server rule sau này cùng dùng một nguồn.
+Các quota này đang được khai báo trong `lib/recruitment.ts`. API tuyển dụng đọc cùng nguồn này để kiểm quyền đăng tin và quyền đẩy tin.
 
-## Luồng đăng tin chuẩn
+## API đã thêm
 
-1. User vào `/tuyen-dung/dang-tin`.
-2. Middleware yêu cầu đăng nhập.
-3. Server lấy `user.id` và `user.role` từ session.
-4. Server kiểm tra số tin đã đăng trong kỳ hiện tại.
-5. Server kiểm tra số tin đang hoạt động.
-6. Nếu còn quota: tạo `job_posts` status `published` hoặc `draft`.
-7. Nếu hết quota: redirect sang màn mua gói đăng vượt.
-8. Nếu mua thành công: ghi `recruitment_orders`, tăng lượt khả dụng.
+```txt
+GET    /api/recruitment/jobs
+POST   /api/recruitment/jobs
+GET    /api/recruitment/jobs?mine=1
+PATCH  /api/recruitment/jobs/[id]
+DELETE /api/recruitment/jobs/[id]
+```
 
-## Luồng đẩy tin
+### Public listing
 
-1. User chọn tin thuộc chính mình.
-2. Tin phải ở trạng thái `published`.
-3. Nếu còn lượt đẩy theo role hoặc order đã thanh toán: set `boost_until`.
-4. Nếu hết lượt: redirect sang mua gói `boost`.
-5. Public listing ưu tiên sort theo `boost_until > now` trước, rồi `created_at`.
+`GET /api/recruitment/jobs` đọc bảng `job_posts`, chỉ trả tin `published` chưa hết hạn. Tin có `boost_until > now` được sort lên trước. Nếu thiếu D1 env hoặc DB lỗi, API trả fallback từ `lib/recruitment.ts`.
+
+### Đăng tin
+
+`POST /api/recruitment/jobs` yêu cầu đăng nhập và D1 env. API kiểm:
+
+1. `session.user.id` tồn tại.
+2. Không kiểm salon.
+3. Số tin đã đăng trong tháng.
+4. Số tin đang hoạt động.
+5. Lượt mua thêm trong `recruitment_orders` nếu đã hết quota miễn phí.
+
+Nếu còn quota, API tạo dòng mới trong `job_posts` với `status = published` và hạn 30 ngày.
+
+### Quản lý tin của tôi
+
+`GET /api/recruitment/jobs?mine=1` yêu cầu đăng nhập, trả danh sách tin của user và object `usage` gồm:
+
+- `postsThisMonth`
+- `activePosts`
+- `boostsThisMonth`
+- `paidPostCredits`
+- `paidBoostCredits`
+- `remainingPosts`
+- `remainingActive`
+- `remainingBoosts`
+- `canPost`
+
+### Đóng/mở/đẩy tin
+
+`PATCH /api/recruitment/jobs/[id]` hỗ trợ:
+
+```json
+{ "action": "close" }
+{ "action": "publish" }
+{ "action": "boost" }
+```
+
+Action `boost` kiểm lượt đẩy theo role và gói đã thanh toán. Nếu còn lượt, API set `boost_until` thêm 7 ngày.
 
 ## Bảng dữ liệu đã thêm
 
@@ -86,23 +119,23 @@ Trường quan trọng:
 - `status`: `pending`, `paid`, `failed`, `refunded`.
 - `payment_ref`: mã giao dịch từ cổng thanh toán sau này.
 
-## Những điểm UI đã khớp
+## UI đã nối API
 
 - Header public có mục `Tuyển dụng`.
 - Trang chủ có section preview tuyển dụng.
 - Mobile bottom nav có mục `Tuyển`.
-- Có trang public `/tuyen-dung`.
-- Có trang đăng tin `/tuyen-dung/dang-tin`.
-- Có trang tài khoản `/tuyen-dung-cua-toi`.
+- `/tuyen-dung` đọc API public, fallback nếu DB chưa sẵn.
+- `/tuyen-dung/dang-tin` dùng form client gọi `POST /api/recruitment/jobs`.
+- `/tuyen-dung-cua-toi` dùng client dashboard gọi `GET /api/recruitment/jobs?mine=1`.
+- Dashboard có nút đóng/mở tin và đẩy tin qua `PATCH /api/recruitment/jobs/[id]`.
 - AppShell có menu `Tin tuyển dụng`.
 - Middleware bảo vệ route đăng tin và quản lý tin.
 
 ## Việc còn lại để đi production
 
-1. Tạo server action/API thật cho đăng tin.
-2. Tạo service tính quota theo tháng và theo order đã thanh toán.
-3. Tạo màn thanh toán thật cho gói đăng vượt và đẩy tin.
-4. Thêm kiểm duyệt tin tuyển dụng.
-5. Thêm filter public: khu vực, vị trí, lương, loại hình làm việc.
-6. Thêm cron/job hết hạn tin và hết hạn boost.
-7. Viết test cho rule: user không có salon vẫn đăng được nếu còn quota.
+1. Tạo thanh toán thật cho gói đăng vượt và đẩy tin.
+2. Khi thanh toán thành công, ghi `recruitment_orders` với `status = paid`.
+3. Thêm kiểm duyệt tin tuyển dụng trước khi public nếu cần.
+4. Thêm filter public: khu vực, vị trí, lương, loại hình làm việc.
+5. Thêm cron/job hết hạn tin và hết hạn boost.
+6. Viết test cho rule: user không có salon vẫn đăng được nếu còn quota.
