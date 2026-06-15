@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 const PROTECTED_ROUTES = [
   "/dashboard",
+  "/tuyen-dung-cua-toi",
+  "/tuyen-dung/dang-tin",
   "/so-tay",
   "/cong-thuc-cua-toi",
   "/ai-tu-van-mau",
