@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { BookOpen, BrainCircuit, CreditCard, Home, NotebookTabs, Palette, Settings } from "lucide-react";
+import { BookOpen, BrainCircuit, Briefcase, CreditCard, Home, NotebookTabs, Palette, Settings } from "lucide-react";
 import { Logo } from "./logo";
 import { auth } from "@/auth";
 import { SignOutButton } from "./sign-out-button";
 
 const menu = [
   { label: "Tổng quan", href: "/dashboard", icon: Home },
+  { label: "Tin tuyển dụng", href: "/tuyen-dung-cua-toi", icon: Briefcase },
   { label: "Sổ tay của tôi", href: "/so-tay", icon: NotebookTabs },
   { label: "Công thức màu", href: "/cong-thuc-cua-toi", icon: Palette },
   { label: "Hỏi AI", href: "/ai-tu-van-mau", icon: BrainCircuit },
