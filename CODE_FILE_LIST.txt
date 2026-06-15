@@ -21,10 +21,17 @@ Public pages:
 - app/kien-thuc/[slug]/page.tsx
 - app/case-thuc-te/page.tsx
 - app/cong-thuc-mau/page.tsx
+- app/cong-thuc-mau/[slug]/page.tsx
 - app/tuyen-dung/page.tsx
 - app/cong-cu-ai/page.tsx
 - app/goi-thanh-vien/page.tsx
 - app/login/page.tsx
+
+API routes:
+- app/api/formulas/route.ts
+- app/api/formulas/[slug]/route.ts
+- app/api/user-formulas/route.ts
+- app/api/user-formulas/[id]/route.ts
 
 Member/account dashboard:
 - app/dashboard/page.tsx
@@ -47,17 +54,24 @@ Components:
 
 Data/schema:
 - lib/data.ts
+- lib/formulas.ts
 - lib/recruitment.ts
 - lib/db/schema.ts
 - drizzle/migrations/0001_recruitment_jobs.sql
+- drizzle/migrations/0002_formula_content.sql
 - drizzle/migrations/meta/_journal.json
+
+Scripts:
+- scripts/seed-d1.mjs
 
 Audit/docs:
 - RECRUITMENT_LOGIC_AUDIT.md
+- FORMULA_LOGIC_AUDIT.md
 
 Ghi chú:
 - Tuyển dụng đã được đưa thành mảng chính.
 - Tài khoản không cần salon vẫn có thể tuyển nếu còn quota.
 - Khi vượt quota có gói đăng thêm và gói đẩy tin.
-- Các flow thanh toán/API thật vẫn cần triển khai tiếp.
+- Công thức màu đã có DB-first API, fallback 6 công thức và route chi tiết theo slug.
+- Các flow thanh toán/API đăng tuyển thật vẫn cần triển khai tiếp.
 - Copy/pull toàn bộ nội dung về local root F:\1_A_Disk_D\Toc-Viet-Lab.
