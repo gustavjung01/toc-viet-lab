@@ -8,6 +8,7 @@ import { CategoryGrid } from "@/components/home/category-grid";
 import { FeaturedCases } from "@/components/home/featured-cases";
 import { MemberNotebook } from "@/components/home/member-notebook";
 import { AiToolsPreview } from "@/components/home/ai-tools-preview";
+import { RecruitmentPreview } from "@/components/home/recruitment-preview";
 import { PricingPreview } from "@/components/home/pricing-preview";
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
         <TrustStrip />
         <CategoryGrid />
         <FeaturedCases />
+        <RecruitmentPreview />
         <MemberNotebook />
         <AiToolsPreview />
         <PricingPreview />
