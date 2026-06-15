@@ -30,6 +30,8 @@ Public pages:
 API routes:
 - app/api/formulas/route.ts
 - app/api/formulas/[slug]/route.ts
+- app/api/recruitment/jobs/route.ts
+- app/api/recruitment/jobs/[id]/route.ts
 - app/api/user-formulas/route.ts
 - app/api/user-formulas/[id]/route.ts
 
@@ -51,11 +53,15 @@ Components:
 - components/cards.tsx
 - components/app-shell.tsx
 - components/home/recruitment-preview.tsx
+- components/recruitment/job-post-form.tsx
+- components/recruitment/my-recruitment-dashboard.tsx
 
 Data/schema:
 - lib/data.ts
 - lib/formulas.ts
 - lib/recruitment.ts
+- lib/recruitment-jobs.ts
+- lib/d1-http.ts
 - lib/db/schema.ts
 - drizzle/migrations/0001_recruitment_jobs.sql
 - drizzle/migrations/0002_formula_content.sql
@@ -72,6 +78,7 @@ Ghi chú:
 - Tuyển dụng đã được đưa thành mảng chính.
 - Tài khoản không cần salon vẫn có thể tuyển nếu còn quota.
 - Khi vượt quota có gói đăng thêm và gói đẩy tin.
+- Tuyển dụng đã có API đăng tin, API danh sách, API quản lý tin và dashboard gọi API.
 - Công thức màu đã có DB-first API, fallback 6 công thức và route chi tiết theo slug.
-- Các flow thanh toán/API đăng tuyển thật vẫn cần triển khai tiếp.
+- Thanh toán thật và webhook ghi recruitment_orders vẫn cần triển khai tiếp.
 - Copy/pull toàn bộ nội dung về local root F:\1_A_Disk_D\Toc-Viet-Lab.
