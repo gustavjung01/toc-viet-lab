@@ -3,9 +3,25 @@ import { Briefcase, MapPin, Megaphone, ShieldCheck, Sparkles } from "lucide-reac
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
-import { jobPosts, recruitmentPlanCards } from "@/lib/recruitment";
+import { recruitmentPlanCards } from "@/lib/recruitment";
+import { absoluteSiteUrl } from "@/lib/site-url";
+import { getFallbackJobs, type RecruitmentJobPost } from "@/lib/recruitment-jobs";
 
-export default function RecruitmentPage() {
+async function fetchJobs(): Promise<{ jobs: RecruitmentJobPost[]; source: string }> {
+  try {
+    const res = await fetch(absoluteSiteUrl("/api/recruitment/jobs?limit=30"), { next: { revalidate: 120 } });
+    if (!res.ok) throw new Error("Recruitment API unavailable");
+    const data = await res.json();
+    const jobs = data.jobs?.length ? data.jobs : getFallbackJobs();
+    return { jobs, source: data.source ?? "api" };
+  } catch {
+    return { jobs: getFallbackJobs(), source: "fallback" };
+  }
+}
+
+export default async function RecruitmentPage() {
+  const { jobs, source } = await fetchJobs();
+
   return (
     <div className="min-h-screen bg-black text-cream-card">
       <Header />
@@ -56,23 +72,23 @@ export default function RecruitmentPage() {
               <h2 className="mt-2 text-3xl font-black text-white">Tin tuyển mới nhất</h2>
             </div>
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/60">
-              Mock data, sẵn để nối D1
+              Nguồn: {source === "d1" ? "D1" : "fallback"}
             </div>
           </div>
           <div className="grid gap-5 lg:grid-cols-3">
-            {jobPosts.map((job) => (
+            {jobs.map((job) => (
               <article key={job.id} className="rounded-[2rem] border border-gold/10 bg-white/[0.04] p-6 shadow-soft">
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">{job.postedAt}</span>
                   {job.featured && <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70">Nổi bật</span>}
                 </div>
                 <h3 className="mt-5 text-2xl font-black text-white">{job.title}</h3>
-                <p className="mt-2 text-sm font-bold text-gold">{job.employer}</p>
+                <p className="mt-2 text-sm font-bold text-gold">{job.employerDisplayName}</p>
                 <div className="mt-4 space-y-2 text-sm text-white/65">
                   <p className="flex items-center gap-2"><MapPin size={16} /> {job.location}</p>
-                  <p className="flex items-center gap-2"><Briefcase size={16} /> {job.salary}</p>
+                  <p className="flex items-center gap-2"><Briefcase size={16} /> {job.salaryText}</p>
                 </div>
-                <p className="mt-5 text-sm leading-7 text-white/60">{job.desc}</p>
+                <p className="mt-5 text-sm leading-7 text-white/60">{job.description}</p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {job.tags.map((tag) => (
                     <span key={tag} className="rounded-full bg-black/35 px-3 py-1 text-xs font-semibold text-white/60">
