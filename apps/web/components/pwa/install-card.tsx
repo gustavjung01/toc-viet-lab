@@ -24,14 +24,6 @@ function isStandalone() {
   );
 }
 
-function isIOS(userAgent = getUserAgent()) {
-  return /iPhone|iPad|iPod/i.test(userAgent);
-}
-
-function isAndroid(userAgent = getUserAgent()) {
-  return /Android/i.test(userAgent);
-}
-
 function isInAppBrowser(userAgent = getUserAgent()) {
   return /FBAN|FBAV|FB_IAB|Instagram|Zalo/i.test(userAgent);
 }
@@ -64,30 +56,11 @@ function copyCurrentLink() {
   prompt("Copy link này rồi mở bằng Safari hoặc Chrome:", url);
 }
 
-function buildInstallGuide() {
-  const userAgent = getUserAgent();
-
-  if (isInAppBrowser(userAgent)) {
-    return isIOS(userAgent)
-      ? "Bạn đang mở trong Zalo/Facebook. Hãy copy link, mở Safari, dán link rồi chọn Chia sẻ > Thêm vào Màn hình chính."
-      : "Bạn đang mở trong Zalo/Facebook. Hãy mở link bằng Chrome/Edge, rồi chọn Cài ứng dụng hoặc Thêm vào màn hình chính.";
-  }
-
-  if (isIOS(userAgent)) {
-    return "Trên iPhone: mở bằng Safari, bấm nút Chia sẻ, rồi chọn Thêm vào Màn hình chính.";
-  }
-
-  if (isAndroid(userAgent)) {
-    return "Trên Android: mở bằng Chrome hoặc Edge, rồi chọn Cài ứng dụng hoặc Thêm vào màn hình chính.";
-  }
-
-  return "Mở website bằng Chrome hoặc Edge. Nếu trình duyệt hỗ trợ, dùng nút cài đặt trên thanh địa chỉ.";
-}
-
 export function PwaInstallCard() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installed, setInstalled] = useState(false);
+  const [inAppBrowser, setInAppBrowser] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -97,7 +70,14 @@ export function PwaInstallCard() {
       return;
     }
 
-    setVisible(true);
+    const isInApp = isInAppBrowser();
+    setInAppBrowser(isInApp);
+
+    // Only show immediately inside Zalo/Facebook/Instagram browsers because users need to open Safari/Chrome first.
+    // In normal browsers, wait until the browser confirms PWA install is actually available.
+    if (isInApp) {
+      setVisible(true);
+    }
 
     function onBeforeInstallPrompt(event: Event) {
       event.preventDefault();
@@ -142,12 +122,10 @@ export function PwaInstallCard() {
       return;
     }
 
-    if (isInAppBrowser()) {
+    // In-app browsers cannot install PWA directly. Give the user the link and let the global tip explain the browser switch.
+    if (inAppBrowser || isInAppBrowser()) {
       copyCurrentLink();
-      return;
     }
-
-    alert(buildInstallGuide());
   }
 
   function dismiss() {
@@ -169,11 +147,15 @@ export function PwaInstallCard() {
       <div className="mb-4 text-left sm:mb-0">
         <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em] text-gold">
           <Smartphone size={15} />
-          Cài nhanh trên điện thoại
+          {inAppBrowser ? "Mở bằng trình duyệt ngoài" : "Cài nhanh trên điện thoại"}
         </div>
-        <h2 className="mt-2 text-xl font-black text-white">Tải Tóc Việt Lab ra màn hình chính</h2>
+        <h2 className="mt-2 text-xl font-black text-white">
+          {inAppBrowser ? "Mở Safari/Chrome để tải app" : "Tải Tóc Việt Lab ra màn hình chính"}
+        </h2>
         <p className="mt-1 text-sm leading-6 text-white/65">
-          Mở nhanh như app, tiện tra công thức màu, case thực tế và tuyển dụng ngay tại salon.
+          {inAppBrowser
+            ? "Zalo/Facebook không cài PWA ổn định. Copy link rồi mở bằng Safari hoặc Chrome để thêm ra màn hình chính."
+            : "Mở nhanh như app, tiện tra công thức màu, case thực tế và tuyển dụng ngay tại salon."}
         </p>
       </div>
 
@@ -183,7 +165,7 @@ export function PwaInstallCard() {
         className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
       >
         <Download size={17} />
-        Tải app
+        {inAppBrowser ? "Copy link" : "Tải app"}
       </button>
     </div>
   );
