@@ -1,10 +1,10 @@
 import { AppShell } from "@/components/app-shell";
-import { SettingsClient } from "@/components/settings/settings-client";
+import { AccountSettingsPanel } from "@/components/account/account-settings-panel";
 
 export default function SettingsPage() {
   return (
     <AppShell>
-      <SettingsClient />
+      <AccountSettingsPanel />
     </AppShell>
   );
 }
