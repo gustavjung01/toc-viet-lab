@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, Smartphone, X } from "lucide-react";
+import { Download, ExternalLink, Smartphone, X } from "lucide-react";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
+
+type InstallMode = "prompt" | "ios" | "in-app";
 
 const CARD_STATE_KEY = "toc_viet_lab_pwa_install_card_state";
 
@@ -22,6 +24,10 @@ function isStandalone() {
     window.matchMedia("(display-mode: standalone)").matches ||
     Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone)
   );
+}
+
+function isIOS(userAgent = getUserAgent()) {
+  return /iPhone|iPad|iPod/i.test(userAgent);
 }
 
 function isInAppBrowser(userAgent = getUserAgent()) {
@@ -48,7 +54,7 @@ function copyCurrentLink() {
   if (navigator.clipboard?.writeText) {
     navigator.clipboard
       .writeText(url)
-      .then(() => alert("Đã copy link. Hãy mở Safari hoặc Chrome rồi dán link này để cài app ổn định hơn."))
+      .then(() => alert("Đã copy link. Hãy mở Safari hoặc Chrome rồi dán link này để cài app."))
       .catch(() => prompt("Copy link này rồi mở bằng Safari hoặc Chrome:", url));
     return;
   }
@@ -60,7 +66,7 @@ export function PwaInstallCard() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [inAppBrowser, setInAppBrowser] = useState(false);
+  const [mode, setMode] = useState<InstallMode | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -70,18 +76,24 @@ export function PwaInstallCard() {
       return;
     }
 
-    const isInApp = isInAppBrowser();
-    setInAppBrowser(isInApp);
+    const userAgent = getUserAgent();
 
-    // Only show immediately inside Zalo/Facebook/Instagram browsers because users need to open Safari/Chrome first.
-    // In normal browsers, wait until the browser confirms PWA install is actually available.
-    if (isInApp) {
+    // iPhone/iPad has no Android-style install prompt. Show a calm inline guide only on Safari-like browsers.
+    if (isIOS(userAgent) && !isInAppBrowser(userAgent)) {
+      setMode("ios");
+      setVisible(true);
+    }
+
+    // Zalo/Facebook/Instagram browsers need a browser-switch guide, not a fake install prompt.
+    if (isInAppBrowser(userAgent)) {
+      setMode("in-app");
       setVisible(true);
     }
 
     function onBeforeInstallPrompt(event: Event) {
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
+      setMode("prompt");
       setVisible(true);
     }
 
@@ -101,7 +113,7 @@ export function PwaInstallCard() {
     };
   }, []);
 
-  if (!visible || installed) return null;
+  if (!visible || installed || !mode) return null;
 
   async function handleInstallClick() {
     if (isStandalone()) {
@@ -110,7 +122,7 @@ export function PwaInstallCard() {
       return;
     }
 
-    if (deferredPrompt) {
+    if (mode === "prompt" && deferredPrompt) {
       await deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       setDeferredPrompt(null);
@@ -122,8 +134,7 @@ export function PwaInstallCard() {
       return;
     }
 
-    // In-app browsers cannot install PWA directly. Give the user the link and let the global tip explain the browser switch.
-    if (inAppBrowser || isInAppBrowser()) {
+    if (mode === "in-app") {
       copyCurrentLink();
     }
   }
@@ -133,8 +144,10 @@ export function PwaInstallCard() {
     setVisible(false);
   }
 
+  const isGuide = mode !== "prompt";
+
   return (
-    <div className="relative mt-6 max-w-2xl overflow-hidden rounded-3xl border border-gold/25 bg-white/[0.06] p-4 pr-12 shadow-[0_24px_90px_rgba(0,0,0,.25)] backdrop-blur-xl sm:flex sm:items-center sm:justify-between sm:gap-5">
+    <div className="relative mt-6 max-w-2xl overflow-hidden rounded-3xl border border-gold/25 bg-white/[0.06] p-4 shadow-[0_24px_90px_rgba(0,0,0,.25)] backdrop-blur-xl sm:p-5">
       <button
         type="button"
         onClick={dismiss}
@@ -144,29 +157,64 @@ export function PwaInstallCard() {
         <X size={16} />
       </button>
 
-      <div className="mb-4 text-left sm:mb-0">
+      <div className="pr-9">
         <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em] text-gold">
-          <Smartphone size={15} />
-          {inAppBrowser ? "Mở bằng trình duyệt ngoài" : "Cài nhanh trên điện thoại"}
+          {mode === "in-app" ? <ExternalLink size={15} /> : <Smartphone size={15} />}
+          {mode === "in-app" ? "Mở bằng trình duyệt ngoài" : "Cài nhanh trên điện thoại"}
         </div>
         <h2 className="mt-2 text-xl font-black text-white">
-          {inAppBrowser ? "Mở Safari/Chrome để tải app" : "Tải Tóc Việt Lab ra màn hình chính"}
+          {mode === "prompt"
+            ? "Tải Tóc Việt Lab ra màn hình chính"
+            : mode === "ios"
+              ? "iPhone: thêm Tóc Việt Lab vào Màn hình chính"
+              : "Zalo/Facebook: mở Safari hoặc Chrome trước"}
         </h2>
         <p className="mt-1 text-sm leading-6 text-white/65">
-          {inAppBrowser
-            ? "Zalo/Facebook không cài PWA ổn định. Copy link rồi mở bằng Safari hoặc Chrome để thêm ra màn hình chính."
-            : "Mở nhanh như app, tiện tra công thức màu, case thực tế và tuyển dụng ngay tại salon."}
+          {mode === "prompt"
+            ? "Mở nhanh như app, tiện tra công thức màu, case thực tế và tuyển dụng ngay tại salon."
+            : mode === "ios"
+              ? "Mở bằng Safari, bấm nút Chia sẻ, rồi chọn Thêm vào Màn hình chính. Bấm X nếu bạn đã thêm rồi."
+              : "Trình duyệt nhúng không cài PWA ổn định. Copy link rồi mở bằng Safari hoặc Chrome để cài app."}
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={handleInstallClick}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
-      >
-        <Download size={17} />
-        {inAppBrowser ? "Copy link" : "Tải app"}
-      </button>
+      {isGuide ? (
+        <div className="mt-4 rounded-2xl border border-gold/15 bg-black/25 p-3 text-sm leading-6 text-white/70">
+          {mode === "ios" ? (
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>Mở trang bằng Safari.</li>
+              <li>Bấm nút Chia sẻ.</li>
+              <li>Chọn Thêm vào Màn hình chính.</li>
+            </ol>
+          ) : (
+            <p>Copy link, mở Safari/Chrome, dán link rồi dùng nút cài app của trình duyệt.</p>
+          )}
+        </div>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {mode === "prompt" ? (
+          <button
+            type="button"
+            onClick={handleInstallClick}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
+          >
+            <Download size={17} />
+            Tải app
+          </button>
+        ) : null}
+
+        {mode === "in-app" ? (
+          <button
+            type="button"
+            onClick={handleInstallClick}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
+          >
+            <Download size={17} />
+            Copy link
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
