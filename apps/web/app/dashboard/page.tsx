@@ -2,9 +2,38 @@ import { AppShell } from "@/components/app-shell";
 import { ArticleCard, CaseCard, SectionHeader } from "@/components/cards";
 import { articles, cases } from "@/lib/data";
 import { auth } from "@/auth";
-import { BookOpen, FlaskConical, NotebookPen, Sparkles } from "lucide-react";
+import { AlertCircle, BookOpen, FlaskConical, NotebookPen, Sparkles } from "lucide-react";
 
-async function getUserStats(userId: string) {
+type UserStats = {
+  saved: number;
+  formulas: number;
+  aiUsed: number;
+  aiCredits: number;
+};
+
+type UserStatsResult = {
+  stats: UserStats;
+  error?: string;
+};
+
+const EMPTY_STATS: UserStats = { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
+
+function hasD1Env() {
+  return Boolean(
+    process.env.CLOUDFLARE_ACCOUNT_ID &&
+    process.env.CLOUDFLARE_D1_DATABASE_ID &&
+    process.env.CLOUDFLARE_D1_TOKEN
+  );
+}
+
+async function getUserStats(userId: string): Promise<UserStatsResult> {
+  if (!hasD1Env()) {
+    return {
+      stats: EMPTY_STATS,
+      error: "Chưa cấu hình D1 env cho dashboard. Các số liệu bên dưới đang tạm hiển thị 0.",
+    };
+  }
+
   try {
     const query = async (sql: string, params: any[]) => {
       const res = await fetch(
@@ -20,6 +49,9 @@ async function getUserStats(userId: string) {
         }
       );
       const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.errors?.[0]?.message || "Không thể đọc dữ liệu D1.");
+      }
       return data.result?.[0]?.results?.[0];
     };
 
@@ -31,13 +63,18 @@ async function getUserStats(userId: string) {
     ]);
 
     return {
-      saved: saved?.count ?? 0,
-      formulas: formulas?.count ?? 0,
-      aiUsed: aiLogs?.count ?? 0,
-      aiCredits: credits?.ai_credits ?? 0,
+      stats: {
+        saved: saved?.count ?? 0,
+        formulas: formulas?.count ?? 0,
+        aiUsed: aiLogs?.count ?? 0,
+        aiCredits: credits?.ai_credits ?? 0,
+      },
     };
-  } catch {
-    return { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
+  } catch (e: any) {
+    return {
+      stats: EMPTY_STATS,
+      error: e?.message || "Không thể tải thống kê tài khoản.",
+    };
   }
 }
 
@@ -53,7 +90,10 @@ export default async function DashboardPage() {
     pro: "Pro Member",
   };
 
-  const userStats = userId ? await getUserStats(userId) : { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
+  const statsResult = userId
+    ? await getUserStats(userId)
+    : { stats: EMPTY_STATS, error: "Không tìm thấy user id trong session." };
+  const userStats = statsResult.stats;
 
   const stats = [
     { label: "Bài đã lưu", value: String(userStats.saved), sub: "bài viết", icon: BookOpen, color: "text-blue-600" },
@@ -72,6 +112,14 @@ export default async function DashboardPage() {
         <p className="mt-3 text-mutedLight">
           Hôm nay bạn muốn học gì mới để nâng tầm tay nghề?
         </p>
+
+        {statsResult.error && (
+          <div className="mt-6 flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-amber-900">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+            <p className="text-sm font-semibold leading-6">{statsResult.error}</p>
+          </div>
+        )}
+
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-3xl bg-white p-6 shadow-soft">
