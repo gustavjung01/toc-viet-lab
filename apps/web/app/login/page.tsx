@@ -3,15 +3,13 @@
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
+import { Lock, Mail, AlertCircle, Loader2, Info } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
-  const [tab, setTab] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,19 +55,12 @@ function LoginForm() {
         </section>
 
         <section className="rounded-[2rem] border border-champagne/20 bg-white p-7 text-charcoal shadow-gold">
-          <div className="mb-7 flex rounded-full bg-cream p-1">
-            <button
-              onClick={() => setTab("login")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "login" ? "bg-charcoal text-champagne" : "text-mutedLight hover:text-charcoal"}`}
-            >
-              Đăng nhập
-            </button>
-            <button
-              onClick={() => setTab("register")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "register" ? "bg-charcoal text-champagne" : "text-mutedLight hover:text-charcoal"}`}
-            >
-              Đăng ký
-            </button>
+          <div className="mb-7 rounded-3xl bg-cream p-4">
+            <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-goldText">Tài khoản</p>
+            <h2 className="mt-2 text-2xl font-black text-charcoal">Đăng nhập</h2>
+            <p className="mt-2 text-sm leading-6 text-mutedLight">
+              Đăng ký tài khoản mới đang được chuẩn bị để đồng bộ với backend VPS. Giai đoạn này chỉ hiển thị form đăng nhập thật, tránh tạo tài khoản giả.
+            </p>
           </div>
 
           {error && (
@@ -106,11 +97,9 @@ function LoginForm() {
               />
             </div>
 
-            <div className="mt-5 flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-mutedLight">
-                <input type="checkbox" className="rounded" /> Ghi nhớ đăng nhập
-              </label>
-              <Link href="#" className="font-bold text-goldText hover:text-goldDeep">Quên mật khẩu?</Link>
+            <div className="mt-5 rounded-2xl bg-[#D6A84F]/10 px-4 py-3 text-sm text-mutedLight">
+              <Info size={16} className="mr-2 inline text-goldText" />
+              Quên mật khẩu và đăng ký mới sẽ mở sau khi account API được khóa logic rõ ràng.
             </div>
 
             <button
@@ -119,7 +108,7 @@ function LoginForm() {
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#D6A84F] py-4 text-sm font-extrabold text-black transition hover:bg-[#F0C76A] disabled:opacity-60"
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
-              {tab === "login" ? "Đăng nhập" : "Tạo tài khoản"}
+              Đăng nhập
             </button>
           </form>
 
