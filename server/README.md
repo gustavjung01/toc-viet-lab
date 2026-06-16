@@ -1,6 +1,6 @@
 # Toc Viet Lab VPS Backend
 
-Backend skeleton for the safe VPS-first rollout under the `tocviet` namespace.
+PostgreSQL-backed backend for the safe VPS-first rollout under the `tocviet` namespace.
 
 ## Current state
 
@@ -9,8 +9,10 @@ This stage exposes the minimum backend surface:
 ```txt
 GET /health -> 200
 GET / -> 200
-GET /recruitment/jobs -> 200, empty jobs list for bridge testing
-POST/PATCH/DELETE /recruitment/jobs -> 501 not implemented yet
+GET /recruitment/jobs -> 200 when DATABASE_URL is configured
+GET /recruitment/jobs -> 503 when DATABASE_URL is missing
+GET /recruitment/jobs?mine=1 -> 501
+POST/PATCH/DELETE /recruitment/jobs -> 501
 ```
 
 The Vercel frontend still keeps the legacy production route. The bridge routes for testing are:
@@ -41,18 +43,18 @@ Default port:
 4000
 ```
 
-Health and skeleton checks:
+Health and recruitment checks:
 
 ```bash
 curl http://localhost:4000/health
 curl http://localhost:4000/recruitment/jobs
 ```
 
-Expected skeleton response includes:
+Expected successful recruitment response includes:
 
 ```txt
 namespace: tocviet
-source: vps-skeleton
+source: vps-postgres
 jobs: []
 ```
 
@@ -66,6 +68,7 @@ APP_NAMESPACE=tocviet
 APP_VERSION=0.1.0
 NODE_ENV=production
 CORS_ORIGIN=https://tocvietlab.studio
+DATABASE_URL=postgres://tocviet:change_me@127.0.0.1:5432/tocviet
 ```
 
 Real env file on VPS:
@@ -100,29 +103,22 @@ Public API: https://api.tocvietlab.studio
 
 Do not touch another site's runtime namespace such as `vlgn`, `vlgn-api.service`, `vlgn.env`, or `vieclamgannha.me` Nginx config.
 
-## VPS layout target
+## PostgreSQL migration
+
+Migration file:
 
 ```txt
-/srv/apps/tocviet/current -> /srv/apps/tocviet/source
-/srv/apps/tocviet/source
-/srv/apps/tocviet/source.git
-/srv/apps/tocviet/releases
-/srv/apps/tocviet/shared/tmp
-/srv/apps/tocviet/shared/uploads
-/srv/backups/tocviet
+server/migrations/001_recruitment.sql
 ```
 
-Backend service runs from:
+Apply it on the VPS:
 
-```txt
-/srv/apps/tocviet/current/server
+```bash
+cd /srv/apps/tocviet/source
+psql "$DATABASE_URL" -f server/migrations/001_recruitment.sql
 ```
 
-Build output:
-
-```txt
-/srv/apps/tocviet/current/server/dist/index.js
-```
+If your VPS user cannot reach `psql` directly, run the same command with the database owner account or via `sudo -u postgres`.
 
 ## VPS quick deploy with systemd
 
@@ -132,10 +128,6 @@ git pull origin main
 npm install
 npm run api:build
 
-sudo mkdir -p /etc/app-env /srv/backups/tocviet /srv/apps/tocviet/shared/tmp /srv/apps/tocviet/shared/uploads
-sudo cp infra/vps/tocviet-api.service /etc/systemd/system/tocviet-api.service
-sudo systemctl daemon-reload
-sudo systemctl enable tocviet-api
 sudo systemctl restart tocviet-api
 sudo systemctl status tocviet-api --no-pager
 ```
