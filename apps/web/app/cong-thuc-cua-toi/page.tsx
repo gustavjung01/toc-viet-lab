@@ -16,6 +16,8 @@ type Formula = {
 
 const EMPTY_FORM = { title: "", tag: "", base: "", developer: "", ratio: "", note: "" };
 
+const inputClass = "mt-1 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-charcoal outline-none placeholder:text-mutedLight/70 focus:border-[#D6A84F]";
+
 export default function MyFormulaPage() {
   const [formulas, setFormulas] = useState<Formula[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,7 @@ export default function MyFormulaPage() {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h1 className="text-4xl font-black text-charcoal">Công thức màu của tôi</h1>
-          <p className="mt-3 text-warmgray">Lưu trữ, tìm kiếm và quản lý công thức hiệu quả.</p>
+          <p className="mt-3 text-mutedLight">Lưu trữ, tìm kiếm và quản lý công thức hiệu quả.</p>
         </div>
         <button
           onClick={() => { setShowForm(true); setSaveError(""); setForm(EMPTY_FORM); }}
@@ -95,7 +97,7 @@ export default function MyFormulaPage() {
 
       <div className="mt-6 rounded-3xl bg-white p-5 shadow-soft">
         <input
-          className="w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none"
+          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-charcoal outline-none placeholder:text-mutedLight/70 focus:border-[#D6A84F]"
           placeholder="Tìm kiếm theo tên, loại dịch vụ..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -104,10 +106,10 @@ export default function MyFormulaPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-lg rounded-[2rem] bg-white p-7 shadow-2xl">
+          <div className="w-full max-w-lg rounded-[2rem] bg-white p-7 text-charcoal shadow-2xl">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-black text-charcoal">Tạo công thức mới</h2>
-              <button onClick={() => setShowForm(false)} className="rounded-full p-2 hover:bg-black/5">
+              <button onClick={() => setShowForm(false)} className="rounded-full p-2 text-charcoal hover:bg-black/5" aria-label="Đóng form tạo công thức">
                 <X size={20} />
               </button>
             </div>
@@ -127,7 +129,7 @@ export default function MyFormulaPage() {
                 <div key={key}>
                   <label className="text-xs font-extrabold text-charcoal">{label}</label>
                   <input
-                    className="mt-1 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-[#D6A84F]"
+                    className={inputClass}
                     placeholder={placeholder}
                     value={form[key]}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
@@ -138,7 +140,7 @@ export default function MyFormulaPage() {
               <div>
                 <label className="text-xs font-extrabold text-charcoal">Ghi chú kỹ thuật</label>
                 <textarea
-                  className="mt-1 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-[#D6A84F]"
+                  className={inputClass}
                   placeholder="Lưu ý khi pha, thời gian để màu..."
                   rows={3}
                   value={form.note}
@@ -162,19 +164,19 @@ export default function MyFormulaPage() {
         <div className="space-y-4">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
+              <Loader2 size={32} className="animate-spin text-goldText" />
             </div>
           ) : error ? (
             <div className="flex items-center gap-2 rounded-3xl bg-red-50 p-6 text-red-600">
               <AlertCircle size={20} /> {error}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
-              <FlaskConical size={40} className="text-[#D6A84F] opacity-50" />
+            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 bg-white/40 py-20 text-center">
+              <FlaskConical size={40} className="text-goldText opacity-60" />
               <p className="mt-4 text-lg font-extrabold text-charcoal">
                 {query ? "Không tìm thấy công thức" : "Chưa có công thức nào"}
               </p>
-              <p className="mt-2 text-sm text-warmgray">
+              <p className="mt-2 text-sm text-mutedLight">
                 {query ? "Thử từ khoá khác" : "Bấm \"Tạo công thức mới\" để bắt đầu"}
               </p>
             </div>
@@ -187,19 +189,19 @@ export default function MyFormulaPage() {
               >
                 <div>
                   {formula.tag && (
-                    <span className="rounded-full bg-[#D6A84F]/15 px-3 py-1 text-xs font-bold text-charcoal">
+                    <span className="rounded-full bg-[#D6A84F]/15 px-3 py-1 text-xs font-bold text-goldText">
                       {formula.tag}
                     </span>
                   )}
                   <h2 className="mt-2 text-lg font-black text-charcoal">{formula.title}</h2>
-                  <p className="mt-1 text-sm text-warmgray">
+                  <p className="mt-1 text-sm text-mutedLight">
                     {[formula.base, formula.developer, formula.ratio].filter(Boolean).join(" · ")}
                   </p>
                 </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleDelete(formula.id); }}
                   disabled={deleting === formula.id}
-                  className="flex items-center gap-1 rounded-full border border-red-100 px-3 py-2 text-xs font-bold text-red-400 transition hover:bg-red-50 disabled:opacity-40"
+                  className="flex items-center gap-1 rounded-full border border-red-100 px-3 py-2 text-xs font-bold text-red-500 transition hover:bg-red-50 disabled:opacity-40"
                 >
                   {deleting === formula.id
                     ? <Loader2 size={14} className="animate-spin" />
@@ -215,36 +217,36 @@ export default function MyFormulaPage() {
           {selected ? (
             <>
               {selected.tag && (
-                <span className="rounded-full bg-[#D6A84F]/20 px-3 py-1 text-xs font-bold text-[#D6A84F]">
+                <span className="rounded-full bg-[#D6A84F]/20 px-3 py-1 text-xs font-bold text-champagne">
                   {selected.tag}
                 </span>
               )}
               <h2 className="mt-4 text-2xl font-black text-champagne">{selected.title}</h2>
               {selected.note && (
-                <p className="mt-3 text-sm leading-7 text-white/65">{selected.note}</p>
+                <p className="mt-3 text-sm leading-7 text-white/75">{selected.note}</p>
               )}
               <div className="mt-6 space-y-3 text-sm">
                 {selected.base && (
                   <div className="rounded-2xl bg-white/5 p-4">
-                    <span className="text-white/50">Nền: </span>{selected.base}
+                    <span className="text-white/60">Nền: </span>{selected.base}
                   </div>
                 )}
                 {selected.developer && (
                   <div className="rounded-2xl bg-white/5 p-4">
-                    <span className="text-white/50">Oxy: </span>{selected.developer}
+                    <span className="text-white/60">Oxy: </span>{selected.developer}
                   </div>
                 )}
                 {selected.ratio && (
                   <div className="rounded-2xl bg-white/5 p-4">
-                    <span className="text-white/50">Tỉ lệ: </span>{selected.ratio}
+                    <span className="text-white/60">Tỉ lệ: </span>{selected.ratio}
                   </div>
                 )}
               </div>
             </>
           ) : (
             <div className="flex flex-col items-center py-10 text-center">
-              <FlaskConical size={36} className="text-white/20" />
-              <p className="mt-4 text-sm text-white/50">Chọn một công thức để xem chi tiết</p>
+              <FlaskConical size={36} className="text-white/25" />
+              <p className="mt-4 text-sm text-white/60">Chọn một công thức để xem chi tiết</p>
             </div>
           )}
         </aside>
