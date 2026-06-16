@@ -42,7 +42,7 @@ export function Footer() {
           <h3 className="font-bold text-gold">Tài khoản</h3>
           <div className="mt-4 space-y-3 text-sm text-white/65">
             {accountLinks.map((link) => (
-              <p key={link.href}>
+              <p key={`${link.href}-${link.label}`}>
                 <Link href={link.href} className="transition hover:text-gold">
                   {link.label}
                 </Link>
