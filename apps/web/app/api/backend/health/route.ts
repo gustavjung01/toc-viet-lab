@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { buildServerApiUrl, hasServerApiBaseUrl } from "@/lib/server-api";
 
+const VPS_SOURCE_HEADER = { "x-tocviet-api-source": "vps" };
+
 export async function GET() {
   if (!hasServerApiBaseUrl()) {
     return NextResponse.json({
@@ -24,7 +26,10 @@ export async function GET() {
       source: "vps",
       status: response.status,
       body,
-    }, { status: response.ok ? 200 : 502 });
+    }, {
+      status: response.ok ? 200 : 502,
+      headers: VPS_SOURCE_HEADER,
+    });
   } catch (e: any) {
     return NextResponse.json({
       ok: false,
