@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, ExternalLink, Smartphone, X } from "lucide-react";
+import { CheckCircle2, Copy, Download, ExternalLink, Smartphone, X } from "lucide-react";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -9,6 +9,7 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 type InstallMode = "prompt" | "ios" | "in-app";
+type CopyState = "idle" | "copied" | "manual";
 
 const CARD_STATE_KEY = "toc_viet_lab_pwa_install_card_state";
 
@@ -34,6 +35,14 @@ function isInAppBrowser(userAgent = getUserAgent()) {
   return /FBAN|FBAV|FB_IAB|Instagram|Zalo/i.test(userAgent);
 }
 
+function isSafari(userAgent = getUserAgent()) {
+  return /Safari/i.test(userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS|FBAN|FBAV|FB_IAB|Instagram|Zalo/i.test(userAgent);
+}
+
+function isAndroid(userAgent = getUserAgent()) {
+  return /Android/i.test(userAgent);
+}
+
 function getStoredState() {
   try {
     return window.localStorage.getItem(CARD_STATE_KEY) || "";
@@ -48,18 +57,11 @@ function setStoredState(nextState: "dismissed" | "installed") {
   } catch {}
 }
 
-function copyCurrentLink() {
-  const url = window.location.href;
+function openAndroidBrowser(packageName: "com.android.chrome" | "com.microsoft.emmx") {
+  const fallbackUrl = encodeURIComponent(window.location.href);
+  const hostPath = `${window.location.host}${window.location.pathname}${window.location.search}${window.location.hash}`;
 
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard
-      .writeText(url)
-      .then(() => alert("Đã copy link. Hãy mở Safari hoặc Chrome rồi dán link này để cài app."))
-      .catch(() => prompt("Copy link này rồi mở bằng Safari hoặc Chrome:", url));
-    return;
-  }
-
-  prompt("Copy link này rồi mở bằng Safari hoặc Chrome:", url);
+  window.location.href = `intent://${hostPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${fallbackUrl};end`;
 }
 
 export function PwaInstallCard() {
@@ -67,9 +69,13 @@ export function PwaInstallCard() {
   const [visible, setVisible] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [mode, setMode] = useState<InstallMode | null>(null);
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+  const [currentUrl, setCurrentUrl] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    setCurrentUrl(window.location.href);
 
     if (isStandalone() || getStoredState() === "installed" || getStoredState() === "dismissed") {
       setVisible(false);
@@ -78,15 +84,11 @@ export function PwaInstallCard() {
 
     const userAgent = getUserAgent();
 
-    // iPhone/iPad has no Android-style install prompt. Show a calm inline guide only on Safari-like browsers.
-    if (isIOS(userAgent) && !isInAppBrowser(userAgent)) {
-      setMode("ios");
-      setVisible(true);
-    }
-
-    // Zalo/Facebook/Instagram browsers need a browser-switch guide, not a fake install prompt.
     if (isInAppBrowser(userAgent)) {
       setMode("in-app");
+      setVisible(true);
+    } else if (isIOS(userAgent) && isSafari(userAgent)) {
+      setMode("ios");
       setVisible(true);
     }
 
@@ -131,11 +133,22 @@ export function PwaInstallCard() {
         setStoredState("installed");
         setVisible(false);
       }
-      return;
     }
+  }
 
-    if (mode === "in-app") {
-      copyCurrentLink();
+  async function copyCurrentLink() {
+    setCopyState("idle");
+
+    try {
+      if (!navigator.clipboard?.writeText) {
+        setCopyState("manual");
+        return;
+      }
+
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyState("copied");
+    } catch {
+      setCopyState("manual");
     }
   }
 
@@ -144,6 +157,8 @@ export function PwaInstallCard() {
     setVisible(false);
   }
 
+  const userAgent = getUserAgent();
+  const androidInApp = mode === "in-app" && isAndroid(userAgent);
   const isGuide = mode !== "prompt";
 
   return (
@@ -174,7 +189,7 @@ export function PwaInstallCard() {
             ? "Mở nhanh như app, tiện tra công thức màu, case thực tế và tuyển dụng ngay tại salon."
             : mode === "ios"
               ? "Mở bằng Safari, bấm nút Chia sẻ, rồi chọn Thêm vào Màn hình chính. Bấm X nếu bạn đã thêm rồi."
-              : "Trình duyệt nhúng không cài PWA ổn định. Copy link rồi mở bằng Safari hoặc Chrome để cài app."}
+              : "Trình duyệt nhúng không cài PWA ổn định. Hãy mở link bằng Safari hoặc Chrome để cài app."}
         </p>
       </div>
 
@@ -187,7 +202,11 @@ export function PwaInstallCard() {
               <li>Chọn Thêm vào Màn hình chính.</li>
             </ol>
           ) : (
-            <p>Copy link, mở Safari/Chrome, dán link rồi dùng nút cài app của trình duyệt.</p>
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>Bấm Mở Chrome trên Android nếu có.</li>
+              <li>Nếu không mở được, bấm Copy link rồi dán sang Safari hoặc Chrome.</li>
+              <li>Sau đó dùng nút cài app của trình duyệt.</li>
+            </ol>
           )}
         </div>
       ) : null}
@@ -204,17 +223,35 @@ export function PwaInstallCard() {
           </button>
         ) : null}
 
+        {androidInApp ? (
+          <button
+            type="button"
+            onClick={() => openAndroidBrowser("com.android.chrome")}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
+          >
+            <ExternalLink size={17} />
+            Mở Chrome
+          </button>
+        ) : null}
+
         {mode === "in-app" ? (
           <button
             type="button"
-            onClick={handleInstallClick}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gold px-5 py-3 text-sm font-extrabold text-black shadow-gold transition hover:bg-goldBright sm:w-auto sm:min-w-32"
+            onClick={copyCurrentLink}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 px-5 py-3 text-sm font-bold text-white/80 transition hover:border-white/40 hover:text-white sm:w-auto"
           >
-            <Download size={17} />
-            Copy link
+            {copyState === "copied" ? <CheckCircle2 size={17} /> : <Copy size={17} />}
+            {copyState === "copied" ? "Đã copy" : "Copy link"}
           </button>
         ) : null}
       </div>
+
+      {copyState === "manual" ? (
+        <div className="mt-3 rounded-2xl border border-white/10 bg-black/25 p-3 text-xs leading-5 text-white/65">
+          Không copy tự động được. Hãy copy thủ công link này rồi mở bằng Safari hoặc Chrome:
+          <span className="mt-2 block break-all font-semibold text-gold">{currentUrl}</span>
+        </div>
+      ) : null}
     </div>
   );
 }
