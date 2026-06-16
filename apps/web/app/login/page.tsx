@@ -44,12 +44,12 @@ function LoginForm() {
             Tra cứu kỹ thuật tóc chuyên sâu.{" "}
             <span className="text-champagne">Lưu công thức. Hỏi AI.</span>
           </h1>
-          <p className="mt-6 max-w-xl leading-8 text-white/65">
+          <p className="mt-6 max-w-xl leading-8 text-white/75">
             Đăng nhập để lưu nội dung, tạo sổ tay cá nhân, quản lý công thức màu và dùng công cụ AI theo tình huống salon thực tế.
           </p>
           <div className="mt-8 grid max-w-xl gap-4 sm:grid-cols-3">
             {["Lưu công thức", "Theo dõi nội dung", "Hỏi AI theo ca"].map((item) => (
-              <div key={item} className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm font-bold text-white/75">
+              <div key={item} className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm font-bold text-white/80">
                 {item}
               </div>
             ))}
@@ -60,13 +60,13 @@ function LoginForm() {
           <div className="mb-7 flex rounded-full bg-cream p-1">
             <button
               onClick={() => setTab("login")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "login" ? "bg-charcoal text-champagne" : "text-warmgray"}`}
+              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "login" ? "bg-charcoal text-champagne" : "text-mutedLight hover:text-charcoal"}`}
             >
               Đăng nhập
             </button>
             <button
               onClick={() => setTab("register")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "register" ? "bg-charcoal text-champagne" : "text-warmgray"}`}
+              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition ${tab === "register" ? "bg-charcoal text-champagne" : "text-mutedLight hover:text-charcoal"}`}
             >
               Đăng ký
             </button>
@@ -80,11 +80,11 @@ function LoginForm() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <label className="text-sm font-extrabold">Email</label>
+            <label className="text-sm font-extrabold text-charcoal">Email</label>
             <div className="mt-2 flex items-center gap-3 rounded-2xl border border-black/10 px-4 py-3">
-              <Mail size={18} className="text-champagne" />
+              <Mail size={18} className="text-goldText" />
               <input
-                className="w-full outline-none bg-transparent"
+                className="w-full bg-transparent text-charcoal outline-none placeholder:text-mutedLight/70"
                 placeholder="Nhập email của bạn"
                 type="email"
                 value={email}
@@ -93,11 +93,11 @@ function LoginForm() {
               />
             </div>
 
-            <label className="mt-5 block text-sm font-extrabold">Mật khẩu</label>
+            <label className="mt-5 block text-sm font-extrabold text-charcoal">Mật khẩu</label>
             <div className="mt-2 flex items-center gap-3 rounded-2xl border border-black/10 px-4 py-3">
-              <Lock size={18} className="text-champagne" />
+              <Lock size={18} className="text-goldText" />
               <input
-                className="w-full outline-none bg-transparent"
+                className="w-full bg-transparent text-charcoal outline-none placeholder:text-mutedLight/70"
                 placeholder="Nhập mật khẩu"
                 type="password"
                 value={password}
@@ -107,10 +107,10 @@ function LoginForm() {
             </div>
 
             <div className="mt-5 flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-warmgray">
+              <label className="flex items-center gap-2 text-mutedLight">
                 <input type="checkbox" className="rounded" /> Ghi nhớ đăng nhập
               </label>
-              <Link href="#" className="font-bold text-[#D6A84F] hover:text-[#F0C76A]">Quên mật khẩu?</Link>
+              <Link href="#" className="font-bold text-goldText hover:text-goldDeep">Quên mật khẩu?</Link>
             </div>
 
             <button
@@ -126,7 +126,7 @@ function LoginForm() {
           <div className="mt-6">
             <div className="relative flex items-center gap-3">
               <div className="flex-1 border-t border-black/10" />
-              <span className="text-xs text-warmgray">hoặc tiếp tục với</span>
+              <span className="text-xs text-mutedLight">hoặc tiếp tục với</span>
               <div className="flex-1 border-t border-black/10" />
             </div>
             <button
