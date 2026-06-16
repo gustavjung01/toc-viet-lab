@@ -1,0 +1,24 @@
+[Unit]
+Description=Toc Viet Lab API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/apps/tocviet/current/server
+EnvironmentFile=/etc/app-env/tocviet.env
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/apps/tocviet/shared /srv/backups/tocviet
+
+[Install]
+WantedBy=multi-user.target
