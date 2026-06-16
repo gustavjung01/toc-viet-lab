@@ -8,12 +8,18 @@
 - Vercel build phần frontend Next.js.
 - VPS chạy phần backend trong thư mục `server/`.
 - Cloudflare giữ DNS/CDN/SSL/R2 nếu cần.
+- Backend Tóc Việt dùng namespace riêng `tocviet`, không đụng runtime `vlgn` hoặc web khác.
 
 ```txt
 Repo: gustavjung01/toc-viet-lab
 Branch: main
 Local: F:\1_A_Disk_D\Toc-Viet-Lab
-VPS path: /srv/apps/tocviet
+VPS app root: /srv/apps/tocviet
+VPS source: /srv/apps/tocviet/source
+VPS current: /srv/apps/tocviet/current -> /srv/apps/tocviet/source
+Env: /etc/app-env/tocviet.env
+Service: tocviet-api.service
+Backups: /srv/backups/tocviet
 Frontend domain: https://tocvietlab.studio
 Backend API domain: https://api.tocvietlab.studio
 ```
@@ -24,7 +30,7 @@ Backend API domain: https://api.tocvietlab.studio
 User browser
   ↓
 Vercel frontend: https://tocvietlab.studio
-  ↓ gọi API
+  ↓ gọi API hoặc Next proxy
 VPS backend: https://api.tocvietlab.studio
   ↓
 Database trên VPS
@@ -40,64 +46,64 @@ api.tocvietlab.studio   -> VPS IP
 cdn.tocvietlab.studio   -> R2/CDN nếu dùng
 ```
 
-## 2. Cấu trúc repo sau khi tách runtime
+## 2. Cấu trúc VPS mục tiêu
 
 ```txt
-toc-viet-lab/
-├─ app/                  # Frontend Next.js chạy Vercel
-├─ components/           # UI frontend
-├─ lib/                  # Shared helpers/types
-├─ server/               # Backend chạy VPS
-│  ├─ index.ts
-│  ├─ routes/
-│  │  ├─ health.ts
-│  │  ├─ auth.ts
-│  │  ├─ recruitment.ts
-│  │  ├─ formulas.ts
-│  │  ├─ user-formulas.ts
-│  │  └─ payment.ts
-│  ├─ db/
-│  │  ├─ index.ts
-│  │  ├─ schema.ts
-│  │  └─ migrations/
-│  ├─ middleware/
-│  │  ├─ auth.ts
-│  │  └─ cors.ts
-│  └─ jobs/
-│     ├─ expire-jobs.ts
-│     └─ backup-db.ts
-├─ scripts/
-├─ package.json
-└─ README.md
+/srv/apps/tocviet/current -> /srv/apps/tocviet/source
+/srv/apps/tocviet/source
+  apps
+  server
+  infra
+  scripts
+  package.json
+  package-lock.json
+
+/srv/apps/tocviet/source.git
+/srv/apps/tocviet/releases
+/srv/apps/tocviet/shared/tmp
+/srv/apps/tocviet/shared/uploads
+/srv/backups/tocviet
+/etc/app-env/tocviet.env
+/etc/systemd/system/tocviet-api.service
 ```
 
-## 3. Lộ trình triển khai theo giai đoạn
+Code backend hiện nằm trong:
 
-### Giai đoạn A: Chuẩn bị repo cho backend VPS
+```txt
+server/src/index.ts
+```
+
+Build output:
+
+```txt
+server/dist/index.js
+```
+
+## 3. Giai đoạn A: Chuẩn bị repo cho backend VPS
 
 Mục tiêu: thêm skeleton backend nhưng chưa cắt D1/Vercel.
 
 Checklist:
 
-- [ ] Thêm thư mục `server/`.
-- [ ] Thêm `server/index.ts`.
-- [ ] Thêm route `GET /health`.
-- [ ] Thêm env API base cho frontend.
-- [ ] Thêm scripts backend vào `package.json`.
-- [ ] Đảm bảo `npm run dev` frontend vẫn chạy.
-- [ ] Đảm bảo `npm run api:dev` backend chạy local.
+- [x] Thêm thư mục `server/`.
+- [x] Thêm route `GET /health`.
+- [x] Thêm scripts backend vào `package.json`.
+- [x] Thêm `server/tsconfig.json`.
+- [x] Thêm bridge test từ Vercel: `/api/backend/health`, `/api/backend/jobs`.
+- [ ] Đảm bảo frontend `apps/web` vẫn build.
+- [ ] Đảm bảo backend chạy trên VPS qua systemd.
 
-Scripts cần thêm:
+Scripts backend:
 
 ```json
 {
-  "api:dev": "tsx server/index.ts",
   "api:build": "tsc -p server/tsconfig.json",
-  "api:start": "node dist/server/index.js"
+  "api:start": "node server/dist/index.js",
+  "api:dev": "npm run api:build && node server/dist/index.js"
 }
 ```
 
-Env frontend:
+Env frontend cho bridge:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=https://api.tocvietlab.studio
@@ -110,62 +116,63 @@ Test local:
 Set-Location "F:\1_A_Disk_D\Toc-Viet-Lab"
 git pull origin main
 npm install
-npm run dev
-```
-
-Backend local sau khi có `server/`:
-
-```powershell
-npm run api:dev
+npm run api:build
+npm run api:start
 ```
 
 Kỳ vọng:
 
 ```txt
-GET http://localhost:4000/health
--> { "ok": true }
+GET http://localhost:4000/health -> 200, namespace: tocviet
+GET http://localhost:4000/recruitment/jobs -> 200, jobs: []
 ```
 
-### Giai đoạn B: Chuẩn bị VPS
+## 4. Giai đoạn B: Chuẩn bị VPS
 
 Mục tiêu: VPS sẵn Node, Nginx, firewall, repo path.
 
-Lệnh VPS:
+Cài gói nền:
 
 ```bash
-apt update && apt upgrade -y
-apt install -y git nginx ufw curl build-essential
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git nginx ufw curl build-essential
 ```
 
 Firewall:
 
 ```bash
-ufw allow OpenSSH
-ufw allow 80
-ufw allow 443
-ufw enable
+sudo ufw allow OpenSSH
+sudo ufw allow 80
+sudo ufw allow 443
+sudo ufw enable
 ```
 
-Tạo thư mục:
+Tạo thư mục riêng cho Tóc Việt:
 
 ```bash
-mkdir -p /var/www
-cd /var/www
-git clone https://github.com/gustavjung01/toc-viet-lab.git
-cd /srv/apps/tocviet
-npm install
+sudo mkdir -p /srv/apps/tocviet/source /srv/apps/tocviet/releases /srv/apps/tocviet/shared/tmp /srv/apps/tocviet/shared/uploads /srv/backups/tocviet /etc/app-env
+sudo chown -R www-data:www-data /srv/apps/tocviet
 ```
 
-Cài process manager:
+Clone hoặc pull repo vào source:
 
 ```bash
-npm install -g pm2
+cd /srv/apps/tocviet/source
+git clone https://github.com/gustavjung01/toc-viet-lab.git .
+```
+
+Tạo symlink runtime:
+
+```bash
+sudo ln -sfn /srv/apps/tocviet/source /srv/apps/tocviet/current
 ```
 
 Env VPS:
 
 ```bash
-nano /etc/app-env/tocviet.env
+sudo nano /etc/app-env/tocviet.env
+sudo chown root:root /etc/app-env/tocviet.env
+sudo chmod 600 /etc/app-env/tocviet.env
 ```
 
 Tối thiểu:
@@ -173,19 +180,21 @@ Tối thiểu:
 ```env
 NODE_ENV=production
 PORT=4000
-API_PUBLIC_URL=https://api.tocvietlab.studio
+API_PORT=4000
+SERVICE_NAME=tocviet-api
+APP_NAMESPACE=tocviet
+APP_VERSION=0.1.0
 CORS_ORIGIN=https://tocvietlab.studio
-DATABASE_URL=file:/srv/apps/tocviet/data/prod.sqlite
-JWT_SECRET=change_me
 ```
 
-Nếu dùng PostgreSQL:
+Nếu dùng PostgreSQL sau này:
 
 ```env
 DATABASE_URL=postgres://tocviet:password@127.0.0.1:5432/tocvietlab
+DATABASE_SCHEMA=tocviet
 ```
 
-### Giai đoạn C: Cloudflare DNS + Nginx
+## 5. Giai đoạn C: Cloudflare DNS + Nginx
 
 Cloudflare DNS:
 
@@ -193,38 +202,23 @@ Cloudflare DNS:
 Type: A
 Name: api
 Value: VPS_PUBLIC_IP
-Proxy: on hoặc DNS only tùy SSL setup
+Proxy: DNS only trước, sau SSL ổn có thể bật proxied
 ```
 
-Nginx config:
+Nginx config mẫu có sẵn:
+
+```txt
+infra/vps/api.tocvietlab.studio.conf
+```
+
+Cài config:
 
 ```bash
-nano /etc/nginx/sites-available/tocviet-api
-```
-
-Nội dung:
-
-```nginx
-server {
-  listen 80;
-  server_name api.tocvietlab.studio;
-
-  location / {
-    proxy_pass http://127.0.0.1:4000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
-}
-```
-
-Enable site:
-
-```bash
-ln -s /etc/nginx/sites-available/tocviet-api /etc/nginx/sites-enabled/tocviet-api
-nginx -t
-systemctl reload nginx
+cd /srv/apps/tocviet/source
+sudo cp infra/vps/api.tocvietlab.studio.conf /etc/nginx/sites-available/api.tocvietlab.studio.conf
+sudo ln -sfn /etc/nginx/sites-available/api.tocvietlab.studio.conf /etc/nginx/sites-enabled/api.tocvietlab.studio.conf
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
 Test:
@@ -236,40 +230,50 @@ curl http://api.tocvietlab.studio/health
 Kỳ vọng:
 
 ```json
-{ "ok": true }
+{ "ok": true, "namespace": "tocviet" }
 ```
 
-### Giai đoạn D: Deploy backend skeleton
-
-Sau khi repo có `server/`:
+## 6. Giai đoạn D: Deploy backend skeleton bằng systemd
 
 ```bash
-cd /srv/apps/tocviet
+cd /srv/apps/tocviet/source
 git pull origin main
 npm install
 npm run api:build
-pm2 start dist/server/index.js --name tocviet-api
-pm2 save
-pm2 startup
-```
 
-Update backend sau mỗi lần sửa repo:
-
-```bash
-cd /srv/apps/tocviet
-git pull origin main
-npm install
-npm run api:build
-pm2 restart tocviet-api
+sudo cp infra/vps/tocviet-api.service /etc/systemd/system/tocviet-api.service
+sudo systemctl daemon-reload
+sudo systemctl enable tocviet-api
+sudo systemctl restart tocviet-api
+sudo systemctl status tocviet-api --no-pager
 ```
 
 Xem log:
 
 ```bash
-pm2 logs tocviet-api
+journalctl -u tocviet-api -f
 ```
 
-### Giai đoạn E: Chuyển tuyển dụng sang VPS trước
+Test local trên VPS:
+
+```bash
+curl http://127.0.0.1:4000/health
+curl http://127.0.0.1:4000/recruitment/jobs
+```
+
+Update backend sau mỗi lần sửa repo:
+
+```bash
+cd /srv/apps/tocviet/source
+git pull origin main
+npm install
+npm run api:build
+sudo systemctl restart tocviet-api
+sudo systemctl status tocviet-api --no-pager
+journalctl -u tocviet-api -f
+```
+
+## 7. Giai đoạn E: Chuyển tuyển dụng sang VPS trước
 
 Lý do: tuyển dụng liên quan doanh thu, quota, gói đăng vượt, gói đẩy tin.
 
@@ -304,27 +308,14 @@ Test case:
 6. User boost khi hết lượt -> bị yêu cầu mua gói boost.
 ```
 
-Cập nhật frontend:
+Giai đoạn đầu giữ Next API route làm proxy:
 
 ```txt
-/tuyen-dung                 -> gọi VPS /recruitment/jobs
-/tuyen-dung/dang-tin        -> gọi VPS POST /recruitment/jobs
-/tuyen-dung-cua-toi         -> gọi VPS /recruitment/jobs/mine
+Next frontend -> /api/backend/jobs -> VPS /recruitment/jobs
+Legacy production /api/recruitment/jobs vẫn giữ cho rollback.
 ```
 
-Giai đoạn đầu có thể giữ Next API route làm proxy:
-
-```txt
-Next frontend -> /api/recruitment/jobs -> VPS API
-```
-
-Sau khi ổn, frontend gọi thẳng:
-
-```txt
-Next frontend -> https://api.tocvietlab.studio/recruitment/jobs
-```
-
-### Giai đoạn F: Mock paid order
+## 8. Giai đoạn F: Mock paid order
 
 Mục tiêu: test thu phí logic trước khi nối cổng thanh toán thật.
 
@@ -346,8 +337,8 @@ Mapping:
 
 ```txt
 starter -> post_package, quantity_total = 3, expires_at = 30 ngày
- growth -> post_package, quantity_total = 10, expires_at = 30 ngày
- boost   -> boost_package, quantity_total = 1, expires_at = 7 ngày
+growth  -> post_package, quantity_total = 10, expires_at = 30 ngày
+boost   -> boost_package, quantity_total = 1, expires_at = 7 ngày
 ```
 
 Sau khi tạo mock order:
@@ -357,7 +348,7 @@ recruitment_orders.status = paid
 quantity_used = 0
 ```
 
-### Giai đoạn G: Chuyển công thức màu/content
+## 9. Giai đoạn G: Chuyển công thức màu/content
 
 API VPS cần có:
 
@@ -370,29 +361,9 @@ POST /user-formulas/copy-from-public
 DELETE /user-formulas/:id
 ```
 
-Frontend cần chuyển:
-
-```txt
-/cong-thuc-mau             -> VPS /formulas
-/cong-thuc-mau/[slug]      -> VPS /formulas/:slug
-/cong-thuc-cua-toi         -> VPS /user-formulas
-```
-
-Test case:
-
-```txt
-1. Public list công thức hiện đủ.
-2. Detail theo slug chạy.
-3. User login copy công thức public về sổ tay.
-4. User sửa bản copy riêng.
-5. User xóa công thức riêng.
-```
-
-### Giai đoạn H: Chuyển auth sau cùng
+## 10. Giai đoạn H: Chuyển auth sau cùng
 
 Không chuyển auth đầu tiên.
-
-Lý do: auth là dây thần kinh chính. Gãy auth là gãy dashboard, tuyển dụng, công thức cá nhân.
 
 Cách an toàn:
 
@@ -411,17 +382,7 @@ POST /auth/register
 GET  /auth/me
 ```
 
-Test case:
-
-```txt
-1. Login email/password đúng -> vào dashboard.
-2. Login sai -> bị từ chối.
-3. Session có user.id và role.
-4. Đăng tuyển lấy đúng user.id.
-5. User không salon vẫn đăng được nếu còn quota.
-```
-
-### Giai đoạn I: Payment thật
+## 11. Giai đoạn I: Payment thật
 
 Sau mock paid order mới nối payment thật.
 
@@ -432,35 +393,14 @@ POST /payment/create-checkout
 POST /payment/webhook
 ```
 
-Luồng:
-
-```txt
-User chọn gói
--> VPS tạo checkout/payment link
--> Payment gateway callback webhook
--> VPS verify webhook
--> VPS ghi recruitment_orders status paid
--> user có quota mới
-```
-
 Không cho frontend tự set `paid`.
 
-### Giai đoạn J: Cron, backup, monitor
+## 12. Cron, backup, monitor
 
-Cron cần có:
+Backup root:
 
 ```txt
-- Expire job_posts hết hạn
-- Clear boost_until hết hạn
-- Backup DB hằng ngày
-- Dọn logs cũ
-```
-
-Backup SQLite:
-
-```bash
-mkdir -p /srv/backups/tocviet
-cp /srv/apps/tocviet/data/prod.sqlite /srv/backups/tocviet/prod-$(date +%F).sqlite
+/srv/backups/tocviet
 ```
 
 Backup PostgreSQL:
@@ -472,13 +412,13 @@ pg_dump tocvietlab > /srv/backups/tocviet/tocvietlab-$(date +%F).sql
 Monitor tối thiểu:
 
 ```bash
-pm2 status
-pm2 logs tocviet-api
-systemctl status nginx
+systemctl status tocviet-api --no-pager
+journalctl -u tocviet-api -f
+systemctl status nginx --no-pager
 curl https://api.tocvietlab.studio/health
 ```
 
-## 4. Checklist cắt Cloudflare D1 khỏi runtime
+## 13. Checklist cắt Cloudflare D1 khỏi runtime
 
 Chỉ bỏ D1 env khỏi Vercel khi đã tick hết:
 
@@ -494,13 +434,11 @@ Chỉ bỏ D1 env khỏi Vercel khi đã tick hết:
 - [ ] Backup DB chạy.
 - [ ] Rollback đã chuẩn bị.
 
-## 5. Rollback
+## 14. Rollback
 
-Nếu backend VPS lỗi, quay về mode cũ:
+Nếu backend VPS lỗi, quay về mode cũ.
 
-### Trên Vercel
-
-Giữ lại env D1 legacy:
+Trên Vercel giữ lại env D1 legacy:
 
 ```env
 CLOUDFLARE_ACCOUNT_ID=...
@@ -515,86 +453,19 @@ NEXT_PUBLIC_API_BASE_URL=https://tocvietlab.studio
 SERVER_API_BASE_URL=https://tocvietlab.studio
 ```
 
-### Trên repo
-
 Không revert toàn bộ nếu không cần. Chỉ chuyển frontend về API cũ hoặc giữ proxy fallback.
 
-### Trên VPS
+## 15. Không được đụng namespace web khác
 
-```bash
-pm2 stop tocviet-api
-pm2 logs tocviet-api
-```
-
-## 6. Thứ tự commit trên main
+Không thao tác vào:
 
 ```txt
-1. Add VPS backend deployment runbook
-2. Add server skeleton and health route
-3. Add frontend API base client
-4. Move recruitment routes to server
-5. Add mock paid recruitment orders
-6. Repoint recruitment frontend to VPS API/proxy
-7. Move formulas routes to server
-8. Add copy public formula to user formulas
-9. Move auth credential check to VPS
-10. Add payment webhook skeleton
-11. Add deploy scripts and PM2/systemd docs
-```
-
-## 7. Lệnh vận hành hằng ngày
-
-### Local frontend
-
-```powershell
-Set-Location "F:\1_A_Disk_D\Toc-Viet-Lab"
-git pull origin main
-npm install
-npm run dev
-```
-
-### VPS backend
-
-```bash
-cd /srv/apps/tocviet
-git pull origin main
-npm install
-npm run api:build
-pm2 restart tocviet-api
-```
-
-### Kiểm tra sau deploy
-
-```bash
-curl https://api.tocvietlab.studio/health
-pm2 status
-pm2 logs tocviet-api --lines 50
-```
-
-Frontend check:
-
-```txt
-https://tocvietlab.studio
-https://tocvietlab.studio/tuyen-dung
-https://tocvietlab.studio/cong-thuc-mau
-```
-
-## 8. Kết luận triển khai
-
-Không chia nhánh. Không tách repo giai đoạn này.
-
-Dùng:
-
-```txt
-1 repo
-1 branch main
-2 runtime:
-- Vercel frontend
-- VPS backend
-```
-
-Chuyển theo thứ tự an toàn:
-
-```txt
-server skeleton -> recruitment -> mock paid order -> formulas -> auth -> payment -> cron/backup
+/srv/apps/vlgn
+/var/www/viec-lam-gan-nha
+/etc/systemd/system/vlgn-api.service
+/etc/app-env/vlgn.env
+/srv/backups/vlgn
+Postgres schema vlgn
+api.vieclamgannha.me nginx config
+viec-lam-gan-nha nginx config
 ```
