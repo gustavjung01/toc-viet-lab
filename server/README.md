@@ -1,25 +1,16 @@
 # Toc Viet Lab VPS Backend
 
-Backend skeleton for the safe VPS-first rollout.
+Backend skeleton for the safe VPS-first rollout under the `tocviet` namespace.
 
 ## Current state
 
-<<<<<<< HEAD
-Đợt 6 thêm server tối thiểu:
+This stage exposes the minimum backend surface:
 
 ```txt
 GET /health -> 200
 GET / -> 200
-GET /recruitment/jobs -> 200, jobs rỗng để test bridge
-POST/PATCH/DELETE /recruitment/jobs -> 501 not-implemented
-=======
-This stage only exposes the minimum backend surface:
-
-```txt
-GET /health
-GET /
-GET|POST|PATCH|DELETE /recruitment/jobs -> 501 for write paths
->>>>>>> 43a781d (Align VPS backend docs and namespace)
+GET /recruitment/jobs -> 200, empty jobs list for bridge testing
+POST/PATCH/DELETE /recruitment/jobs -> 501 not implemented yet
 ```
 
 The Vercel frontend still keeps the legacy production route. The bridge routes for testing are:
@@ -50,11 +41,19 @@ Default port:
 4000
 ```
 
-Health check:
+Health and skeleton checks:
 
 ```bash
 curl http://localhost:4000/health
 curl http://localhost:4000/recruitment/jobs
+```
+
+Expected skeleton response includes:
+
+```txt
+namespace: tocviet
+source: vps-skeleton
+jobs: []
 ```
 
 ## Env
@@ -69,21 +68,39 @@ NODE_ENV=production
 CORS_ORIGIN=https://tocvietlab.studio
 ```
 
-Env thật đặt tại:
+Real env file on VPS:
 
 ```txt
 /etc/app-env/tocviet.env
 ```
 
-Owner/mode đề xuất:
+Recommended owner and mode:
 
 ```bash
-<<<<<<< HEAD
 sudo chown root:root /etc/app-env/tocviet.env
 sudo chmod 600 /etc/app-env/tocviet.env
 ```
 
-## VPS layout mục tiêu
+Do not commit real env values, private keys, tokens, or database passwords.
+
+## Safe namespace
+
+All backend deploy work for Toc Viet must stay under:
+
+```txt
+App root: /srv/apps/tocviet
+Runtime symlink: /srv/apps/tocviet/current -> /srv/apps/tocviet/source
+Source path: /srv/apps/tocviet/source
+Backup root: /srv/backups/tocviet
+Env file: /etc/app-env/tocviet.env
+Service unit: tocviet-api.service
+Database schema: tocviet
+Public API: https://api.tocvietlab.studio
+```
+
+Do not touch another site's runtime namespace such as `vlgn`, `vlgn-api.service`, `vlgn.env`, or `vieclamgannha.me` Nginx config.
+
+## VPS layout target
 
 ```txt
 /srv/apps/tocviet/current -> /srv/apps/tocviet/source
@@ -95,7 +112,7 @@ sudo chmod 600 /etc/app-env/tocviet.env
 /srv/backups/tocviet
 ```
 
-Backend service chạy từ:
+Backend service runs from:
 
 ```txt
 /srv/apps/tocviet/current/server
@@ -107,13 +124,10 @@ Build output:
 /srv/apps/tocviet/current/server/dist/index.js
 ```
 
-## VPS quick deploy với systemd
+## VPS quick deploy with systemd
 
 ```bash
 cd /srv/apps/tocviet/source
-=======
-cd /srv/apps/tocviet
->>>>>>> 43a781d (Align VPS backend docs and namespace)
 git pull origin main
 npm install
 npm run api:build
@@ -126,37 +140,28 @@ sudo systemctl restart tocviet-api
 sudo systemctl status tocviet-api --no-pager
 ```
 
-<<<<<<< HEAD
-Xem log:
-=======
-If the process already exists:
->>>>>>> 43a781d (Align VPS backend docs and namespace)
+Logs:
 
 ```bash
 journalctl -u tocviet-api -f
 ```
 
-<<<<<<< HEAD
-Test local trên VPS:
-=======
-## Nginx example
->>>>>>> 43a781d (Align VPS backend docs and namespace)
+Test on VPS before Nginx:
 
 ```bash
 curl http://127.0.0.1:4000/health
 curl http://127.0.0.1:4000/recruitment/jobs
 ```
 
-<<<<<<< HEAD
 ## Nginx
 
-Mẫu config nằm ở:
+Template config:
 
 ```txt
 infra/vps/api.tocvietlab.studio.conf
 ```
 
-Cài vào VPS:
+Install on VPS:
 
 ```bash
 sudo cp infra/vps/api.tocvietlab.studio.conf /etc/nginx/sites-available/api.tocvietlab.studio.conf
@@ -165,24 +170,12 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-Sau khi cấu hình DNS/SSL:
-=======
-After SSL is configured:
->>>>>>> 43a781d (Align VPS backend docs and namespace)
+After DNS and SSL are configured:
 
 ```bash
 curl https://api.tocvietlab.studio/health
 curl https://api.tocvietlab.studio/recruitment/jobs
 ```
-
-## Safe namespace
-
-- App root: `/srv/apps/tocviet`
-- Backup root: `/srv/backups/tocviet`
-- Env file: `/etc/app-env/tocviet.env`
-- Service unit: `tocviet-api.service`
-- Database schema: `tocviet`
-- Public API: `https://api.tocvietlab.studio`
 
 ## Not in scope for this stage
 
