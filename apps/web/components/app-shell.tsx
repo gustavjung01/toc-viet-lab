@@ -26,7 +26,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream text-charcoal">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 bg-black p-5 text-white lg:block">
         <Logo />
         <nav className="mt-10 space-y-2">
@@ -43,17 +43,17 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
       <main className="lg:pl-72">
-        <div className="sticky top-0 z-30 border-b border-black/5 bg-cream/90 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-30 border-b border-lineLight bg-cream/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
             <div className="lg:hidden">
               <Logo compact />
             </div>
             <div className="hidden lg:block">
-              <p className="text-sm font-semibold text-muted">Xin chào,</p>
-              <h1 className="text-xl font-extrabold text-black">{userName}</h1>
+              <p className="text-sm font-semibold text-mutedLight">Xin chào,</p>
+              <h1 className="text-xl font-extrabold text-charcoal">{userName}</h1>
             </div>
             <div className="flex items-center gap-3">
-              <div className="rounded-full bg-black px-4 py-2 text-sm font-bold text-gold">
+              <div className="rounded-full bg-charcoal px-4 py-2 text-sm font-bold text-gold">
                 {roleLabel[userRole] ?? "Thành viên"}
               </div>
               <SignOutButton />
