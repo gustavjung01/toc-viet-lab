@@ -327,7 +327,7 @@ ufw enable
 mkdir -p /var/www
 cd /var/www
 git clone https://github.com/gustavjung01/toc-viet-lab.git
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 npm install
 npm run api:build
 ```
@@ -443,7 +443,7 @@ GET http://localhost:4000/health
 VPS update:
 
 ```bash
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 git pull origin main
 npm install
 npm run api:build

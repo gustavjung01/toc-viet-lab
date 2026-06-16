@@ -13,7 +13,7 @@
 Repo: gustavjung01/toc-viet-lab
 Branch: main
 Local: F:\1_A_Disk_D\Toc-Viet-Lab
-VPS path: /var/www/toc-viet-lab
+VPS path: /srv/apps/tocviet
 Frontend domain: https://tocvietlab.studio
 Backend API domain: https://api.tocvietlab.studio
 ```
@@ -152,7 +152,7 @@ Tạo thư mục:
 mkdir -p /var/www
 cd /var/www
 git clone https://github.com/gustavjung01/toc-viet-lab.git
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 npm install
 ```
 
@@ -165,7 +165,7 @@ npm install -g pm2
 Env VPS:
 
 ```bash
-nano /var/www/toc-viet-lab/.env
+nano /etc/app-env/tocviet.env
 ```
 
 Tối thiểu:
@@ -175,7 +175,7 @@ NODE_ENV=production
 PORT=4000
 API_PUBLIC_URL=https://api.tocvietlab.studio
 CORS_ORIGIN=https://tocvietlab.studio
-DATABASE_URL=file:/var/www/toc-viet-lab/data/prod.sqlite
+DATABASE_URL=file:/srv/apps/tocviet/data/prod.sqlite
 JWT_SECRET=change_me
 ```
 
@@ -244,7 +244,7 @@ Kỳ vọng:
 Sau khi repo có `server/`:
 
 ```bash
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 git pull origin main
 npm install
 npm run api:build
@@ -256,7 +256,7 @@ pm2 startup
 Update backend sau mỗi lần sửa repo:
 
 ```bash
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 git pull origin main
 npm install
 npm run api:build
@@ -459,14 +459,14 @@ Cron cần có:
 Backup SQLite:
 
 ```bash
-mkdir -p /var/backups/tocviet
-cp /var/www/toc-viet-lab/data/prod.sqlite /var/backups/tocviet/prod-$(date +%F).sqlite
+mkdir -p /srv/backups/tocviet
+cp /srv/apps/tocviet/data/prod.sqlite /srv/backups/tocviet/prod-$(date +%F).sqlite
 ```
 
 Backup PostgreSQL:
 
 ```bash
-pg_dump tocvietlab > /var/backups/tocviet/tocvietlab-$(date +%F).sql
+pg_dump tocvietlab > /srv/backups/tocviet/tocvietlab-$(date +%F).sql
 ```
 
 Monitor tối thiểu:
@@ -556,7 +556,7 @@ npm run dev
 ### VPS backend
 
 ```bash
-cd /var/www/toc-viet-lab
+cd /srv/apps/tocviet
 git pull origin main
 npm install
 npm run api:build

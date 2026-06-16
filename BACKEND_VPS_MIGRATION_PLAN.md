@@ -312,7 +312,7 @@ PAYMENT_SECRET=...
 Nếu dùng SQLite VPS:
 
 ```env
-DATABASE_URL=file:/var/www/toc-viet-lab/data/prod.sqlite
+DATABASE_URL=file:/srv/apps/tocviet/data/prod.sqlite
 ```
 
 ## 8. Các bước triển khai chi tiết
@@ -490,7 +490,7 @@ Bước an toàn:
 Cấu trúc VPS:
 
 ```txt
-/var/www/toc-viet-lab
+/srv/apps/tocviet
   server
   .env
   logs

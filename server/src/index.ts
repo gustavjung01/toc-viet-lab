@@ -3,6 +3,7 @@ import { URL } from "node:url";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 4000);
 const SERVICE_NAME = process.env.SERVICE_NAME || "tocviet-api";
+const NAMESPACE = process.env.APP_NAMESPACE || "tocviet";
 const VERSION = process.env.npm_package_version || process.env.APP_VERSION || "0.1.0";
 const STARTED_AT = new Date();
 
@@ -31,6 +32,7 @@ function notFound(res: http.ServerResponse, path: string) {
 function healthBody() {
   return {
     ok: true,
+    namespace: NAMESPACE,
     service: SERVICE_NAME,
     version: VERSION,
     runtime: "node",
@@ -44,6 +46,7 @@ function healthBody() {
 function emptyRecruitmentJobsBody() {
   return {
     ok: true,
+    namespace: NAMESPACE,
     source: "vps-skeleton",
     module: "recruitment",
     jobs: [],
@@ -68,6 +71,7 @@ const server = http.createServer((req, res) => {
   if (method === "GET" && path === "/") {
     sendJson(res, 200, {
       ok: true,
+      namespace: NAMESPACE,
       service: SERVICE_NAME,
       message: "Toc Viet Lab backend API is running.",
       health: "/health",

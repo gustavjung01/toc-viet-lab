@@ -1,9 +1,10 @@
-# Tóc Việt Lab VPS Backend
+# Toc Viet Lab VPS Backend
 
-Backend skeleton cho giai đoạn VPS-first API.
+Backend skeleton for the safe VPS-first rollout.
 
-## Trạng thái hiện tại
+## Current state
 
+<<<<<<< HEAD
 Đợt 6 thêm server tối thiểu:
 
 ```txt
@@ -11,9 +12,17 @@ GET /health -> 200
 GET / -> 200
 GET /recruitment/jobs -> 200, jobs rỗng để test bridge
 POST/PATCH/DELETE /recruitment/jobs -> 501 not-implemented
+=======
+This stage only exposes the minimum backend surface:
+
+```txt
+GET /health
+GET /
+GET|POST|PATCH|DELETE /recruitment/jobs -> 501 for write paths
+>>>>>>> 43a781d (Align VPS backend docs and namespace)
 ```
 
-Frontend Vercel vẫn chạy production route cũ. Route bridge để test là:
+The Vercel frontend still keeps the legacy production route. The bridge routes for testing are:
 
 ```txt
 /apps/web: /api/backend/health
@@ -22,20 +31,26 @@ Frontend Vercel vẫn chạy production route cũ. Route bridge để test là:
 
 ## Local run
 
-Từ root repo:
+From the repo root:
 
 ```bash
 npm run api:build
 npm run api:start
 ```
 
-Hoặc dev mode:
+Or in dev mode:
 
 ```bash
 npm run api:dev
 ```
 
-Mặc định server chạy port `4000`.
+Default port:
+
+```txt
+4000
+```
+
+Health check:
 
 ```bash
 curl http://localhost:4000/health
@@ -48,6 +63,7 @@ curl http://localhost:4000/recruitment/jobs
 PORT=4000
 API_PORT=4000
 SERVICE_NAME=tocviet-api
+APP_NAMESPACE=tocviet
 APP_VERSION=0.1.0
 NODE_ENV=production
 CORS_ORIGIN=https://tocvietlab.studio
@@ -62,6 +78,7 @@ Env thật đặt tại:
 Owner/mode đề xuất:
 
 ```bash
+<<<<<<< HEAD
 sudo chown root:root /etc/app-env/tocviet.env
 sudo chmod 600 /etc/app-env/tocviet.env
 ```
@@ -94,6 +111,9 @@ Build output:
 
 ```bash
 cd /srv/apps/tocviet/source
+=======
+cd /srv/apps/tocviet
+>>>>>>> 43a781d (Align VPS backend docs and namespace)
 git pull origin main
 npm install
 npm run api:build
@@ -106,19 +126,28 @@ sudo systemctl restart tocviet-api
 sudo systemctl status tocviet-api --no-pager
 ```
 
+<<<<<<< HEAD
 Xem log:
+=======
+If the process already exists:
+>>>>>>> 43a781d (Align VPS backend docs and namespace)
 
 ```bash
 journalctl -u tocviet-api -f
 ```
 
+<<<<<<< HEAD
 Test local trên VPS:
+=======
+## Nginx example
+>>>>>>> 43a781d (Align VPS backend docs and namespace)
 
 ```bash
 curl http://127.0.0.1:4000/health
 curl http://127.0.0.1:4000/recruitment/jobs
 ```
 
+<<<<<<< HEAD
 ## Nginx
 
 Mẫu config nằm ở:
@@ -137,18 +166,30 @@ sudo systemctl reload nginx
 ```
 
 Sau khi cấu hình DNS/SSL:
+=======
+After SSL is configured:
+>>>>>>> 43a781d (Align VPS backend docs and namespace)
 
 ```bash
 curl https://api.tocvietlab.studio/health
 curl https://api.tocvietlab.studio/recruitment/jobs
 ```
 
-## Không làm ở đợt này
+## Safe namespace
+
+- App root: `/srv/apps/tocviet`
+- Backup root: `/srv/backups/tocviet`
+- Env file: `/etc/app-env/tocviet.env`
+- Service unit: `tocviet-api.service`
+- Database schema: `tocviet`
+- Public API: `https://api.tocvietlab.studio`
+
+## Not in scope for this stage
 
 ```txt
-- Chưa chuyển auth sang VPS.
-- Chưa chuyển D1 sang database VPS.
-- Chưa đổi production /api/recruitment/jobs.
-- Chưa gỡ D1 env khỏi Vercel.
-- Chưa đụng R2.
+- No auth migration to VPS yet.
+- No D1 migration to the VPS database yet.
+- No production route change for /api/recruitment/jobs yet.
+- No D1 env removal from Vercel yet.
+- No R2 changes.
 ```
