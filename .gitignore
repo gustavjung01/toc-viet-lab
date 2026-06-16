@@ -22,3 +22,8 @@ public/images/articles/
 .vercel
 
 temp-cases-staging/
+
+# Monorepo frontend local/generated image batches
+apps/web/public/images/articles/
+apps/web/public/images/cases/
+
