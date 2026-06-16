@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 
 const LEVELS = Array.from({ length: 10 }, (_, i) => i + 1);
+const inputClass = "mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-charcoal outline-none placeholder:text-mutedLight/70 focus:border-[#D6A84F]";
 
 type AnalysisResult = {
   nenToc: string;
@@ -70,7 +71,7 @@ export default function AIColorPage() {
       <div className="mb-8 rounded-[2rem] bg-charcoal p-7 text-white shadow-soft">
         <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-champagne">AI tư vấn màu</p>
         <h1 className="mt-3 text-4xl font-black">Tư vấn màu chuẩn salon bằng AI</h1>
-        <p className="mt-4 max-w-2xl leading-8 text-white/65">
+        <p className="mt-4 max-w-2xl leading-8 text-white/75">
           Nhập thông tin nền tóc, lịch sử tóc và mục tiêu màu để nhận phân tích kỹ thuật.
         </p>
         {credits !== null && (
@@ -83,7 +84,7 @@ export default function AIColorPage() {
 
       <div className="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
         {/* Form */}
-        <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-6 shadow-soft">
+        <form onSubmit={handleSubmit} className="rounded-3xl bg-white p-6 text-charcoal shadow-soft">
           <h2 className="text-xl font-black text-charcoal">1. Thông tin tóc hiện tại</h2>
 
           <label className="mt-6 block text-sm font-extrabold text-charcoal">Cấp độ nền tóc</label>
@@ -96,7 +97,7 @@ export default function AIColorPage() {
                 className={`aspect-square rounded-xl text-xs font-black transition ${
                   level === String(l)
                     ? "bg-[#D6A84F] text-black"
-                    : "bg-cream text-warmgray hover:bg-[#D6A84F]/20"
+                    : "bg-cream text-mutedLight hover:bg-[#D6A84F]/20"
                 }`}
               >
                 {l}
@@ -114,7 +115,7 @@ export default function AIColorPage() {
             <div key={key} className="mt-5">
               <label className="text-sm font-extrabold text-charcoal">{label}</label>
               <input
-                className="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-[#D6A84F]"
+                className={inputClass}
                 placeholder={placeholder}
                 value={form[key]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
@@ -143,7 +144,7 @@ export default function AIColorPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black text-champagne">2. Kết quả từ AI</h2>
             {result && (
-              <span className="rounded-full bg-[#D6A84F]/20 px-3 py-1 text-xs font-bold text-[#D6A84F]">
+              <span className="rounded-full bg-[#D6A84F]/20 px-3 py-1 text-xs font-bold text-champagne">
                 Đã phân tích
               </span>
             )}
@@ -151,8 +152,8 @@ export default function AIColorPage() {
 
           {!result ? (
             <div className="mt-10 flex flex-col items-center py-10 text-center">
-              <Sparkles size={36} className="text-white/20" />
-              <p className="mt-4 text-sm text-white/50">
+              <Sparkles size={36} className="text-white/25" />
+              <p className="mt-4 text-sm text-white/60">
                 Điền thông tin bên trái và bấm phân tích để nhận kết quả
               </p>
             </div>
@@ -166,10 +167,10 @@ export default function AIColorPage() {
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-2xl bg-white/5 p-5">
                   <p className="text-xs font-extrabold uppercase tracking-widest text-champagne">{label}</p>
-                  <p className="mt-2 text-sm leading-7 text-white/80">{value}</p>
+                  <p className="mt-2 text-sm leading-7 text-white/85">{value}</p>
                 </div>
               ))}
-              <p className="pt-2 text-xs text-white/30">
+              <p className="pt-2 text-xs text-white/45">
                 * Kết quả chỉ mang tính tham khảo. Luôn test lọn trước khi xử lý thực tế.
               </p>
             </div>
