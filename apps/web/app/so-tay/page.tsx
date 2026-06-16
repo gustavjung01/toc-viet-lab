@@ -65,7 +65,7 @@ export default function NotebookPage() {
             {label}
             <span
               className={`rounded-full px-2 py-0.5 text-xs ${
-                activeTab === key ? "bg-white/20 text-white" : "bg-black/5 text-warmgray"
+                activeTab === key ? "bg-white/20 text-white" : "bg-black/5 text-mutedLight"
               }`}
             >
               {countByType(key)}
@@ -77,19 +77,19 @@ export default function NotebookPage() {
       {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
+          <Loader2 size={32} className="animate-spin text-goldText" />
         </div>
       ) : error ? (
         <div className="flex items-center gap-2 rounded-3xl bg-red-50 p-6 text-red-600">
           <AlertCircle size={20} /> {error}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 py-20 text-center">
-          <BookOpen size={40} className="text-[#D6A84F] opacity-40" />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-black/10 bg-white/40 py-20 text-center">
+          <BookOpen size={40} className="text-goldText opacity-60" />
           <p className="mt-4 text-lg font-extrabold text-charcoal">
             {activeTab === "all" ? "Chưa lưu nội dung nào" : "Không có mục nào trong tab này"}
           </p>
-          <p className="mt-2 text-sm text-warmgray">
+          <p className="mt-2 text-sm text-mutedLight">
             Bấm bookmark trên bài viết hoặc case để lưu vào đây
           </p>
         </div>
@@ -103,10 +103,10 @@ export default function NotebookPage() {
               <div
                 className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl ${
                   item.item_type === "article"
-                    ? "bg-blue-50 text-blue-500"
+                    ? "bg-blue-50 text-blue-600"
                     : item.item_type === "case"
-                    ? "bg-[#D6A84F]/10 text-[#D6A84F]"
-                    : "bg-green-50 text-green-500"
+                    ? "bg-[#D6A84F]/10 text-goldText"
+                    : "bg-green-50 text-green-600"
                 }`}
               >
                 {item.item_type === "article" ? (
@@ -118,7 +118,7 @@ export default function NotebookPage() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold uppercase text-warmgray">
+                <p className="text-xs font-bold uppercase text-mutedLight">
                   {item.item_type === "article"
                     ? "Bài viết"
                     : item.item_type === "case"
@@ -134,7 +134,7 @@ export default function NotebookPage() {
                   await fetch(`/api/saved-items/${item.id}`, { method: "DELETE" });
                   setItems((prev) => prev.filter((i) => i.id !== item.id));
                 }}
-                className="rounded-full p-2 text-warmgray transition hover:bg-red-50 hover:text-red-400"
+                className="rounded-full p-2 text-mutedLight transition hover:bg-red-50 hover:text-red-500"
                 title="Bỏ lưu"
               >
                 ✕
