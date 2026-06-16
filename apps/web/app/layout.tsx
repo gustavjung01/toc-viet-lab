@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { InAppBrowserTip } from "@/components/pwa/in-app-browser-tip";
 import { PwaRegister } from "@/components/pwa-register";
 import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${beVietnam.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
         <PwaRegister />
+        <InAppBrowserTip />
       </body>
     </html>
   );
