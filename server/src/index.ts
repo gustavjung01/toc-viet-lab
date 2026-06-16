@@ -41,6 +41,20 @@ function healthBody() {
   };
 }
 
+function emptyRecruitmentJobsBody() {
+  return {
+    ok: true,
+    source: "vps-skeleton",
+    module: "recruitment",
+    jobs: [],
+    total: 0,
+    limit: 30,
+    offset: 0,
+    status: "empty-until-database-migration",
+    message: "Recruitment VPS API skeleton is reachable. Database-backed jobs come in the next deployment batch.",
+  };
+}
+
 const server = http.createServer((req, res) => {
   const method = req.method || "GET";
   const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
@@ -66,12 +80,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (method === "GET" && path === "/recruitment/jobs") {
+    sendJson(res, 200, emptyRecruitmentJobsBody());
+    return;
+  }
+
   if (path === "/recruitment/jobs") {
     sendJson(res, 501, {
       ok: false,
       module: "recruitment",
       status: "not-implemented",
-      message: "Recruitment VPS API skeleton is ready. Data migration comes in the next deployment batch.",
+      message: "Write actions for recruitment VPS API are not implemented yet. Data migration comes in the next deployment batch.",
     });
     return;
   }
