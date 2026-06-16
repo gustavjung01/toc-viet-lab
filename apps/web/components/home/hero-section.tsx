@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { PwaInstallCard } from "@/components/pwa/install-card";
 import { assetUrl } from "@/lib/image-assets";
 
 export function HeroSection() {
@@ -37,6 +38,7 @@ export function HeroSection() {
                 Xem case thực tế
               </Link>
             </div>
+            <PwaInstallCard />
           </div>
 
           <div className="relative flex justify-end">
