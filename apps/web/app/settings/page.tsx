@@ -62,11 +62,11 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <h1 className="text-4xl font-black text-charcoal">Cài đặt tài khoản</h1>
-      <p className="mt-3 text-warmgray">Quản lý thông tin cá nhân và gói sử dụng.</p>
+      <p className="mt-3 text-mutedLight">Quản lý thông tin cá nhân và gói sử dụng.</p>
 
       {loading ? (
         <div className="mt-10 flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-[#D6A84F]" />
+          <Loader2 size={32} className="animate-spin text-goldText" />
         </div>
       ) : (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -74,11 +74,11 @@ export default function SettingsPage() {
           <form onSubmit={handleSave} className="rounded-3xl bg-white p-7 shadow-soft">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#D6A84F]/15">
-                <User size={28} className="text-[#D6A84F]" />
+                <User size={28} className="text-goldText" />
               </div>
               <div>
                 <p className="text-lg font-black text-charcoal">{profile?.name ?? "—"}</p>
-                <p className="text-sm text-warmgray">{profile?.email}</p>
+                <p className="text-sm text-mutedLight">{profile?.email}</p>
               </div>
             </div>
 
@@ -86,7 +86,7 @@ export default function SettingsPage() {
               <div>
                 <label className="text-xs font-extrabold text-charcoal">Tên hiển thị</label>
                 <input
-                  className="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-[#D6A84F]"
+                  className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-charcoal outline-none placeholder:text-mutedLight/70 focus:border-[#D6A84F]"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nhập tên của bạn"
@@ -96,11 +96,11 @@ export default function SettingsPage() {
               <div>
                 <label className="text-xs font-extrabold text-charcoal">Email</label>
                 <input
-                  className="mt-2 w-full rounded-2xl border border-black/10 bg-black/3 px-4 py-3 text-sm text-warmgray outline-none"
+                  className="mt-2 w-full rounded-2xl border border-black/10 bg-black/[0.03] px-4 py-3 text-sm text-mutedLight outline-none"
                   value={profile?.email ?? ""}
                   disabled
                 />
-                <p className="mt-1 text-xs text-warmgray">Email không thể thay đổi</p>
+                <p className="mt-1 text-xs text-mutedLight">Email không thể thay đổi</p>
               </div>
             </div>
 
@@ -110,7 +110,7 @@ export default function SettingsPage() {
               </div>
             )}
             {success && (
-              <div className="mt-4 flex items-center gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-600">
+              <div className="mt-4 flex items-center gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
                 <CheckCircle2 size={16} /> Đã lưu thành công
               </div>
             )}
@@ -134,7 +134,7 @@ export default function SettingsPage() {
               </p>
               <div className="mt-4 space-y-3 text-sm">
                 <div className="flex justify-between rounded-2xl bg-white/5 px-4 py-3">
-                  <span className="text-white/60">Credit AI còn lại</span>
+                  <span className="text-white/70">Credit AI còn lại</span>
                   <span className="font-bold text-champagne">{profile?.ai_credits ?? 0}</span>
                 </div>
               </div>
