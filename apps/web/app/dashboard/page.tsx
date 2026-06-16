@@ -56,31 +56,31 @@ export default async function DashboardPage() {
   const userStats = userId ? await getUserStats(userId) : { saved: 0, formulas: 0, aiUsed: 0, aiCredits: 0 };
 
   const stats = [
-    { label: "Bài đã lưu", value: String(userStats.saved), sub: "bài viết", icon: BookOpen, color: "text-blue-500" },
-    { label: "Công thức màu", value: String(userStats.formulas), sub: "công thức", icon: FlaskConical, color: "text-[#D6A84F]" },
-    { label: "Lượt dùng AI", value: String(userStats.aiUsed), sub: "lượt", icon: Sparkles, color: "text-purple-500" },
-    { label: "Credit AI còn lại", value: String(userStats.aiCredits), sub: "credit", icon: NotebookPen, color: "text-green-500" },
+    { label: "Bài đã lưu", value: String(userStats.saved), sub: "bài viết", icon: BookOpen, color: "text-blue-600" },
+    { label: "Công thức màu", value: String(userStats.formulas), sub: "công thức", icon: FlaskConical, color: "text-goldText" },
+    { label: "Lượt dùng AI", value: String(userStats.aiUsed), sub: "lượt", icon: Sparkles, color: "text-purple-600" },
+    { label: "Credit AI còn lại", value: String(userStats.aiCredits), sub: "credit", icon: NotebookPen, color: "text-green-600" },
   ];
 
   return (
     <AppShell>
       <section>
-        <p className="text-sm font-semibold text-warmgray">{roleLabel[role]}</p>
+        <p className="text-sm font-semibold text-mutedLight">{roleLabel[role]}</p>
         <h1 className="mt-1 text-3xl font-black text-charcoal md:text-5xl">
           Chào mừng trở lại, {firstName} 👋
         </h1>
-        <p className="mt-3 text-warmgray">
+        <p className="mt-3 text-mutedLight">
           Hôm nay bạn muốn học gì mới để nâng tầm tay nghề?
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-3xl bg-white p-6 shadow-soft">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-warmgray">{stat.label}</p>
+                <p className="text-sm font-bold text-mutedLight">{stat.label}</p>
                 <stat.icon size={20} className={stat.color} />
               </div>
               <div className="mt-3 text-4xl font-black text-charcoal">{stat.value}</div>
-              <p className="text-sm text-warmgray">{stat.sub}</p>
+              <p className="text-sm text-mutedLight">{stat.sub}</p>
             </div>
           ))}
         </div>
