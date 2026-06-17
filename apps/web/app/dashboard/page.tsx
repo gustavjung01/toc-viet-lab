@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/app-shell";
-import { ArticleCard, CaseCard, SectionHeader } from "@/components/cards";
-import { articles, cases } from "@/lib/data";
+import { DashboardContentPreview } from "@/components/account/dashboard-content-preview";
 import { auth } from "@/auth";
 import { AlertCircle, BookOpen, FlaskConical, NotebookPen, Sparkles } from "lucide-react";
 
@@ -134,23 +133,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-10">
-        <SectionHeader title="Tiếp tục học" />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {articles.slice(0, 3).map((article) => (
-            <ArticleCard key={article.slug} article={article} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-10">
-        <SectionHeader title="Case gần đây" />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {cases.map((item) => (
-            <CaseCard key={item.title} item={item} />
-          ))}
-        </div>
-      </section>
+      <DashboardContentPreview />
     </AppShell>
   );
 }
