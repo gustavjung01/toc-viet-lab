@@ -1,7 +1,8 @@
 import http from "node:http";
 import { URL } from "node:url";
 import { createRecruitmentJob, parseRecruitmentInternalActor, parseRecruitmentPostInput, recruitmentWriteHeaders } from "./recruitment-write";
-import { getRecruitmentJobsPage, hasDatabaseUrl } from "./db";
+import { getDatabasePool, getRecruitmentJobsPage, hasDatabaseUrl } from "./db";
+import { getRecruitmentUsage } from "./recruitment-quota";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 4000);
 const SERVICE_NAME = process.env.SERVICE_NAME || "tocviet-api";
@@ -108,21 +109,6 @@ async function handleRecruitmentJobs(req: http.IncomingMessage, res: http.Server
   const limit = parseBoundedInteger(url.searchParams.get("limit"), 30, 1, 50);
   const offset = Math.max(parseBoundedInteger(url.searchParams.get("offset"), 0, 0, Number.MAX_SAFE_INTEGER), 0);
 
-  if (mine) {
-    sendJson(
-      res,
-      501,
-      recruitmentErrorBody(
-        "mine_not_implemented",
-        "GET /recruitment/jobs?mine=1 is not implemented on the Toc Viet VPS backend yet.",
-        limit,
-        offset
-      ),
-      { "x-tocviet-api-source": "vps-postgres" }
-    );
-    return;
-  }
-
   if (!hasDatabaseUrl()) {
     sendJson(
       res,
@@ -136,6 +122,53 @@ async function handleRecruitmentJobs(req: http.IncomingMessage, res: http.Server
       { "x-tocviet-api-source": "vps-postgres" }
     );
     return;
+  }
+
+  if (mine) {
+    const actor = parseRecruitmentInternalActor(req.headers);
+    if ("statusCode" in actor) {
+      sendJson(res, actor.statusCode, recruitmentErrorBody(actor.code, actor.message, limit, offset), recruitmentWriteHeaders());
+      return;
+    }
+
+    try {
+      const pool = getDatabasePool();
+      const [page, usage] = await Promise.all([
+        getRecruitmentJobsPage(limit, offset, { employerUserId: actor.userId }),
+        getRecruitmentUsage(pool, actor.userId, actor.role),
+      ]);
+
+      sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          namespace: NAMESPACE,
+          source: "vps-postgres",
+          module: "recruitment",
+          jobs: page.jobs,
+          total: page.total,
+          usage,
+          limit: page.limit,
+          offset: page.offset,
+        },
+        { "x-tocviet-api-source": "vps-postgres" }
+      );
+      return;
+    } catch (error: any) {
+      sendJson(
+        res,
+        500,
+        recruitmentErrorBody(
+          "mine_query_failed",
+          error?.message || "Failed to read your recruitment jobs from PostgreSQL.",
+          limit,
+          offset
+        ),
+        { "x-tocviet-api-source": "vps-postgres" }
+      );
+      return;
+    }
   }
 
   try {
@@ -258,7 +291,7 @@ const server = http.createServer((req, res) => {
       namespace: NAMESPACE,
       service: SERVICE_NAME,
       message: "Toc Viet Lab backend API is running.",
-      health: "/health",
+      version: VERSION,
     });
     return;
   }
@@ -268,46 +301,34 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (method === "GET" && path === "/recruitment/jobs") {
-    void handleRecruitmentJobs(req, res, url);
-    return;
-  }
-
-  if (method === "POST" && path === "/recruitment/jobs") {
-    void handleRecruitmentJobCreate(req, res);
-    return;
-  }
-
   if (path === "/recruitment/jobs") {
-    sendJson(
-      res,
-      501,
-      {
-        ok: false,
-        namespace: NAMESPACE,
-        source: "vps-postgres",
-        module: "recruitment",
-        status: "not_implemented",
-        error: `HTTP ${method} on /recruitment/jobs is not implemented on the Toc Viet VPS backend yet.`,
-      },
-      recruitmentWriteHeaders()
-    );
-    return;
+    if (method === "GET") {
+      void handleRecruitmentJobs(req, res, url);
+      return;
+    }
+
+    if (method === "POST") {
+      void handleRecruitmentJobCreate(req, res);
+      return;
+    }
+
+    if (method === "PATCH" || method === "DELETE") {
+      sendJson(
+        res,
+        501,
+        recruitmentWriteErrorBody(
+          "not_implemented",
+          `${method} /recruitment/jobs is not implemented on the Toc Viet VPS backend yet.`
+        ),
+        recruitmentWriteHeaders()
+      );
+      return;
+    }
   }
 
   notFound(res, path);
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`${SERVICE_NAME} listening on 0.0.0.0:${PORT}`);
-});
-
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Closing HTTP server...");
-  server.close(() => process.exit(0));
-});
-
-process.on("SIGINT", () => {
-  console.log("SIGINT received. Closing HTTP server...");
-  server.close(() => process.exit(0));
+server.listen(PORT, () => {
+  console.log(`[tocviet-api] ${SERVICE_NAME} listening on :${PORT}`);
 });
