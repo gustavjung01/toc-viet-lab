@@ -40,6 +40,17 @@ export function getForwardHeaders(req: NextRequest) {
   return headers;
 }
 
+function mergeHeaders(baseHeaders: Headers, extraHeaders: HeadersInit | undefined) {
+  if (!extraHeaders) return baseHeaders;
+
+  const nextHeaders = new Headers(extraHeaders);
+  nextHeaders.forEach((value, key) => {
+    baseHeaders.set(key, value);
+  });
+
+  return baseHeaders;
+}
+
 export async function proxyToServerApi(req: NextRequest, path: string, init?: RequestInit) {
   if (!hasServerApiBaseUrl()) return null;
 
@@ -47,7 +58,7 @@ export async function proxyToServerApi(req: NextRequest, path: string, init?: Re
   const targetUrl = new URL(buildServerApiUrl(path));
   sourceUrl.searchParams.forEach((value, key) => targetUrl.searchParams.set(key, value));
 
-  const headers = getForwardHeaders(req);
+  const headers = mergeHeaders(getForwardHeaders(req), init?.headers);
   const method = init?.method || req.method;
   const shouldForwardBody = !["GET", "HEAD"].includes(method.toUpperCase());
 
