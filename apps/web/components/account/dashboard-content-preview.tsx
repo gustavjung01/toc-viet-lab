@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { HairVisual } from "@/components/visual";
 import { articles, cases } from "@/lib/data";
 import { toAssetUrl } from "@/lib/asset-url";
-import { Clock, X } from "lucide-react";
+import { Clock, Loader2, X } from "lucide-react";
 
 type PreviewItem = {
   type: "article" | "case";
@@ -51,15 +51,47 @@ function casePreview(item: any): PreviewItem {
       `Salon: ${item.salon}`,
       `Thời gian xử lý: ${item.time}`,
       `Mục tiêu: ${item.goal}`,
+      `Tình trạng: ${item.condition}`,
     ],
     saveId: item.id ?? item.title,
   };
 }
 
+function cleanMarkdown(text: string) {
+  return text
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*/g, "")
+    .replace(/\|/g, "  ")
+    .trim();
+}
+
 export function DashboardContentPreview() {
   const [selected, setSelected] = useState<PreviewItem | null>(null);
+  const [fullContent, setFullContent] = useState("");
+  const [contentLoading, setContentLoading] = useState(false);
   const articleItems = articles.slice(0, 3).map(articlePreview);
   const caseItems = cases.map(casePreview);
+
+  useEffect(() => {
+    if (!selected || selected.type !== "article") {
+      setFullContent("");
+      setContentLoading(false);
+      return;
+    }
+
+    setContentLoading(true);
+    setFullContent("");
+    fetch(`/api/articles/${selected.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const content = data?.article?.content || data?.article?.body || "";
+        setFullContent(content ? cleanMarkdown(content) : "");
+      })
+      .catch(() => setFullContent(""))
+      .finally(() => setContentLoading(false));
+  }, [selected]);
+
+  const modalText = fullContent || selected?.body || "";
 
   return (
     <>
@@ -71,13 +103,7 @@ export function DashboardContentPreview() {
           {articleItems.map((item) => (
             <article key={item.id} className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
               <button type="button" onClick={() => setSelected(item)} className="block w-full text-left">
-                <HairVisual
-                  src={item.imageSrc}
-                  alt={item.title}
-                  aspect="aspect-[4/3] sm:aspect-video"
-                  className="rounded-none"
-                  label={item.eyebrow}
-                />
+                <HairVisual src={item.imageSrc} alt={item.title} aspect="aspect-[4/3] sm:aspect-video" className="rounded-none" label={item.eyebrow} />
                 <div className="p-5">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">{item.eyebrow}</span>
@@ -104,13 +130,7 @@ export function DashboardContentPreview() {
           {caseItems.map((item) => (
             <article key={item.id} className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
               <button type="button" onClick={() => setSelected(item)} className="block w-full text-left">
-                <HairVisual
-                  imageKey={item.imageKey}
-                  alt={item.title}
-                  aspect="aspect-[4/3] sm:aspect-video"
-                  className="rounded-none"
-                  label={item.eyebrow}
-                />
+                <HairVisual imageKey={item.imageKey} alt={item.title} aspect="aspect-[4/3] sm:aspect-video" className="rounded-none" label={item.eyebrow} />
                 <div className="p-5">
                   <span className="rounded-full bg-charcoal px-3 py-1 text-xs font-bold text-champagne">{item.eyebrow}</span>
                   <h3 className="mt-4 line-clamp-2 text-lg font-extrabold leading-snug text-charcoal">{item.title}</h3>
@@ -127,8 +147,8 @@ export function DashboardContentPreview() {
       </section>
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] bg-white p-6 text-charcoal shadow-2xl md:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-4">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[1.75rem] bg-white p-5 text-charcoal shadow-2xl sm:rounded-[2rem] sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-goldText">{selected.eyebrow}</p>
@@ -139,7 +159,15 @@ export function DashboardContentPreview() {
                 <X size={20} />
               </button>
             </div>
-            <p className="mt-6 text-sm font-semibold leading-7 text-mutedLight">{selected.body}</p>
+            {contentLoading ? (
+              <div className="mt-8 flex items-center gap-3 rounded-3xl bg-cream p-5 text-sm font-bold text-charcoal">
+                <Loader2 className="h-5 w-5 animate-spin text-goldText" /> Đang tải nội dung đầy đủ...
+              </div>
+            ) : (
+              <div className="mt-6 whitespace-pre-line text-sm font-semibold leading-8 text-slate-700">
+                {modalText}
+              </div>
+            )}
             <div className="mt-6 space-y-3 rounded-3xl bg-cream p-5">
               {selected.bullets.map((line) => (
                 <p key={line} className="text-sm font-bold leading-6 text-charcoal">• {line}</p>
