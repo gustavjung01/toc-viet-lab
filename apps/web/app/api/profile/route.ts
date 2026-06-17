@@ -1,77 +1,224 @@
 import { auth } from "@/auth";
+import { executeD1, hasD1Env, queryD1 } from "@/lib/d1-http";
 import { NextRequest, NextResponse } from "next/server";
 
-function hasD1Env() {
-  return Boolean(
-    process.env.CLOUDFLARE_ACCOUNT_ID &&
-    process.env.CLOUDFLARE_D1_DATABASE_ID &&
-    process.env.CLOUDFLARE_D1_TOKEN
+type JobSeekerProfile = {
+  isLookingForJob: boolean;
+  desiredPosition: string;
+  experienceLevel: string;
+  yearsOfExperience: string;
+  skills: string;
+  preferredCities: string;
+  preferredDistricts: string;
+  expectedSalaryText: string;
+  workType: string;
+  portfolioUrl: string;
+  shortIntroduction: string;
+  contactPhone: string;
+  contactEmail: string;
+};
+
+type UserRow = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  role: string | null;
+  ai_credits: number | null;
+  phone?: string | null;
+  city?: string | null;
+  district?: string | null;
+  bio?: string | null;
+  job_seeker_profile?: string | null;
+};
+
+const defaultJobSeekerProfile: JobSeekerProfile = {
+  isLookingForJob: false,
+  desiredPosition: "",
+  experienceLevel: "",
+  yearsOfExperience: "",
+  skills: "",
+  preferredCities: "",
+  preferredDistricts: "",
+  expectedSalaryText: "",
+  workType: "full_time",
+  portfolioUrl: "",
+  shortIntroduction: "",
+  contactPhone: "",
+  contactEmail: "",
+};
+
+let profileStorageChecked = false;
+
+function isDuplicateColumnError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.toLowerCase().includes("duplicate column") || message.toLowerCase().includes("already exists");
+}
+
+async function addColumnIfMissing(sql: string) {
+  try {
+    await executeD1(sql);
+  } catch (error) {
+    if (!isDuplicateColumnError(error)) throw error;
+  }
+}
+
+async function ensureProfileStorage() {
+  if (profileStorageChecked) return;
+
+  await addColumnIfMissing("ALTER TABLE users ADD COLUMN phone TEXT NOT NULL DEFAULT ''");
+  await addColumnIfMissing("ALTER TABLE users ADD COLUMN city TEXT NOT NULL DEFAULT ''");
+  await addColumnIfMissing("ALTER TABLE users ADD COLUMN district TEXT NOT NULL DEFAULT ''");
+  await addColumnIfMissing("ALTER TABLE users ADD COLUMN bio TEXT NOT NULL DEFAULT ''");
+  await addColumnIfMissing("ALTER TABLE users ADD COLUMN job_seeker_profile TEXT NOT NULL DEFAULT '{}'");
+
+  profileStorageChecked = true;
+}
+
+function text(value: unknown, maxLength = 240) {
+  return String(value ?? "").trim().slice(0, maxLength);
+}
+
+function parseJobSeekerProfile(raw: unknown): JobSeekerProfile {
+  if (!raw || typeof raw !== "object") return defaultJobSeekerProfile;
+  const data = raw as Record<string, unknown>;
+  return {
+    isLookingForJob: Boolean(data.isLookingForJob),
+    desiredPosition: text(data.desiredPosition, 120),
+    experienceLevel: text(data.experienceLevel, 80),
+    yearsOfExperience: text(data.yearsOfExperience, 40),
+    skills: text(data.skills, 500),
+    preferredCities: text(data.preferredCities, 200),
+    preferredDistricts: text(data.preferredDistricts, 200),
+    expectedSalaryText: text(data.expectedSalaryText, 120),
+    workType: text(data.workType || "full_time", 40),
+    portfolioUrl: text(data.portfolioUrl, 240),
+    shortIntroduction: text(data.shortIntroduction, 800),
+    contactPhone: text(data.contactPhone, 40),
+    contactEmail: text(data.contactEmail, 120),
+  };
+}
+
+function readStoredJobSeekerProfile(value: string | null | undefined): JobSeekerProfile {
+  if (!value) return defaultJobSeekerProfile;
+  try {
+    return parseJobSeekerProfile(JSON.parse(value));
+  } catch {
+    return defaultJobSeekerProfile;
+  }
+}
+
+function normalizeUser(row: UserRow) {
+  return {
+    id: row.id,
+    name: row.name ?? "",
+    email: row.email ?? "",
+    role: row.role ?? "free",
+    ai_credits: Number(row.ai_credits ?? 0),
+    phone: row.phone ?? "",
+    city: row.city ?? "",
+    district: row.district ?? "",
+    bio: row.bio ?? "",
+    jobSeeker: readStoredJobSeekerProfile(row.job_seeker_profile),
+  };
+}
+
+async function ensureUserRecord(user: any) {
+  await executeD1(
+    `INSERT OR IGNORE INTO users (id, name, email, role, ai_credits, created_at)
+     VALUES (?, ?, ?, 'free', 0, unixepoch())`,
+    [
+      String(user.id),
+      text(user.name || user.email || "Người dùng Tóc Việt", 100),
+      text(user.email, 160),
+    ]
   );
 }
 
-async function d1Query(sql: string, params: any[]) {
-  if (!hasD1Env()) {
-    throw new Error("Thiếu cấu hình D1 env cho tài khoản.");
-  }
-
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/d1/database/${process.env.CLOUDFLARE_D1_DATABASE_ID}/query`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.CLOUDFLARE_D1_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sql, params }),
-      cache: "no-store",
-    }
+async function getCurrentUserRow(userId: string) {
+  const rows = await queryD1<UserRow>(
+    `SELECT id, name, email, role, ai_credits, phone, city, district, bio, job_seeker_profile
+     FROM users
+     WHERE id = ?`,
+    [userId]
   );
-  const data = await res.json();
-  if (!res.ok || !data.success) {
-    throw new Error(data.errors?.[0]?.message || "D1 không trả về dữ liệu hợp lệ.");
-  }
-  return data.result?.[0];
+  return rows[0] ?? null;
 }
 
 export async function GET() {
   const session = await auth();
-  if (!session?.user?.id) {
+  const sessionUser = session?.user as any;
+  if (!sessionUser?.id) {
     return NextResponse.json({ error: "Bạn cần đăng nhập để xem tài khoản." }, { status: 401 });
   }
+
+  if (!hasD1Env()) {
+    return NextResponse.json({ error: "D1 env is not configured, chưa thể lưu hồ sơ tài khoản thật." }, { status: 503 });
+  }
+
   try {
-    const result = await d1Query(
-      "SELECT id, name, email, role, ai_credits, created_at FROM users WHERE id = ?",
-      [session.user.id]
-    );
-    const user = result?.results?.[0] ?? null;
-    if (!user) {
+    await ensureProfileStorage();
+    await ensureUserRecord(sessionUser);
+    const row = await getCurrentUserRow(String(sessionUser.id));
+    if (!row) {
       return NextResponse.json(
         { error: "Chưa tìm thấy hồ sơ tài khoản trong database.", user: null },
         { status: 404 }
       );
     }
-    return NextResponse.json({ user });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Không thể tải hồ sơ tài khoản." }, { status: 500 });
+    return NextResponse.json({ user: normalizeUser(row) });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message || "Không thể tải hồ sơ tài khoản." }, { status: 500 });
   }
 }
 
 export async function PATCH(req: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
+  const sessionUser = session?.user as any;
+  if (!sessionUser?.id) {
     return NextResponse.json({ error: "Bạn cần đăng nhập để cập nhật tài khoản." }, { status: 401 });
   }
-  const { name } = await req.json();
-  if (!name?.trim()) {
-    return NextResponse.json({ error: "Tên không được để trống" }, { status: 400 });
+
+  if (!hasD1Env()) {
+    return NextResponse.json({ error: "D1 env is not configured, chưa thể lưu hồ sơ tài khoản thật." }, { status: 503 });
   }
+
+  const body = await req.json().catch(() => ({}));
+  const name = text(body.name, 100);
+  if (!name) {
+    return NextResponse.json({ error: "Tên hiển thị không được để trống." }, { status: 400 });
+  }
+
+  const phone = text(body.phone, 40);
+  const city = text(body.city, 120);
+  const district = text(body.district, 120);
+  const bio = text(body.bio, 800);
+  const jobSeeker = parseJobSeekerProfile(body.jobSeeker);
+
   try {
-    await d1Query(
-      "UPDATE users SET name = ? WHERE id = ?",
-      [name.trim(), session.user.id]
+    await ensureProfileStorage();
+    await ensureUserRecord(sessionUser);
+    await executeD1(
+      `UPDATE users
+       SET name = ?, phone = ?, city = ?, district = ?, bio = ?, job_seeker_profile = ?
+       WHERE id = ?`,
+      [
+        name,
+        phone,
+        city,
+        district,
+        bio,
+        JSON.stringify(jobSeeker),
+        String(sessionUser.id),
+      ]
     );
-    return NextResponse.json({ success: true, name: name.trim() });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Không thể cập nhật tài khoản." }, { status: 500 });
+
+    const row = await getCurrentUserRow(String(sessionUser.id));
+    if (!row) {
+      return NextResponse.json({ error: "Đã lưu nhưng chưa đọc lại được hồ sơ." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, user: normalizeUser(row) });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message || "Không thể cập nhật tài khoản." }, { status: 500 });
   }
 }
