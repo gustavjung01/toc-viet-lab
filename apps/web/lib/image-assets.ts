@@ -102,12 +102,11 @@ export const imageAssets: Record<ImageAssetKey, string | null> = {
   "trust-salon-logos": "/images/pricing/trust-salon-logos.jpg"
 };
 
-const DEFAULT_BASE = "https://cdn.tocvietlab.studio";
+const ASSET_BASE = (process.env.NEXT_PUBLIC_ASSET_BASE_URL || "").replace(/\/$/, "");
 
 export function assetUrl(key: ImageAssetKey): string | undefined {
   const value = imageAssets[key];
   if (!value) return undefined;
-
-  const base = (process.env.NEXT_PUBLIC_ASSET_BASE_URL || DEFAULT_BASE).replace(/\/$/, "");
-  return `${base}${value}`;
+  if (!ASSET_BASE) return value;
+  return `${ASSET_BASE}${value}`;
 }
