@@ -40,7 +40,7 @@ export function MyRecruitmentDashboard({ role }: Props) {
     setLoading(true);
     setError("");
     setWarning("");
-    const res = await fetch("/api/recruitment/jobs?mine=1", { cache: "no-store" });
+    const res = await fetch("/api/backend/jobs?mine=1", { cache: "no-store" });
     const data = await res.json().catch(() => ({}));
     setLoading(false);
 
