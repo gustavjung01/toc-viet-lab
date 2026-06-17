@@ -43,7 +43,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main className="pb-20 lg:pb-0 lg:pl-72">
+      <main className="pb-24 lg:pb-0 lg:pl-72">
         <div className="sticky top-0 z-30 border-b border-lineLight bg-cream/95 px-4 py-3 backdrop-blur sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <Link href="/" className="lg:hidden" aria-label="Về trang chủ">
@@ -66,8 +66,20 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
               <SignOutButton />
             </div>
           </div>
+          <nav className="mx-auto mt-3 flex max-w-6xl gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Tab tài khoản">
+            {menu.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-xs font-black text-charcoal shadow-sm"
+              >
+                <item.icon size={14} />
+                {item.label.replace(" của tôi", "")}
+              </Link>
+            ))}
+          </nav>
         </div>
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</div>
       </main>
       <MobileBottomNav />
     </div>
