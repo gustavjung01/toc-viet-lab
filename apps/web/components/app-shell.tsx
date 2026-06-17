@@ -3,6 +3,7 @@ import { BookOpen, BrainCircuit, Briefcase, CreditCard, Home, NotebookTabs, Pale
 import { Logo } from "./logo";
 import { auth } from "@/auth";
 import { SignOutButton } from "./sign-out-button";
+import { MobileBottomNav } from "./mobile-bottom-nav";
 
 const menu = [
   { label: "Tổng quan", href: "/dashboard", icon: Home },
@@ -42,17 +43,23 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main className="lg:pl-72">
-        <div className="sticky top-0 z-30 border-b border-lineLight bg-cream/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-6xl items-center justify-between">
-            <div className="lg:hidden">
+      <main className="pb-20 lg:pb-0 lg:pl-72">
+        <div className="sticky top-0 z-30 border-b border-lineLight bg-cream/95 px-4 py-3 backdrop-blur sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+            <Link href="/" className="lg:hidden" aria-label="Về trang chủ">
               <Logo compact />
-            </div>
+            </Link>
             <div className="hidden lg:block">
               <p className="text-sm font-semibold text-mutedLight">Xin chào,</p>
               <h1 className="text-xl font-extrabold text-charcoal">{userName}</h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="ml-auto flex items-center gap-2">
+              <Link
+                href="/settings"
+                className="hidden rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-black text-charcoal shadow-sm sm:inline-flex"
+              >
+                Tài khoản
+              </Link>
               <div className="rounded-full bg-charcoal px-4 py-2 text-sm font-bold text-gold">
                 {roleLabel[userRole] ?? "Thành viên"}
               </div>
@@ -62,6 +69,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
       </main>
+      <MobileBottomNav />
     </div>
   );
 }
