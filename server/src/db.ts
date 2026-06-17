@@ -10,7 +10,7 @@ export function hasDatabaseUrl() {
   return DATABASE_URL.length > 0;
 }
 
-function getPool() {
+export function getDatabasePool() {
   if (!pool) {
     pool = new Pool({
       connectionString: DATABASE_URL,
@@ -36,7 +36,7 @@ export async function getRecruitmentJobsPage(limit: number, offset: number): Pro
     throw new Error("DATABASE_URL is not configured for the Toc Viet VPS backend.");
   }
 
-  const pool = getPool();
+  const pool = getDatabasePool();
   const now = unixNow();
   const countFilter = "WHERE status = 'published' AND (expires_at IS NULL OR expires_at > $1)";
   const jobsFilter = "WHERE status = 'published' AND (expires_at IS NULL OR expires_at > $3)";
