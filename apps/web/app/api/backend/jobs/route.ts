@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { proxyToServerApi } from "@/lib/server-api";
 
+async function getSessionHeaders() {
+  const session = await auth();
+  const user = session?.user as any;
+  const headers: Record<string, string> = {};
+
+  if (user?.id) headers["x-tocviet-user-id"] = String(user.id);
+  if (user?.role) headers["x-tocviet-user-role"] = String(user.role);
+  if (user?.name) headers["x-tocviet-user-display-name"] = String(user.name);
+  if (user?.email) headers["x-tocviet-user-email"] = String(user.email);
+
+  return headers;
+}
+
 async function callJobs(req: NextRequest) {
-  const response = await proxyToServerApi(req, "/recruitment/jobs");
+  const sessionHeaders = await getSessionHeaders();
+  const response = await proxyToServerApi(req, "/recruitment/jobs", { headers: sessionHeaders });
   if (response) return response;
 
   return NextResponse.json({
