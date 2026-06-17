@@ -31,13 +31,77 @@ export type RecruitmentJobsPage = {
   offset: number;
 };
 
-export async function getRecruitmentJobsPage(limit: number, offset: number): Promise<RecruitmentJobsPage> {
+type RecruitmentJobsPageOptions = {
+  employerUserId?: string;
+};
+
+const recruitmentJobSelect = `SELECT
+  id,
+  employer_user_id,
+  employer_display_name,
+  employer_type,
+  title,
+  position,
+  description,
+  city,
+  district,
+  address,
+  salary_min,
+  salary_max,
+  salary_text,
+  work_type,
+  experience_level,
+  benefits,
+  contact_name,
+  contact_phone,
+  contact_email,
+  status,
+  plan_code,
+  boost_until,
+  published_at,
+  expires_at,
+  created_at,
+  tags
+ FROM tocviet.job_posts`;
+
+export async function getRecruitmentJobsPage(
+  limit: number,
+  offset: number,
+  options: RecruitmentJobsPageOptions = {}
+): Promise<RecruitmentJobsPage> {
   if (!hasDatabaseUrl()) {
     throw new Error("DATABASE_URL is not configured for the Toc Viet VPS backend.");
   }
 
   const pool = getDatabasePool();
   const now = unixNow();
+
+  if (options.employerUserId) {
+    const [totalResult, jobsResult] = await Promise.all([
+      pool.query<{ count: string }>(
+        `SELECT COUNT(*)::bigint AS count
+         FROM tocviet.job_posts
+         WHERE employer_user_id = $1`,
+        [options.employerUserId]
+      ),
+      pool.query<RecruitmentJobRow>(
+        `${recruitmentJobSelect}
+         WHERE employer_user_id = $3
+         ORDER BY CASE WHEN status = 'published' AND (expires_at IS NULL OR expires_at > $4) THEN 0 ELSE 1 END,
+           created_at DESC
+         LIMIT $1 OFFSET $2`,
+        [limit, offset, options.employerUserId, now]
+      ),
+    ]);
+
+    return {
+      jobs: jobsResult.rows.map(normalizeRecruitmentJob),
+      total: Number(totalResult.rows[0]?.count ?? 0),
+      limit,
+      offset,
+    };
+  }
+
   const countFilter = "WHERE status = 'published' AND (expires_at IS NULL OR expires_at > $1)";
   const jobsFilter = "WHERE status = 'published' AND (expires_at IS NULL OR expires_at > $3)";
 
@@ -49,34 +113,7 @@ export async function getRecruitmentJobsPage(limit: number, offset: number): Pro
       [now]
     ),
     pool.query<RecruitmentJobRow>(
-      `SELECT
-         id,
-         employer_user_id,
-         employer_display_name,
-         employer_type,
-         title,
-         position,
-         description,
-         city,
-         district,
-         address,
-         salary_min,
-         salary_max,
-         salary_text,
-         work_type,
-         experience_level,
-         benefits,
-         contact_name,
-         contact_phone,
-         contact_email,
-         status,
-         plan_code,
-         boost_until,
-         published_at,
-         expires_at,
-         created_at,
-         tags
-       FROM tocviet.job_posts
+      `${recruitmentJobSelect}
        ${jobsFilter}
        ORDER BY CASE WHEN boost_until IS NOT NULL AND boost_until > $3 THEN 0 ELSE 1 END,
          created_at DESC
