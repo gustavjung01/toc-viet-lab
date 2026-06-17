@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { MobileBottomNav } from "./mobile-bottom-nav";
 
 const VERSION_KEY = "toc_viet_lab_app_version";
 
@@ -18,7 +19,7 @@ function injectToastStyle() {
   const style = document.createElement("style");
   style.id = "tocviet-pwa-update-style";
   style.textContent = [
-    ".tocviet-pwa-update{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;width:min(430px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(214,168,79,.42);border-radius:18px;background:rgba(8,7,6,.94);color:#F8F1E7;padding:12px 14px;box-shadow:0 18px 60px rgba(0,0,0,.42);backdrop-filter:blur(14px)}",
+    ".tocviet-pwa-update{position:fixed;left:50%;bottom:max(88px,calc(18px + env(safe-area-inset-bottom)));transform:translateX(-50%);z-index:9999;width:min(430px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(214,168,79,.42);border-radius:18px;background:rgba(8,7,6,.94);color:#F8F1E7;padding:12px 14px;box-shadow:0 18px 60px rgba(0,0,0,.42);backdrop-filter:blur(14px)}",
     ".tocviet-pwa-update strong{display:block;color:#F0C76A;font-size:14px}",
     ".tocviet-pwa-update span{display:block;color:#B9AEA1;font-size:12px;line-height:1.35}",
     ".tocviet-pwa-update button{border:0;border-radius:999px;background:linear-gradient(180deg,#F0C76A,#D6A84F);color:#080706;font-weight:800;padding:9px 13px;cursor:pointer;white-space:nowrap}"
@@ -124,5 +125,5 @@ export function PwaRegister() {
     };
   }, []);
 
-  return null;
+  return <MobileBottomNav />;
 }
