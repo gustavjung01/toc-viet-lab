@@ -20,10 +20,21 @@ export function getForwardHeaders(req: NextRequest) {
   const cookie = req.headers.get("cookie");
   const authorization = req.headers.get("authorization");
   const contentType = req.headers.get("content-type");
+  const internalSecret = process.env.INTERNAL_API_SECRET;
 
   if (cookie) headers.set("cookie", cookie);
   if (authorization) headers.set("authorization", authorization);
   if (contentType) headers.set("content-type", contentType);
+  if (internalSecret) headers.set("x-internal-api-secret", internalSecret);
+  for (const headerName of [
+    "x-tocviet-user-id",
+    "x-tocviet-user-role",
+    "x-tocviet-user-display-name",
+    "x-tocviet-user-email",
+  ]) {
+    const value = req.headers.get(headerName);
+    if (value) headers.set(headerName, value);
+  }
   headers.set("x-tocviet-source", "vercel-next-proxy");
 
   return headers;
