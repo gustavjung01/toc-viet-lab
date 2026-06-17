@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { HairVisual } from "@/components/visual";
 import { toAssetUrl } from "@/lib/asset-url";
 import { BookmarkButton } from "@/components/bookmark-button";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import type { Metadata } from "next";
 import { absoluteSiteUrl } from "@/lib/site-url";
 
@@ -54,9 +55,15 @@ function renderMarkdown(md: string) {
   while (i < lines.length) {
     const line = lines[i];
 
-    if (line.startsWith("## ")) {
+    if (line.startsWith("### ")) {
       elements.push(
-        <h2 key={i} className="mt-10 mb-4 text-2xl font-black text-charcoal">
+        <h3 key={i} className="mt-8 mb-3 text-xl font-black text-slate-950">
+          {line.slice(4)}
+        </h3>
+      );
+    } else if (line.startsWith("## ")) {
+      elements.push(
+        <h2 key={i} className="mt-10 mb-4 text-2xl font-black text-slate-950">
           {line.slice(3)}
         </h2>
       );
@@ -65,21 +72,21 @@ function renderMarkdown(md: string) {
       const boldEnd = text.indexOf("**", 2);
       if (boldEnd > 2) {
         elements.push(
-          <li key={i} className="ml-5 mt-2 list-disc leading-8 text-warmgray">
-            <b className="text-charcoal">{text.slice(2, boldEnd)}</b>
+          <li key={i} className="ml-5 mt-2 list-disc leading-8 text-slate-700">
+            <b className="text-slate-950">{text.slice(2, boldEnd)}</b>
             {text.slice(boldEnd + 2)}
           </li>
         );
       } else {
         elements.push(
-          <li key={i} className="ml-5 mt-2 list-disc leading-8 text-warmgray">
+          <li key={i} className="ml-5 mt-2 list-disc leading-8 text-slate-700">
             {text}
           </li>
         );
       }
     } else if (line.startsWith("- ")) {
       elements.push(
-        <li key={i} className="ml-5 mt-2 list-disc leading-8 text-warmgray">
+        <li key={i} className="ml-5 mt-2 list-disc leading-8 text-slate-700">
           {line.slice(2)}
         </li>
       );
@@ -87,7 +94,7 @@ function renderMarkdown(md: string) {
       // skip blank lines
     } else {
       elements.push(
-        <p key={i} className="mt-3 leading-8 text-warmgray">
+        <p key={i} className="mt-3 leading-8 text-slate-700">
           {line}
         </p>
       );
@@ -119,18 +126,18 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-cream text-charcoal">
       <Header />
-      <main className="px-4 py-10 sm:px-6 lg:px-8">
+      <main className="px-4 py-10 pb-24 sm:px-6 lg:px-8 lg:pb-10">
         <div className="mx-auto max-w-4xl">
           <Link
             href="/kien-thuc"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-warmgray hover:text-charcoal"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-slate-950"
           >
             <ArrowLeft size={16} /> Quay lại Kiến thức
           </Link>
 
-          <span className="rounded-full bg-champagne/20 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.2em] text-charcoal">
+          <span className="rounded-full bg-champagne/25 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.2em] text-charcoal">
             {article.category}
           </span>
 
@@ -138,10 +145,10 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
             {article.title}
           </h1>
 
-          <p className="mt-5 text-lg leading-8 text-warmgray">{article.excerpt}</p>
+          <p className="mt-5 text-lg font-semibold leading-8 text-slate-700">{article.excerpt}</p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-warmgray">
-            <span className="rounded-full bg-champagne/15 px-3 py-1 text-xs font-bold text-charcoal">
+          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm font-semibold text-slate-700">
+            <span className="rounded-full bg-champagne/20 px-3 py-1 text-xs font-bold text-charcoal">
               {level}
             </span>
             <span className="flex items-center gap-1">
@@ -161,7 +168,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
           <div className="mt-10 rounded-3xl bg-white p-6 shadow-soft md:p-8">
             {article.content ? renderMarkdown(article.content) : (
-              <p className="text-warmgray">Nội dung đang được cập nhật...</p>
+              <p className="text-slate-700">Nội dung đang được cập nhật...</p>
             )}
           </div>
 
@@ -170,7 +177,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
               {tags.map((tag: string) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-warmgray"
+                  className="rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-bold text-slate-700"
                 >
                   {tag}
                 </span>
@@ -189,6 +196,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         </div>
       </main>
       <Footer />
+      <MobileBottomNav />
 
       <script
         type="application/ld+json"
