@@ -3,6 +3,13 @@ import { URL } from "node:url";
 import { createRecruitmentJob, parseRecruitmentInternalActor, parseRecruitmentPostInput, recruitmentWriteHeaders } from "./recruitment-write";
 import { getDatabasePool, getRecruitmentJobsPage, hasDatabaseUrl } from "./db";
 import { getRecruitmentUsage } from "./recruitment-quota";
+import {
+  adminRecruitmentHeaders,
+  applyAdminRecruitmentAction,
+  getAdminRecruitmentJobsPage,
+  parseAdminRecruitmentAction,
+  parseRecruitmentAdminActor,
+} from "./recruitment-admin";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 4000);
 const SERVICE_NAME = process.env.SERVICE_NAME || "tocviet-api";
@@ -20,18 +27,14 @@ function sendJson(res: http.ServerResponse, statusCode: number, body: JsonBody, 
     "access-control-allow-origin": process.env.CORS_ORIGIN || "https://tocvietlab.studio",
     "access-control-allow-methods": "GET,POST,PATCH,DELETE,OPTIONS",
     "access-control-allow-headers":
-      "content-type,authorization,x-tocviet-source,x-internal-api-secret,x-tocviet-user-id,x-tocviet-user-role,x-tocviet-user-display-name,x-tocviet-user-email",
+      "content-type,authorization,x-tocviet-source,x-internal-api-secret,x-tocviet-user-id,x-tocviet-user-role,x-tocviet-user-display-name,x-tocviet-user-email,x-tocviet-admin-user-id,x-tocviet-admin-email",
     ...extraHeaders,
   });
   res.end(payload);
 }
 
 function notFound(res: http.ServerResponse, path: string) {
-  sendJson(res, 404, {
-    ok: false,
-    error: "Not found",
-    path,
-  });
+  sendJson(res, 404, { ok: false, error: "Not found", path });
 }
 
 function healthBody() {
@@ -49,27 +52,11 @@ function healthBody() {
 }
 
 function recruitmentErrorBody(status: string, error: string, limit: number, offset: number) {
-  return {
-    ok: false,
-    namespace: NAMESPACE,
-    source: "vps-postgres",
-    module: "recruitment",
-    status,
-    error,
-    limit,
-    offset,
-  };
+  return { ok: false, namespace: NAMESPACE, source: "vps-postgres", module: "recruitment", status, error, limit, offset };
 }
 
 function recruitmentWriteErrorBody(status: string, error: string) {
-  return {
-    ok: false,
-    namespace: NAMESPACE,
-    source: "vps-postgres",
-    module: "recruitment",
-    status,
-    error,
-  };
+  return { ok: false, namespace: NAMESPACE, source: "vps-postgres", module: "recruitment", status, error };
 }
 
 function parseBoundedInteger(rawValue: string | null, fallback: number, min: number, max: number) {
@@ -81,48 +68,101 @@ function parseBoundedInteger(rawValue: string | null, fallback: number, min: num
 function parseJsonBody(req: http.IncomingMessage) {
   return new Promise<unknown>((resolve, reject) => {
     const chunks: Buffer[] = [];
-
-    req.on("data", (chunk) => {
-      chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : Buffer.from(chunk));
-    });
-
+    req.on("data", (chunk) => chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : Buffer.from(chunk)));
     req.on("end", () => {
       const raw = Buffer.concat(chunks).toString("utf8").trim();
       if (!raw) {
         resolve({});
         return;
       }
-
       try {
         resolve(JSON.parse(raw));
       } catch (error) {
         reject(error);
       }
     });
-
     req.on("error", reject);
   });
+}
+
+function ensureDb(res: http.ServerResponse, limit = 30, offset = 0) {
+  if (hasDatabaseUrl()) return true;
+  sendJson(
+    res,
+    503,
+    recruitmentErrorBody("database_not_configured", "DATABASE_URL is not configured on the Toc Viet VPS backend.", limit, offset),
+    { "x-tocviet-api-source": "vps-postgres" }
+  );
+  return false;
+}
+
+async function handleAdminRecruitmentJobs(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+  const limit = parseBoundedInteger(url.searchParams.get("limit"), 50, 1, 100);
+  const offset = Math.max(parseBoundedInteger(url.searchParams.get("offset"), 0, 0, Number.MAX_SAFE_INTEGER), 0);
+  if (!ensureDb(res, limit, offset)) return;
+
+  const actor = parseRecruitmentAdminActor(req.headers);
+  if ("statusCode" in actor) {
+    sendJson(res, actor.statusCode, recruitmentErrorBody(actor.code, actor.message, limit, offset), adminRecruitmentHeaders());
+    return;
+  }
+
+  try {
+    const page = await getAdminRecruitmentJobsPage(limit, offset, {
+      status: url.searchParams.get("status") || "all",
+      q: url.searchParams.get("q") || "",
+    });
+    sendJson(
+      res,
+      200,
+      { ok: true, namespace: NAMESPACE, source: "vps-postgres", module: "admin-recruitment", jobs: page.jobs, total: page.total, limit: page.limit, offset: page.offset },
+      adminRecruitmentHeaders()
+    );
+  } catch (error: any) {
+    sendJson(res, 500, recruitmentErrorBody("admin_query_failed", error?.message || "Failed to read admin recruitment jobs.", limit, offset), adminRecruitmentHeaders());
+  }
+}
+
+async function handleAdminRecruitmentJobPatch(req: http.IncomingMessage, res: http.ServerResponse, jobId: string) {
+  if (!ensureDb(res)) return;
+
+  const actor = parseRecruitmentAdminActor(req.headers);
+  if ("statusCode" in actor) {
+    sendJson(res, actor.statusCode, recruitmentWriteErrorBody(actor.code, actor.message), adminRecruitmentHeaders());
+    return;
+  }
+
+  let rawBody: unknown;
+  try {
+    rawBody = await parseJsonBody(req);
+  } catch {
+    sendJson(res, 400, recruitmentWriteErrorBody("invalid_json", "Request body must be valid JSON."), adminRecruitmentHeaders());
+    return;
+  }
+
+  const action = parseAdminRecruitmentAction(rawBody);
+  if (typeof action !== "string") {
+    sendJson(res, action.statusCode, recruitmentWriteErrorBody(action.code, action.message), adminRecruitmentHeaders());
+    return;
+  }
+
+  try {
+    const result = await applyAdminRecruitmentAction(jobId, action);
+    if ("statusCode" in result) {
+      sendJson(res, result.statusCode, recruitmentWriteErrorBody(result.code, result.message), adminRecruitmentHeaders());
+      return;
+    }
+    sendJson(res, 200, { ok: true, namespace: NAMESPACE, source: "vps-postgres", module: "admin-recruitment", action, job: result }, adminRecruitmentHeaders());
+  } catch (error: any) {
+    sendJson(res, 500, recruitmentWriteErrorBody("admin_action_failed", error?.message || "Failed to update recruitment job."), adminRecruitmentHeaders());
+  }
 }
 
 async function handleRecruitmentJobs(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
   const mine = url.searchParams.get("mine") === "1";
   const limit = parseBoundedInteger(url.searchParams.get("limit"), 30, 1, 50);
   const offset = Math.max(parseBoundedInteger(url.searchParams.get("offset"), 0, 0, Number.MAX_SAFE_INTEGER), 0);
-
-  if (!hasDatabaseUrl()) {
-    sendJson(
-      res,
-      503,
-      recruitmentErrorBody(
-        "database_not_configured",
-        "DATABASE_URL is not configured on the Toc Viet VPS backend.",
-        limit,
-        offset
-      ),
-      { "x-tocviet-api-source": "vps-postgres" }
-    );
-    return;
-  }
+  if (!ensureDb(res, limit, offset)) return;
 
   if (mine) {
     const actor = parseRecruitmentInternalActor(req.headers);
@@ -137,85 +177,24 @@ async function handleRecruitmentJobs(req: http.IncomingMessage, res: http.Server
         getRecruitmentJobsPage(limit, offset, { employerUserId: actor.userId }),
         getRecruitmentUsage(pool, actor.userId, actor.role),
       ]);
-
-      sendJson(
-        res,
-        200,
-        {
-          ok: true,
-          namespace: NAMESPACE,
-          source: "vps-postgres",
-          module: "recruitment",
-          jobs: page.jobs,
-          total: page.total,
-          usage,
-          limit: page.limit,
-          offset: page.offset,
-        },
-        { "x-tocviet-api-source": "vps-postgres" }
-      );
+      sendJson(res, 200, { ok: true, namespace: NAMESPACE, source: "vps-postgres", module: "recruitment", jobs: page.jobs, total: page.total, usage, limit: page.limit, offset: page.offset }, { "x-tocviet-api-source": "vps-postgres" });
       return;
     } catch (error: any) {
-      sendJson(
-        res,
-        500,
-        recruitmentErrorBody(
-          "mine_query_failed",
-          error?.message || "Failed to read your recruitment jobs from PostgreSQL.",
-          limit,
-          offset
-        ),
-        { "x-tocviet-api-source": "vps-postgres" }
-      );
+      sendJson(res, 500, recruitmentErrorBody("mine_query_failed", error?.message || "Failed to read your recruitment jobs from PostgreSQL.", limit, offset), { "x-tocviet-api-source": "vps-postgres" });
       return;
     }
   }
 
   try {
     const page = await getRecruitmentJobsPage(limit, offset);
-    sendJson(
-      res,
-      200,
-      {
-        ok: true,
-        namespace: NAMESPACE,
-        source: "vps-postgres",
-        module: "recruitment",
-        jobs: page.jobs,
-        total: page.total,
-        limit: page.limit,
-        offset: page.offset,
-      },
-      { "x-tocviet-api-source": "vps-postgres" }
-    );
+    sendJson(res, 200, { ok: true, namespace: NAMESPACE, source: "vps-postgres", module: "recruitment", jobs: page.jobs, total: page.total, limit: page.limit, offset: page.offset }, { "x-tocviet-api-source": "vps-postgres" });
   } catch (error: any) {
-    sendJson(
-      res,
-      500,
-      recruitmentErrorBody(
-        "query_failed",
-        error?.message || "Failed to read recruitment jobs from PostgreSQL.",
-        limit,
-        offset
-      ),
-      { "x-tocviet-api-source": "vps-postgres" }
-    );
+    sendJson(res, 500, recruitmentErrorBody("query_failed", error?.message || "Failed to read recruitment jobs from PostgreSQL.", limit, offset), { "x-tocviet-api-source": "vps-postgres" });
   }
 }
 
 async function handleRecruitmentJobCreate(req: http.IncomingMessage, res: http.ServerResponse) {
-  if (!hasDatabaseUrl()) {
-    sendJson(
-      res,
-      503,
-      recruitmentWriteErrorBody(
-        "database_not_configured",
-        "DATABASE_URL is not configured on the Toc Viet VPS backend."
-      ),
-      recruitmentWriteHeaders()
-    );
-    return;
-  }
+  if (!ensureDb(res)) return;
 
   const actor = parseRecruitmentInternalActor(req.headers);
   if ("statusCode" in actor) {
@@ -227,12 +206,7 @@ async function handleRecruitmentJobCreate(req: http.IncomingMessage, res: http.S
   try {
     rawBody = await parseJsonBody(req);
   } catch {
-    sendJson(
-      res,
-      400,
-      recruitmentWriteErrorBody("invalid_json", "Request body must be valid JSON."),
-      recruitmentWriteHeaders()
-    );
+    sendJson(res, 400, recruitmentWriteErrorBody("invalid_json", "Request body must be valid JSON."), recruitmentWriteHeaders());
     return;
   }
 
@@ -248,30 +222,9 @@ async function handleRecruitmentJobCreate(req: http.IncomingMessage, res: http.S
       sendJson(res, result.statusCode, recruitmentWriteErrorBody(result.code, result.message), recruitmentWriteHeaders());
       return;
     }
-
-    sendJson(
-      res,
-      201,
-      {
-        ok: true,
-        namespace: NAMESPACE,
-        source: "vps-postgres",
-        module: "recruitment",
-        job: result.job,
-        usage: result.usage,
-      },
-      recruitmentWriteHeaders()
-    );
+    sendJson(res, 201, { ok: true, namespace: NAMESPACE, source: "vps-postgres", module: "recruitment", job: result.job, usage: result.usage }, recruitmentWriteHeaders());
   } catch (error: any) {
-    sendJson(
-      res,
-      500,
-      recruitmentWriteErrorBody(
-        "write_failed",
-        error?.message || "Failed to create recruitment job in PostgreSQL."
-      ),
-      recruitmentWriteHeaders()
-    );
+    sendJson(res, 500, recruitmentWriteErrorBody("write_failed", error?.message || "Failed to create recruitment job in PostgreSQL."), recruitmentWriteHeaders());
   }
 }
 
@@ -286,13 +239,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (method === "GET" && path === "/") {
-    sendJson(res, 200, {
-      ok: true,
-      namespace: NAMESPACE,
-      service: SERVICE_NAME,
-      message: "Toc Viet Lab backend API is running.",
-      version: VERSION,
-    });
+    sendJson(res, 200, { ok: true, namespace: NAMESPACE, service: SERVICE_NAME, message: "Toc Viet Lab backend API is running.", version: VERSION });
     return;
   }
 
@@ -301,27 +248,28 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (path === "/admin/recruitment/jobs" && method === "GET") {
+    void handleAdminRecruitmentJobs(req, res, url);
+    return;
+  }
+
+  if (path.startsWith("/admin/recruitment/jobs/") && method === "PATCH") {
+    const jobId = decodeURIComponent(path.replace("/admin/recruitment/jobs/", ""));
+    void handleAdminRecruitmentJobPatch(req, res, jobId);
+    return;
+  }
+
   if (path === "/recruitment/jobs") {
     if (method === "GET") {
       void handleRecruitmentJobs(req, res, url);
       return;
     }
-
     if (method === "POST") {
       void handleRecruitmentJobCreate(req, res);
       return;
     }
-
     if (method === "PATCH" || method === "DELETE") {
-      sendJson(
-        res,
-        501,
-        recruitmentWriteErrorBody(
-          "not_implemented",
-          `${method} /recruitment/jobs is not implemented on the Toc Viet VPS backend yet.`
-        ),
-        recruitmentWriteHeaders()
-      );
+      sendJson(res, 501, recruitmentWriteErrorBody("not_implemented", `${method} /recruitment/jobs is not implemented on the Toc Viet VPS backend yet.`), recruitmentWriteHeaders());
       return;
     }
   }
