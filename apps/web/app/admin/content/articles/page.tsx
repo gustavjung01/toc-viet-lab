@@ -1,5 +1,6 @@
 import { AdminShell } from "@/components/admin/shell";
 import { AdminGuardMessage } from "@/components/admin/guard-message";
+import { AdminContentTabs } from "@/components/admin/content-tabs";
 import { readAdminAccess } from "@/lib/admin-permission";
 import { absoluteSiteUrl } from "@/lib/site-url";
 
@@ -32,6 +33,7 @@ export default async function AdminArticlesPage() {
 
   return (
     <AdminShell>
+      <AdminContentTabs />
       <section className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
         <p className="text-xs font-black uppercase tracking-[0.24em] text-[#D6A84F]">Content</p>
         <h2 className="mt-3 text-3xl font-black text-white">Bài kiến thức</h2>
