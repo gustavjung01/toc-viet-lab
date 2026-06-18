@@ -5,7 +5,7 @@ const items = [
   { label: "Tổng quan", href: "/admin", icon: BarChart3 },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Tuyển dụng", href: "/admin/recruitment/jobs", icon: BriefcaseBusiness },
-  { label: "Bài viết", href: "/admin/content/articles", icon: BookOpen },
+  { label: "Nội dung", href: "/admin/content", icon: BookOpen },
   { label: "Cài đặt", href: "/admin/settings", icon: Settings },
 ];
 
